@@ -1,0 +1,19 @@
+{
+  "name": "visual",
+  "version": "1.0.0",
+  "description": "the basic tools for javascript visualiztion",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/huiyan-fe/visual.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/huiyan-fe/visual/issues"
+  },
+  "homepage": "https://github.com/huiyan-fe/visual#readme"
+}
