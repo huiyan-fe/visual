@@ -16,6 +16,10 @@ class Data {
   get() {
     return this.data;
   }
+
+  set(data) {
+    this.data = data;
+  }
 }
 
 export default Data;

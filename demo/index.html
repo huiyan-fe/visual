@@ -12,7 +12,22 @@
         for(var i = 0;i<20;i++){
             paths.push([Math.random()*500,Math.random()*500])
         }
-        var v = new Visual(document.getElementById('c1'),paths)
+        var v = new Visual(document.getElementById('c1'), paths);
+        v.on('mousemove', (match) => {
+            console.log('mousemove',match);
+        });
+        v.on('click',(match) => {
+            console.log('click',match)
+        });
+
+        setTimeout(()=>{
+            paths = [];
+            for(var i = 0;i<20;i++){
+                paths.push([Math.random()*500,Math.random()*500])
+            }
+            v.data.set(paths);
+        },2000)
+
     </script>
 </body>
 
