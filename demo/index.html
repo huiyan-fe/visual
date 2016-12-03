@@ -1,0 +1,19 @@
+<html>
+
+<head>
+    <title>Demo of visual</title>
+    <script src="../dist/visual.1.0.0.js"></script>
+</head>
+
+<body>
+    <canvas id="c1" style="width:500px; height: 500px; border:1px solid #ccc;"></canvas>
+    <script>
+        var paths = [];
+        for(var i = 0;i<20;i++){
+            paths.push([Math.random()*500,Math.random()*500])
+        }
+        var v = new Visual(document.getElementById('c1'),paths)
+    </script>
+</body>
+
+</html>

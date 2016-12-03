@@ -4,7 +4,8 @@
   "description": "the basic tools for javascript visualiztion",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:dev": "webpack -w --config .webpack.config.js"
   },
   "repository": {
     "type": "git",
@@ -17,10 +18,14 @@
   },
   "homepage": "https://github.com/huiyan-fe/visual#readme",
   "devDependencies": {
+    "babel-core": "^6.18.2",
+    "babel-loader": "^6.2.8",
+    "babel-preset-latest": "^6.16.0",
     "eslint": "^3.11.1",
     "eslint-config-airbnb": "^13.0.0",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^2.2.3",
-    "eslint-plugin-react": "^6.7.1"
+    "eslint-plugin-react": "^6.7.1",
+    "webpack": "^1.13.3"
   }
 }
