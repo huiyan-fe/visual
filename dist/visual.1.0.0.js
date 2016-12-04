@@ -79,10 +79,12 @@
 	    this._.canvas = canvas;
 	    var ctx = this._.ctx = canvas.getContext('2d');
 	    _visualCanvas2.default.adjust(ctx);
-
 	    this.config = new _visualConfig2.default(conf);
-	    this.data = new _visualData2.default(data);
-	    _visualCanvas2.default.drawLine(ctx, data);
+	    this.data = new _visualData2.default(data, this);
+	    this.sysData = {};
+	    //
+	    this.draw();
+	    //
 	    this.initEvent();
 	  }
 
@@ -92,56 +94,72 @@
 	      var _this = this;
 
 	      var canvas = this._.canvas;
+
+	      var emit = function emit(type, data) {
+	        var vEvents = _this._.events && _this._.events[type];
+	        Object.keys(vEvents).forEach(function (id) {
+	          if (vEvents[id]) {
+	            vEvents[id](data);
+	          }
+	        });
+	      };
+
 	      canvas.addEventListener('mousemove', function (e) {
-	        var vEvents = _this._.events && _this._.events.mousemove;
 	        var ctx = _this._.ctx;
 	        var data = _this.data.get();
 	        var match = _visualMath2.default.match([e.offsetX, e.offsetY], data);
 	        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-	        _visualCanvas2.default.drawLine(ctx, data);
+	        //
 	        if (match.length >= 1) {
-	          (function () {
-	            var matchInfo = match[0];
-	            var point = match[0].projection;
-	            _visualCanvas2.default.drawPoint(ctx, point);
-	            Object.keys(vEvents).forEach(function (id) {
-	              if (vEvents[id]) {
-	                vEvents[id]({
-	                  point: matchInfo.projection,
-	                  length: matchInfo.length,
-	                  data: data[matchInfo.index]
-	                });
-	              }
-	            });
-	          })();
+	          var matchInfo = match[0];
+	          var point = match[0].projection;
+
+	          emit('mousemove', {
+	            point: point,
+	            length: matchInfo.length,
+	            data: matchInfo.data
+	          });
+
+	          _this.sysData.lineProjection = [{
+	            type: Visual.circle,
+	            points: [point]
+	          }];
+	        } else {
+	          _this.sysData.lineProjection = [];
 	        }
+	        //
+	        _this.draw();
 	      });
+
 	      canvas.addEventListener('mouseleave', function () {
 	        console.log('ml');
 	      });
+
 	      canvas.addEventListener('click', function (e) {
 	        var ctx = _this._.ctx;
 	        var data = _this.data.get();
 	        var match = _visualMath2.default.match([e.offsetX, e.offsetY], data);
 	        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-	        _visualCanvas2.default.drawLine(ctx, data);
 	        if (match.length >= 1) {
-	          (function () {
-	            var matchInfo = match[0];
-	            var point = match[0].projection;
-	            _visualCanvas2.default.drawPoint(ctx, point);
-	            var vEvents = _this._.events && _this._.events.click;
-	            Object.keys(vEvents).forEach(function (id) {
-	              if (vEvents[id]) {
-	                vEvents[id]({
-	                  point: matchInfo.projection,
-	                  length: matchInfo.length,
-	                  data: data[matchInfo.index]
-	                });
-	              }
-	            });
-	          })();
+	          var matchInfo = match[0];
+	          var point = match[0].projection;
+
+	          _this.sysData.lineProjection = [{
+	            type: Visual.circle,
+	            points: [point]
+	          }];
+	          //
+	          emit('click', {
+	            point: point,
+	            length: matchInfo.length,
+	            data: matchInfo.data
+	          });
+	        } else {
+	          delete _this.sysData.lineProjection;
 	        }
+
+	        //
+	        _this.draw();
 	      });
 	    }
 	  }, {
@@ -168,10 +186,38 @@
 	        });
 	      });
 	    }
+	  }, {
+	    key: 'draw',
+	    value: function draw() {
+	      var _this2 = this;
+
+	      var drawFn = function drawFn(theData) {
+	        switch (theData.type) {
+	          case Visual.line:
+	            _visualCanvas2.default.drawLine(_this2._.ctx, theData.paths);
+	            break;
+	          case Visual.circle:
+	            _visualCanvas2.default.drawPoint(_this2._.ctx, theData.points);
+	            break;
+	          default:
+	        }
+	      };
+	      //
+	      var data = this.data.get();
+	      data.forEach(drawFn);
+	      //
+	      var sysData = this.sysData;
+	      Object.keys(sysData).forEach(function (key) {
+	        sysData[key].forEach(drawFn);
+	      });
+	    }
 	  }]);
 
 	  return Visual;
 	}();
+
+	Visual.line = Symbol('line');
+	Visual.circle = Symbol('circle');
 
 	global.Visual = Visual;
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
@@ -273,12 +319,14 @@
 	  },
 	  drawPoint: function drawPoint(ctxParam, data) {
 	    var ctx = ctxParam;
-	    ctx.beginPath();
-	    ctx.arc(data[0], data[1], 4, 0, 2 * Math.PI);
-	    ctx.lineWidth = 4;
-	    ctx.fillStyle = 'white';
-	    ctx.stroke();
-	    ctx.fill();
+	    data.forEach(function (point) {
+	      ctx.beginPath();
+	      ctx.arc(point[0], point[1], 4, 0, 2 * Math.PI);
+	      ctx.lineWidth = 4;
+	      ctx.fillStyle = 'white';
+	      ctx.stroke();
+	      ctx.fill();
+	    });
 	  },
 	  adjust: function adjust(cctxParam) {
 	    var ctx = cctxParam;
@@ -306,57 +354,59 @@
 	  value: true
 	});
 	var MathTool = {
-	  match: function match(P, datas) {
+	  match: function match(P, datasGroup) {
 	    var res = [];
-	    datas.forEach(function (data, index) {
-	      if (index !== 0) {
-	        var A = datas[index - 1];
-	        var B = datas[index];
-	        var vAP = [P[0] - A[0], P[1] - A[1]];
-	        var lAP = Math.sqrt(Math.pow(vAP[0], 2) + Math.pow(vAP[1], 2));
-	        var vAB = [B[0] - A[0], B[1] - A[1]];
-	        var lAB = Math.sqrt(Math.pow(vAB[0], 2) + Math.pow(vAB[1], 2));
-	        var vPB = [B[0] - P[0], B[1] - P[1]];
-	        var lPB = Math.sqrt(Math.pow(vPB[0], 2) + Math.pow(vPB[1], 2));
+	    datasGroup.forEach(function (datas) {
+	      datas.paths.forEach(function (data, index) {
+	        if (index !== 0) {
+	          var A = datas.paths[index - 1];
+	          var B = datas.paths[index];
+	          var vAP = [P[0] - A[0], P[1] - A[1]];
+	          var lAP = Math.sqrt(Math.pow(vAP[0], 2) + Math.pow(vAP[1], 2));
+	          var vAB = [B[0] - A[0], B[1] - A[1]];
+	          var lAB = Math.sqrt(Math.pow(vAB[0], 2) + Math.pow(vAB[1], 2));
+	          var vPB = [B[0] - P[0], B[1] - P[1]];
+	          var lPB = Math.sqrt(Math.pow(vPB[0], 2) + Math.pow(vPB[1], 2));
 
-	        var cAPAB = vAP[0] * vAB[0] + vAP[1] * vAB[1];
-	        var lAPAB = lAP * lAB;
-	        var rPAB = Math.acos(cAPAB / lAPAB);
+	          var cAPAB = vAP[0] * vAB[0] + vAP[1] * vAB[1];
+	          var lAPAB = lAP * lAB;
+	          var rPAB = Math.acos(cAPAB / lAPAB);
 
-	        var cABPB = vAB[0] * vPB[0] + vAB[1] * vPB[1];
-	        var lABPB = lAB * Math.sqrt(Math.pow(vPB[0], 2) + Math.pow(vPB[1], 2));
-	        var rPBA = Math.acos(cABPB / lABPB);
+	          var cABPB = vAB[0] * vPB[0] + vAB[1] * vPB[1];
+	          var lABPB = lAB * Math.sqrt(Math.pow(vPB[0], 2) + Math.pow(vPB[1], 2));
+	          var rPBA = Math.acos(cABPB / lABPB);
 
-	        if (rPAB < Math.PI / 2 && rPBA < Math.PI / 2) {
-	          var lAO = Math.cos(rPAB) * lAP;
-	          var pAOAB = lAO / lAB;
-	          var lPO = Math.sin(rPAB) * lAP;
-	          var O = [A[0] + vAB[0] * pAOAB, A[1] + vAB[1] * pAOAB];
-	          if (lPO < 30) {
+	          if (rPAB < Math.PI / 2 && rPBA < Math.PI / 2) {
+	            var lAO = Math.cos(rPAB) * lAP;
+	            var pAOAB = lAO / lAB;
+	            var lPO = Math.sin(rPAB) * lAP;
+	            var O = [A[0] + vAB[0] * pAOAB, A[1] + vAB[1] * pAOAB];
+	            if (lPO < 30) {
+	              res.push({
+	                data: datas,
+	                projection: O,
+	                length: lPO
+	              });
+	            }
+	          }
+	          //
+	          if (lPB < 30) {
 	            res.push({
-	              index: index,
-	              projection: O,
-	              length: lPO
+	              data: datas,
+	              projection: B,
+	              length: lPB
+	            });
+	          }
+
+	          if (lAP < 30) {
+	            res.push({
+	              data: datas,
+	              projection: A,
+	              length: lAP
 	            });
 	          }
 	        }
-	        //
-	        if (lPB < 30) {
-	          res.push({
-	            index: index,
-	            projection: B,
-	            length: lPB
-	          });
-	        }
-
-	        if (lAP < 30) {
-	          res.push({
-	            index: index,
-	            projection: A,
-	            length: lAP
-	          });
-	        }
-	      }
+	      });
 	    });
 	    res.sort(function (a, b) {
 	      return a.length - b.length;

@@ -20,12 +20,14 @@ const Canvas = {
   },
   drawPoint(ctxParam, data) {
     const ctx = ctxParam;
-    ctx.beginPath();
-    ctx.arc(data[0], data[1], 4, 0, 2 * Math.PI);
-    ctx.lineWidth = 4;
-    ctx.fillStyle = 'white';
-    ctx.stroke();
-    ctx.fill();
+    data.forEach((point) => {
+      ctx.beginPath();
+      ctx.arc(point[0], point[1], 4, 0, 2 * Math.PI);
+      ctx.lineWidth = 4;
+      ctx.fillStyle = 'white';
+      ctx.stroke();
+      ctx.fill();
+    });
   },
   adjust(cctxParam) {
     const ctx = cctxParam;

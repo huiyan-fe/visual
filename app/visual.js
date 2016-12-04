@@ -12,61 +12,83 @@ class Visual {
     this._.canvas = canvas;
     const ctx = this._.ctx = canvas.getContext('2d');
     Canvas.adjust(ctx);
-
     this.config = new Config(conf);
-    this.data = new Data(data);
-    Canvas.drawLine(ctx, data);
+    this.data = new Data(data, this);
+    this.sysData = {};
+    //
+    this.draw();
+    //
     this.initEvent();
   }
 
   initEvent() {
     const canvas = this._.canvas;
+
+    const emit = (type, data) => {
+      const vEvents = this._.events && this._.events[type];
+      Object.keys(vEvents).forEach((id) => {
+        if (vEvents[id]) {
+          vEvents[id](data);
+        }
+      });
+    };
+
     canvas.addEventListener('mousemove', (e) => {
-      const vEvents = this._.events && this._.events.mousemove;
       const ctx = this._.ctx;
       const data = this.data.get();
       const match = VMath.match([e.offsetX, e.offsetY], data);
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-      Canvas.drawLine(ctx, data);
+      //
       if (match.length >= 1) {
         const matchInfo = match[0];
         const point = match[0].projection;
-        Canvas.drawPoint(ctx, point);
-        Object.keys(vEvents).forEach((id) => {
-          if (vEvents[id]) {
-            vEvents[id]({
-              point: matchInfo.projection,
-              length: matchInfo.length,
-              data: data[matchInfo.index],
-            });
-          }
+
+        emit('mousemove', {
+          point,
+          length: matchInfo.length,
+          data: matchInfo.data,
         });
+
+        this.sysData.lineProjection = [{
+          type: Visual.circle,
+          points: [point],
+        }];
+      } else {
+        this.sysData.lineProjection = [];
       }
+      //
+      this.draw();
     });
+
     canvas.addEventListener('mouseleave', () => {
       console.log('ml');
     });
-    canvas.addEventListener('click', (e) => {      
+
+    canvas.addEventListener('click', (e) => {
       const ctx = this._.ctx;
       const data = this.data.get();
       const match = VMath.match([e.offsetX, e.offsetY], data);
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-      Canvas.drawLine(ctx, data);
       if (match.length >= 1) {
         const matchInfo = match[0];
         const point = match[0].projection;
-        Canvas.drawPoint(ctx, point);
-        const vEvents = this._.events && this._.events.click;
-        Object.keys(vEvents).forEach((id) => {
-          if (vEvents[id]) {
-            vEvents[id]({
-              point: matchInfo.projection,
-              length: matchInfo.length,
-              data: data[matchInfo.index],
-            });
-          }
+
+        this.sysData.lineProjection = [{
+          type: Visual.circle,
+          points: [point],
+        }];
+        //
+        emit('click', {
+          point,
+          length: matchInfo.length,
+          data: matchInfo.data,
         });
+      } else {
+        delete this.sysData.lineProjection;
       }
+
+      //
+      this.draw();
     });
   }
 
@@ -91,6 +113,31 @@ class Visual {
       });
     });
   }
+
+  draw() {
+    const drawFn = (theData) => {
+      switch (theData.type) {
+        case Visual.line:
+          Canvas.drawLine(this._.ctx, theData.paths);
+          break;
+        case Visual.circle:
+          Canvas.drawPoint(this._.ctx, theData.points);
+          break;
+        default:
+      }
+    };
+    //
+    const data = this.data.get();
+    data.forEach(drawFn);
+    //
+    const sysData = this.sysData;
+    Object.keys(sysData).forEach((key) => {
+      sysData[key].forEach(drawFn);
+    });
+  }
 }
+
+Visual.line = Symbol('line');
+Visual.circle = Symbol('circle');
 
 global.Visual = Visual;
