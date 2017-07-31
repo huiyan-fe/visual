@@ -1,31 +1,33 @@
 {
-  "name": "visual",
-  "version": "1.0.0",
-  "description": "the basic tools for javascript visualiztion",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build:dev": "webpack -w --config .webpack.config.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/huiyan-fe/visual.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/huiyan-fe/visual/issues"
-  },
-  "homepage": "https://github.com/huiyan-fe/visual#readme",
-  "devDependencies": {
-    "babel-core": "^6.18.2",
-    "babel-loader": "^6.2.8",
-    "babel-preset-latest": "^6.16.0",
-    "eslint": "^3.11.1",
-    "eslint-config-airbnb": "^13.0.0",
-    "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-jsx-a11y": "^2.2.3",
-    "eslint-plugin-react": "^6.7.1",
-    "webpack": "^1.13.3"
-  }
+    "name": "visual",
+    "version": "1.0.1",
+    "description": "the basic tools for javascript visualiztion",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build:dev": "webpack -w --config .webpack.config.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/huiyan-fe/visual.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/huiyan-fe/visual/issues"
+    },
+    "homepage": "https://github.com/huiyan-fe/visual#readme",
+    "devDependencies": {
+        "babel-core": "^6.18.2",
+        "babel-loader": "^6.2.8",
+        "babel-preset-latest": "^6.16.0",
+        "eslint": "^3.19.0",
+        "eslint-config-airbnb": "^13.0.0",
+        "eslint-config-airbnb-base": "^11.3.1",
+        "eslint-config-google": "^0.9.1",
+        "eslint-plugin-import": "^2.2.0",
+        "eslint-plugin-jsx-a11y": "^2.2.3",
+        "eslint-plugin-react": "^6.7.1",
+        "webpack": "^3.4.1"
+    }
 }

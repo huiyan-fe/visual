@@ -1,0 +1,44 @@
+<html>
+
+<head>
+    <title>Demo of visual</title>
+    <script src="../dist/visual.1.0.1.js"></script>
+</head>
+
+<body>
+    <div id="content" style="width:500px; height: 500px; border:1px solid #ccc;"></div>
+    <script>
+        let dom = document.getElementById('content');
+        let v = new Visual(dom);
+
+        v.line([
+            [85, 86],
+            [85, 89],
+            [85, 104]
+        ], {
+            strokeStyle: '#4df693',
+            lineWidth: 10
+        });
+
+        v.line([
+            [139, 85],
+            [197, 85],
+            [224, 85]
+        ], {
+            strokeStyle: '#4df693',
+            lineWidth: 10
+        });
+
+        v.line([
+            [10, 10],
+            [400, 10],
+        ], {
+            strokeStyle: '#4df693',
+            lineWidth: 10
+        });
+
+        console.log(v);
+    </script>
+</body>
+
+</html>

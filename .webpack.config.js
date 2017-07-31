@@ -1,10 +1,11 @@
 const package = require("./package.json");
+const path = require('path');
 
 module.exports = {
     entry: './app/visual.js',
     output: {
         filename: `visual.${package.version}.js`,
-        path: './dist'
+        path: path.resolve(__dirname, "dist")
     },
     module: {
         loaders: [{
