@@ -24,13 +24,20 @@
         </div>
     </div>
     <script>
+        let locparms = location.search.slice(1).split('&');
+        let param = {}
+        locparms.forEach(item => {
+            let pa = item.split('=');
+            param[pa[0]] = pa[1];
+        });
+        let api = param.api;
         let dom = document.getElementById('content');
         let v = new Visual(dom);
 
         let input = document.getElementById('input');
         input.onchange = (e) => {
             $.ajax({
-                url: 'http://cp01-jiaotongyun-6.epc.baidu.com:8080/guidingscreen/screen/detail?id=1',
+                url: api + '/guidingscreen/screen/detail?id=1',
                 dataType: 'JSONP',
                 success: (data) => {
                     window.detail = data.data.detail;
@@ -102,7 +109,7 @@
             console.log(config.components[0].path.steps[0].pixels[0])
             detail.configData = JSON.stringify(config);
             $.ajax({
-                url: 'http://cp01-jiaotongyun-6.epc.baidu.com:8080/guidingscreen/screen/update',
+                url: api + '/guidingscreen/screen/update',
                 data: detail,
                 dataType: 'JSONP',
                 // type: 'POST',
