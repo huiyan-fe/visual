@@ -97,16 +97,16 @@
 
         let save = document.getElementById('save');
         save.onclick = () => {
-            let globalindex = 0;
-            config.components.forEach((item, index) => {
-                if (item.type === 'Road') {
-                    item.path.steps.forEach(step => {
-                        step.pixels = v.sys.objects[globalindex].path;
-                        globalindex++;
-                    })
-                }
-            })
-            console.log(config.components[0].path.steps[0].pixels[0])
+            // let globalindex = 0;
+            // config.components.forEach((item, index) => {
+            //     if (item.type === 'Road') {
+            //         item.path.steps.forEach(step => {
+            //             step.pixels = v.sys.objects[globalindex].path;
+            //             globalindex++;
+            //         })
+            //     }
+            // })
+            // console.log(config.components[0].path.steps[0].pixels[0])
             detail.configData = JSON.stringify(config);
             $.ajax({
                 url: api + '/guidingscreen/screen/update',
