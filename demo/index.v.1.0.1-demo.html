@@ -37,7 +37,7 @@
         let input = document.getElementById('input');
         input.onchange = (e) => {
             $.ajax({
-                url: api + '/guidingscreen/screen/detail?id=1',
+                url: api + '/guidingscreen/screen/detail?id=' + e.target.value,
                 dataType: 'JSONP',
                 success: (data) => {
                     window.detail = data.data.detail;
