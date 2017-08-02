@@ -10,31 +10,28 @@
     <script>
         var paths = [];
         var paths2 = [];
-        for(var i = 0;i<3;i++){
-            paths.push([Math.random()*500,Math.random()*500]);
-            paths2.push([Math.random()*500,Math.random()*500]);
+        for (var i = 0; i < 3; i++) {
+            paths.push([Math.random() * 500, Math.random() * 500]);
+            paths2.push([Math.random() * 500, Math.random() * 500]);
         }
 
         //
-        var data = [
-            {
+        var data = [{
                 type: Visual.line,
                 paths: paths
-            },
-            {
+            }, {
                 type: Visual.line,
                 paths: paths2
-            }
-        ]
-        //
+            }]
+            //
         var v = new Visual(document.getElementById('c1'), data);
-        
+
         v.on('mousemove', (match) => {
             // console.log('mousemove',match);
         });
 
-        v.on('click',(match) => {
-            console.log('click',match)
+        v.on('click', (match) => {
+            console.log('click', match)
         });
 
         // setTimeout(()=>{
@@ -44,8 +41,9 @@
         //     }
         //     v.data.set(paths);
         // },2000)
-
     </script>
+
+    
 </body>
 
 </html>

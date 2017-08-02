@@ -2,7 +2,13 @@
 
 <head>
     <title>Demo of visual</title>
+    <style>
+        #content {
+            margin-top: 60px;
+        }
+    </style>
     <script src="../dist/visual.1.0.1.js"></script>
+    <script src="libs/stats.min.js"></script>
 </head>
 
 <body>
@@ -17,7 +23,7 @@
             [85, 104]
         ], {
             strokeStyle: '#4df693',
-            lineWidth: 10
+            lineWidth: 20
         });
 
         v.line([
@@ -26,7 +32,7 @@
             [224, 85]
         ], {
             strokeStyle: '#4df693',
-            lineWidth: 10
+            lineWidth: 20
         });
 
         v.line([
@@ -37,7 +43,19 @@
             lineWidth: 10
         });
 
+        // v.text('hello', [200, 200]);
+
         console.log(v);
+    </script>
+
+
+    <script>
+        var stats = new Stats();
+        document.body.appendChild(stats.dom);
+        requestAnimationFrame(function loop() {
+            stats.update();
+            requestAnimationFrame(loop)
+        });
     </script>
 </body>
 

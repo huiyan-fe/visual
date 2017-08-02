@@ -76,20 +76,23 @@ var _visualLine = __webpack_require__(2);
 
 var _visualLine2 = _interopRequireDefault(_visualLine);
 
+var _visualText = __webpack_require__(7);
+
+var _visualText2 = _interopRequireDefault(_visualText);
+
 var _visualDraw = __webpack_require__(3);
 
 var _visualDraw2 = _interopRequireDefault(_visualDraw);
 
-var _visualMatch = __webpack_require__(5);
+var _visualEvent = __webpack_require__(6);
 
-var _visualMatch2 = _interopRequireDefault(_visualMatch);
+var _visualEvent2 = _interopRequireDefault(_visualEvent);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var initCanvas = Symbol('initCanvas');
-var initEvent = Symbol('initEvent');
 
 var Visual = function () {
     function Visual(dom) {
@@ -98,12 +101,13 @@ var Visual = function () {
         this.sys = {
             objects: [],
             objectTypes: {
-                line: Symbol('line')
+                line: Symbol('line'),
+                text: Symbol('text')
             }
         };
         this.dom = dom;
         this[initCanvas]();
-        this[initEvent]();
+        (0, _visualEvent2.default)(this);
     }
 
     _createClass(Visual, [{
@@ -120,35 +124,30 @@ var Visual = function () {
             this.canvas.style.width = this.width;
             this.canvas.style.height = this.height;
             this.ctx = this.canvas.getContext('2d');
+            this.ctx.scale(pixelRatio, pixelRatio);
 
             this.dom.appendChild(this.canvas);
         }
     }, {
-        key: initEvent,
-        value: function value() {
-            var _this = this;
-
-            var canvas = this.canvas;
-            var datas = this.sys.objects;
-
-            canvas.addEventListener('mousemove', function (e) {
-                _visualMatch2.default.match([e.offsetX, e.offsetY], datas);
-                _this.draw();
-                // console.log(matched[0]);
-            });
-            canvas.addEventListener('mousedown', function (e) {
-                console.log(e.offsetX, e.offsetY);
-            });
-            canvas.addEventListener('mouseup', function (e) {
-                console.log(e.offsetX, e.offsetY);
-            });
+        key: 'clean',
+        value: function clean() {
+            this.sys.objects = [];
+            this.draw();
         }
     }]);
 
     return Visual;
 }();
 
-Visual.prototype.line = _visualLine2.default;
+Visual.prototype.line = function line() {
+    var path = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    return new _visualLine2.default(this, path, options);
+};
+
+Visual.prototype.text = _visualText2.default;
+
 Visual.prototype.draw = _visualDraw2.default;
 
 global.Visual = Visual;
@@ -191,18 +190,45 @@ module.exports = g;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-function Line() {
-    var path = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-    var options = arguments[1];
 
-    this.sys.objects.push({
-        id: Symbol('line'),
-        type: this.sys.objectTypes.line,
-        path: path,
-        options: options
-    });
-    this.draw();
-}
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Line = function () {
+    function Line(Visual) {
+        var path = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+        var options = arguments[2];
+
+        _classCallCheck(this, Line);
+
+        this.Visual = Visual;
+        this.id = Symbol('line');
+
+        this.Visual.sys.objects.push({
+            id: this.id,
+            type: Visual.sys.objectTypes.line,
+            path: path,
+            options: options
+        });
+        this.Visual.draw();
+    }
+
+    _createClass(Line, [{
+        key: 'remove',
+        value: function remove() {
+            var _this = this;
+
+            var objects = this.Visual.sys.objects;
+            this.Visual.sys.objects = objects.filter(function (item) {
+                return item.id !== _this.id;
+            });
+            this.Visual.draw();
+        }
+    }]);
+
+    return Line;
+}();
 
 exports.default = Line;
 
@@ -223,22 +249,38 @@ var _visualDrawLine2 = _interopRequireDefault(_visualDrawLine);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function Draw() {
-    var _this = this;
+var self = null; /* globals requestAnimationFrame  */
 
-    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-    this.ctx.canvas.style.cursor = 'default';
-    var objects = this.sys.objects || [];
-    objects.forEach(function (obj) {
-        switch (obj.type) {
-            case _this.sys.objectTypes.line:
-                (0, _visualDrawLine2.default)(_this.ctx, obj);
-                break;
-            default:
-                console.log('unkone type', obj.type);
-        }
-    });
+var drawFlat = false;
+
+function Draw() {
+    self = this;
+    drawFlat = true;
 }
+
+(function DrawDispatch() {
+    if (self && drawFlat) {
+        self.ctx.clearRect(0, 0, self.ctx.canvas.width, self.ctx.canvas.height);
+        self.ctx.canvas.style.cursor = 'default';
+
+        var objects = self.sys.objects || [];
+        objects.forEach(function (obj) {
+            switch (obj.type) {
+                case self.sys.objectTypes.line:
+                    (0, _visualDrawLine2.default)(self.ctx, obj);
+                    break;
+                case self.sys.objectTypes.text:
+                    console.log(self.ctx);
+                    // DrawText(self.ctx, obj);
+                    break;
+                default:
+                    console.log('unkone type', obj.type);
+            }
+        });
+        drawFlat = false;
+    }
+    requestAnimationFrame(DrawDispatch);
+})();
 
 exports.default = Draw;
 
@@ -256,6 +298,7 @@ function DrawLine(ctx, obj) {
     // draw basic line
     ctx.beginPath();
     ctx.save();
+    ctx.lineJoin = 'round';
     Object.keys(obj.options).forEach(function (key) {
         ctx[key] = obj.options[key];
     });
@@ -396,6 +439,104 @@ var MathTool = {
 };
 
 exports.default = MathTool;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _visualMatch = __webpack_require__(5);
+
+var _visualMatch2 = _interopRequireDefault(_visualMatch);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Event = function Event(self) {
+    var canvas = self.canvas;
+    var datas = self.sys.objects;
+    var mousedownPos = [];
+    var hoveredObj = [];
+    var pickupedObj = [];
+
+    window.addEventListener('mousemove', function (e) {
+        if (pickupedObj.length === 0) {
+            hoveredObj = _visualMatch2.default.match([e.offsetX, e.offsetY], self.sys.objects);
+        } else {
+            var movedPos = [e.offsetX - mousedownPos[0], e.offsetY - mousedownPos[1]];
+            var snapShootPath = pickupedObj[0].pathSnapshoot;
+
+            var newPath = [];
+            var isMoveSingle = pickupedObj[0].origin.type === 'point' && pickupedObj[0].origin.length < 10;
+            if (isMoveSingle) {
+                var singleIndex = pickupedObj[0].origin.index;
+                var path = pickupedObj[0].origin.data.path;
+                path[singleIndex][0] = snapShootPath[singleIndex][0] + movedPos[0];
+                path[singleIndex][1] = snapShootPath[singleIndex][1] + movedPos[1];
+            } else {
+                newPath = snapShootPath.map(function (item) {
+                    var x = item[0];
+                    var y = item[1];
+                    x += movedPos[0];
+                    y += movedPos[1];
+                    return [x, y];
+                });
+                pickupedObj[0].origin.data.path = newPath;
+            }
+            e.preventDefault();
+        }
+        self.draw();
+    });
+
+    canvas.addEventListener('mousedown', function (e) {
+        if (hoveredObj.length >= 1) {
+            pickupedObj = [{
+                pathSnapshoot: JSON.parse(JSON.stringify(hoveredObj[0].data.path)),
+                origin: Object.assign(hoveredObj[0])
+            }];
+            mousedownPos = [e.offsetX, e.offsetY];
+        }
+    });
+
+    window.addEventListener('mouseup', function () {
+        pickupedObj = [];
+        mousedownPos = [];
+    });
+}; /* globals window */
+
+exports.default = Event;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+function Text() {
+    var text = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+    var point = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [0, 0];
+    var options = arguments[2];
+
+    this.sys.objects.push({
+        id: Symbol('text'),
+        type: this.sys.objectTypes.line,
+        text: text,
+        point: point,
+        options: options
+    });
+    this.draw();
+}
+
+exports.default = Text;
 
 /***/ })
 /******/ ]);

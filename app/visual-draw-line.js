@@ -2,6 +2,7 @@ function DrawLine(ctx, obj) {
     // draw basic line
     ctx.beginPath();
     ctx.save();
+    ctx.lineJoin = 'round';
     Object.keys(obj.options).forEach(key => {
         ctx[key] = obj.options[key];
     });

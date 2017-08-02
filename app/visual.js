@@ -1,11 +1,12 @@
 /* globals window document getComputedStyle */
 
-import Line from './visual-line';
+import VLine from './visual-line';
+import vText from './visual-text';
 import Draw from './visual-draw';
-import MatchTool from './visual-match';
+
+import Event from './visual-event';
 
 const initCanvas = Symbol('initCanvas');
-const initEvent = Symbol('initEvent');
 
 class Visual {
     constructor(dom) {
@@ -13,11 +14,12 @@ class Visual {
             objects: [],
             objectTypes: {
                 line: Symbol('line'),
+                text: Symbol('text'),
             },
         };
         this.dom = dom;
         this[initCanvas]();
-        this[initEvent]();
+        Event(this);
     }
 
     [initCanvas]() {
@@ -32,30 +34,23 @@ class Visual {
         this.canvas.style.width = this.width;
         this.canvas.style.height = this.height;
         this.ctx = this.canvas.getContext('2d');
+        this.ctx.scale(pixelRatio, pixelRatio);
 
         this.dom.appendChild(this.canvas);
     }
 
-    [initEvent]() {
-        const canvas = this.canvas;
-        const datas = this.sys.objects;
-
-        canvas.addEventListener('mousemove', e => {
-            MatchTool.match([e.offsetX, e.offsetY], datas);
-            this.draw();
-            // console.log(matched[0]);
-        });
-        canvas.addEventListener('mousedown', e => {
-            console.log(e.offsetX, e.offsetY);
-        });
-        canvas.addEventListener('mouseup', e => {
-            console.log(e.offsetX, e.offsetY);
-        });
-
+    clean() {
+        this.sys.objects = [];
+        this.draw();
     }
 }
 
-Visual.prototype.line = Line;
+Visual.prototype.line = function line(path = [], options = {}) {
+    return new VLine(this, path, options);
+};
+
+Visual.prototype.text = vText;
+
 Visual.prototype.draw = Draw;
 
 global.Visual = Visual;
