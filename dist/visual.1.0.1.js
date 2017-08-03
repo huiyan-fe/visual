@@ -76,11 +76,11 @@ var _visualLine = __webpack_require__(2);
 
 var _visualLine2 = _interopRequireDefault(_visualLine);
 
-var _visualText = __webpack_require__(3);
+var _visualText = __webpack_require__(7);
 
 var _visualText2 = _interopRequireDefault(_visualText);
 
-var _visualDraw = __webpack_require__(4);
+var _visualDraw = __webpack_require__(3);
 
 var _visualDraw2 = _interopRequireDefault(_visualDraw);
 
@@ -195,6 +195,14 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var step = 10;
+
+var steplizePoint = function steplizePoint(point) {
+    return point.map(function (item) {
+        return Math.round(item / step) * step;
+    });
+};
+
 var Line = function () {
     function Line(Visual) {
         var path = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
@@ -202,13 +210,16 @@ var Line = function () {
 
         _classCallCheck(this, Line);
 
+        console.log(path);
         this.Visual = Visual;
         this.id = Symbol('line');
 
         this.Visual.sys.objects.push({
             id: this.id,
             type: Visual.sys.objectTypes.line,
-            path: path,
+            path: path.map(function (point) {
+                return steplizePoint(point);
+            }),
             options: options
         });
         this.Visual.draw();
@@ -242,35 +253,8 @@ exports.default = Line;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-function Text() {
-    var text = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-    var point = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [0, 0];
-    var options = arguments[2];
 
-    this.sys.objects.push({
-        id: Symbol('text'),
-        type: this.sys.objectTypes.line,
-        text: text,
-        point: point,
-        options: options
-    });
-    this.draw();
-}
-
-exports.default = Text;
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _visualDrawLine = __webpack_require__(5);
+var _visualDrawLine = __webpack_require__(4);
 
 var _visualDrawLine2 = _interopRequireDefault(_visualDrawLine);
 
@@ -312,7 +296,7 @@ function Draw() {
 exports.default = Draw;
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -396,78 +380,7 @@ function DrawLine(ctx, obj) {
 exports.default = DrawLine;
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _visualMatch = __webpack_require__(7);
-
-var _visualMatch2 = _interopRequireDefault(_visualMatch);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var Event = function Event(self) {
-    var canvas = self.canvas;
-    var datas = self.sys.objects;
-    var mousedownPos = [];
-    var hoveredObj = [];
-    var pickupedObj = [];
-
-    window.addEventListener('mousemove', function (e) {
-        if (pickupedObj.length === 0) {
-            hoveredObj = _visualMatch2.default.match([e.offsetX, e.offsetY], self.sys.objects);
-        } else {
-            var movedPos = [e.offsetX - mousedownPos[0], e.offsetY - mousedownPos[1]];
-            var snapShootPath = pickupedObj[0].pathSnapshoot;
-
-            var newPath = [];
-            var isMoveSingle = pickupedObj[0].origin.type === 'point' && pickupedObj[0].origin.length < 10;
-            if (isMoveSingle) {
-                var singleIndex = pickupedObj[0].origin.index;
-                var path = pickupedObj[0].origin.data.path;
-                path[singleIndex][0] = snapShootPath[singleIndex][0] + movedPos[0];
-                path[singleIndex][1] = snapShootPath[singleIndex][1] + movedPos[1];
-            } else {
-                newPath = snapShootPath.map(function (item) {
-                    var x = item[0];
-                    var y = item[1];
-                    x += movedPos[0];
-                    y += movedPos[1];
-                    return [x, y];
-                });
-                pickupedObj[0].origin.data.path = newPath;
-            }
-            e.preventDefault();
-        }
-        self.draw();
-    });
-
-    canvas.addEventListener('mousedown', function (e) {
-        if (hoveredObj.length >= 1) {
-            pickupedObj = [{
-                pathSnapshoot: JSON.parse(JSON.stringify(hoveredObj[0].data.path)),
-                origin: Object.assign(hoveredObj[0])
-            }];
-            mousedownPos = [e.offsetX, e.offsetY];
-        }
-    });
-
-    window.addEventListener('mouseup', function () {
-        pickupedObj = [];
-        mousedownPos = [];
-    });
-}; /* globals window */
-
-exports.default = Event;
-
-/***/ }),
-/* 7 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -537,6 +450,114 @@ var MathTool = {
 };
 
 exports.default = MathTool;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _visualMatch = __webpack_require__(5);
+
+var _visualMatch2 = _interopRequireDefault(_visualMatch);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var step = 10; /* globals window */
+
+var steplizePoint = function steplizePoint(point) {
+    return point.map(function (item) {
+        return Math.round(item / step) * step;
+    });
+};
+
+var Event = function Event(self) {
+    var canvas = self.canvas;
+    var mousedownPos = [];
+    var hoveredObj = [];
+    var pickupedObj = [];
+
+    window.addEventListener('mousemove', function (e) {
+        if (pickupedObj.length === 0) {
+            hoveredObj = _visualMatch2.default.match([e.offsetX, e.offsetY], self.sys.objects);
+        } else {
+            var movedPos = [e.offsetX - mousedownPos[0], e.offsetY - mousedownPos[1]];
+            movedPos = steplizePoint(movedPos);
+
+            var snapShootPath = pickupedObj[0].pathSnapshoot;
+
+            var newPath = [];
+            var isMoveSingle = pickupedObj[0].origin.type === 'point' && pickupedObj[0].origin.length < 10;
+            if (isMoveSingle) {
+                var singleIndex = pickupedObj[0].origin.index;
+                var path = pickupedObj[0].origin.data.path;
+                path[singleIndex][0] = snapShootPath[singleIndex][0] + movedPos[0];
+                path[singleIndex][1] = snapShootPath[singleIndex][1] + movedPos[1];
+                path[singleIndex] = steplizePoint(path[singleIndex]);
+            } else {
+                newPath = snapShootPath.map(function (item) {
+                    var x = item[0];
+                    var y = item[1];
+                    x += movedPos[0];
+                    y += movedPos[1];
+                    return steplizePoint([x, y]);
+                });
+                pickupedObj[0].origin.data.path = newPath;
+            }
+            e.preventDefault();
+        }
+        self.draw();
+    });
+
+    canvas.addEventListener('mousedown', function (e) {
+        if (hoveredObj.length >= 1) {
+            pickupedObj = [{
+                pathSnapshoot: JSON.parse(JSON.stringify(hoveredObj[0].data.path)),
+                origin: Object.assign(hoveredObj[0])
+            }];
+            mousedownPos = [e.offsetX, e.offsetY];
+        }
+    });
+
+    window.addEventListener('mouseup', function () {
+        pickupedObj = [];
+        mousedownPos = [];
+    });
+};
+
+exports.default = Event;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+function Text() {
+    var text = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+    var point = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [0, 0];
+    var options = arguments[2];
+
+    this.sys.objects.push({
+        id: Symbol('text'),
+        type: this.sys.objectTypes.line,
+        text: text,
+        point: point,
+        options: options
+    });
+    this.draw();
+}
+
+exports.default = Text;
 
 /***/ })
 /******/ ]);

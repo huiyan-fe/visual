@@ -2,9 +2,14 @@
 
 import MatchTool from './visual-match';
 
+const step = 10;
+
+const steplizePoint = point => {
+    return point.map(item => Math.round(item / step) * step);
+};
+
 const Event = self => {
     const canvas = self.canvas;
-    const datas = self.sys.objects;
     let mousedownPos = [];
     let hoveredObj = [];
     let pickupedObj = [];
@@ -13,7 +18,9 @@ const Event = self => {
         if (pickupedObj.length === 0) {
             hoveredObj = MatchTool.match([e.offsetX, e.offsetY], self.sys.objects);
         } else {
-            const movedPos = [e.offsetX - mousedownPos[0], e.offsetY - mousedownPos[1]];
+            let movedPos = [e.offsetX - mousedownPos[0], e.offsetY - mousedownPos[1]];
+            movedPos = steplizePoint(movedPos);
+
             const snapShootPath = pickupedObj[0].pathSnapshoot;
 
             let newPath = [];
@@ -23,13 +30,14 @@ const Event = self => {
                 const path = pickupedObj[0].origin.data.path;
                 path[singleIndex][0] = snapShootPath[singleIndex][0] + movedPos[0];
                 path[singleIndex][1] = snapShootPath[singleIndex][1] + movedPos[1];
+                path[singleIndex] = steplizePoint(path[singleIndex]);
             } else {
                 newPath = snapShootPath.map(item => {
                     let x = item[0];
                     let y = item[1];
                     x += movedPos[0];
                     y += movedPos[1];
-                    return [x, y];
+                    return steplizePoint([x, y]);
                 });
                 pickupedObj[0].origin.data.path = newPath;
             }
