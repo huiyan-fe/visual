@@ -76,11 +76,11 @@ var _visualLine = __webpack_require__(2);
 
 var _visualLine2 = _interopRequireDefault(_visualLine);
 
-var _visualText = __webpack_require__(7);
+var _visualText = __webpack_require__(3);
 
 var _visualText2 = _interopRequireDefault(_visualText);
 
-var _visualDraw = __webpack_require__(3);
+var _visualDraw = __webpack_require__(4);
 
 var _visualDraw2 = _interopRequireDefault(_visualDraw);
 
@@ -242,8 +242,35 @@ exports.default = Line;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+function Text() {
+    var text = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+    var point = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [0, 0];
+    var options = arguments[2];
 
-var _visualDrawLine = __webpack_require__(4);
+    this.sys.objects.push({
+        id: Symbol('text'),
+        type: this.sys.objectTypes.line,
+        text: text,
+        point: point,
+        options: options
+    });
+    this.draw();
+}
+
+exports.default = Text;
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _visualDrawLine = __webpack_require__(5);
 
 var _visualDrawLine2 = _interopRequireDefault(_visualDrawLine);
 
@@ -285,7 +312,7 @@ function Draw() {
 exports.default = Draw;
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -369,78 +396,6 @@ function DrawLine(ctx, obj) {
 exports.default = DrawLine;
 
 /***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-var MathTool = {
-    match: function match(P, datasGroup) {
-        var res = [];
-        datasGroup.forEach(function (datas) {
-            datas.isActive = null;
-            datas.path.forEach(function (data, index) {
-                if (index !== 0) {
-                    var A = datas.path[index - 1];
-                    var B = datas.path[index];
-                    var vAP = [P[0] - A[0], P[1] - A[1]];
-                    var lAP = Math.sqrt(Math.pow(vAP[0], 2) + Math.pow(vAP[1], 2));
-                    var vAB = [B[0] - A[0], B[1] - A[1]];
-                    var lAB = Math.sqrt(Math.pow(vAB[0], 2) + Math.pow(vAB[1], 2));
-                    var vPB = [B[0] - P[0], B[1] - P[1]];
-                    var lPB = Math.sqrt(Math.pow(vPB[0], 2) + Math.pow(vPB[1], 2));
-
-                    var cAPAB = vAP[0] * vAB[0] + vAP[1] * vAB[1];
-                    var lAPAB = lAP * lAB;
-                    var rPAB = Math.acos(cAPAB / lAPAB);
-
-                    var cABPB = vAB[0] * vPB[0] + vAB[1] * vPB[1];
-                    var lABPB = lAB * Math.sqrt(Math.pow(vPB[0], 2) + Math.pow(vPB[1], 2));
-                    var rPBA = Math.acos(cABPB / lABPB);
-
-                    //
-                    if (lPB < 30 || lAP < 30) {
-                        res.push({
-                            type: 'point',
-                            data: datas,
-                            projection: lPB < lAP ? B : A,
-                            length: lPB < lAP ? lPB : lAP,
-                            index: lPB < lAP ? index : index - 1
-                        });
-                    } else if (rPAB < Math.PI / 2 && rPBA < Math.PI / 2) {
-                        var lAO = Math.cos(rPAB) * lAP;
-                        var pAOAB = lAO / lAB;
-                        var lPO = Math.sin(rPAB) * lAP;
-                        var O = [A[0] + vAB[0] * pAOAB, A[1] + vAB[1] * pAOAB];
-                        if (lPO < 30) {
-                            res.push({
-                                type: 'vertical',
-                                data: datas,
-                                projection: O,
-                                length: lPO
-                            });
-                        }
-                    }
-                }
-            });
-        });
-        res.sort(function (a, b) {
-            return a.length - b.length;
-        });
-        if (res[0]) {
-            res[0].data.isActive = res[0];
-        }
-        return res;
-    }
-};
-
-exports.default = MathTool;
-
-/***/ }),
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -451,7 +406,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _visualMatch = __webpack_require__(5);
+var _visualMatch = __webpack_require__(7);
 
 var _visualMatch2 = _interopRequireDefault(_visualMatch);
 
@@ -521,22 +476,67 @@ exports.default = Event;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-function Text() {
-    var text = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-    var point = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [0, 0];
-    var options = arguments[2];
+var MathTool = {
+    match: function match(P, datasGroup) {
+        var res = [];
+        datasGroup.forEach(function (datas) {
+            datas.isActive = null;
+            datas.path.forEach(function (data, index) {
+                if (index !== 0) {
+                    var A = datas.path[index - 1];
+                    var B = datas.path[index];
+                    var vAP = [P[0] - A[0], P[1] - A[1]];
+                    var lAP = Math.sqrt(Math.pow(vAP[0], 2) + Math.pow(vAP[1], 2));
+                    var vAB = [B[0] - A[0], B[1] - A[1]];
+                    var lAB = Math.sqrt(Math.pow(vAB[0], 2) + Math.pow(vAB[1], 2));
+                    var vPB = [B[0] - P[0], B[1] - P[1]];
+                    var lPB = Math.sqrt(Math.pow(vPB[0], 2) + Math.pow(vPB[1], 2));
 
-    this.sys.objects.push({
-        id: Symbol('text'),
-        type: this.sys.objectTypes.line,
-        text: text,
-        point: point,
-        options: options
-    });
-    this.draw();
-}
+                    var cAPAB = vAP[0] * vAB[0] + vAP[1] * vAB[1];
+                    var lAPAB = lAP * lAB;
+                    var rPAB = Math.acos(cAPAB / lAPAB);
 
-exports.default = Text;
+                    var cABPB = vAB[0] * vPB[0] + vAB[1] * vPB[1];
+                    var lABPB = lAB * Math.sqrt(Math.pow(vPB[0], 2) + Math.pow(vPB[1], 2));
+                    var rPBA = Math.acos(cABPB / lABPB);
+
+                    //
+                    if (lPB < 30 || lAP < 30) {
+                        res.push({
+                            type: 'point',
+                            data: datas,
+                            projection: lPB < lAP ? B : A,
+                            length: lPB < lAP ? lPB : lAP,
+                            index: lPB < lAP ? index : index - 1
+                        });
+                    } else if (rPAB < Math.PI / 2 && rPBA < Math.PI / 2) {
+                        var lAO = Math.cos(rPAB) * lAP;
+                        var pAOAB = lAO / lAB;
+                        var lPO = Math.sin(rPAB) * lAP;
+                        var O = [A[0] + vAB[0] * pAOAB, A[1] + vAB[1] * pAOAB];
+                        if (lPO < 30) {
+                            res.push({
+                                type: 'vertical',
+                                data: datas,
+                                projection: O,
+                                length: lPO
+                            });
+                        }
+                    }
+                }
+            });
+        });
+        res.sort(function (a, b) {
+            return a.length - b.length;
+        });
+        if (res[0]) {
+            res[0].data.isActive = res[0];
+        }
+        return res;
+    }
+};
+
+exports.default = MathTool;
 
 /***/ })
 /******/ ]);
