@@ -18,17 +18,17 @@ function DrawLine(Visual, obj) {
             ctx.lineTo(item[0], item[1]);
         }
     });
+    ctx.lineWidth = 8 * Visual.options.grid.scale[0];
     ctx.stroke();
     ctx.restore();
 
-    // draw handle
     if (obj && obj.isActive) {
         ctx.canvas.style.cursor = 'pointer';
         // console.log(obj.isActive)
         ctx.save();
         // draw base line
         ctx.beginPath();
-        ctx.lineWidth = 4;
+        ctx.lineWidth = 14;
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
         usePath.forEach((item, index) => {
             if (index === 0) {
