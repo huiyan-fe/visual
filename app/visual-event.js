@@ -2,6 +2,7 @@
 
 import MatchTool from './tools/match';
 import steplizePoint from './tools/steplize';
+import { scaleReverse } from './tools/scalelize';
 
 const Event = self => {
     const canvas = self.canvas;
@@ -16,21 +17,35 @@ const Event = self => {
                 pathSnapshoot: JSON.parse(JSON.stringify(hoveredObj[0].data.path)),
                 origin: Object.assign(hoveredObj[0]),
             }];
-            mousedownPos = [e.pageX, e.pageY];
+            mousedownPos = scaleReverse([
+                [e.pageX, e.pageY],
+            ], self.options.grid.scale)[0];
         }
     });
 
     window.addEventListener('mousemove', e => {
+        let x = 0;
+        let y = 0;
         if (pickupedObj.length === 0) {
-            let x = e.offsetX;
-            let y = e.offsetY;
+            x = e.offsetX;
+            y = e.offsetY;
             if (e.target !== canvas) {
                 x = -999;
                 y = -999;
             }
+
+            [x, y] = scaleReverse([
+                [x, y],
+            ], self.options.grid.scale)[0];
+
             hoveredObj = MatchTool.match([x, y], self.sys.objects);
         } else {
-            let movedPos = [e.pageX - mousedownPos[0], e.pageY - mousedownPos[1]];
+            x = e.pageX;
+            y = e.pageY;
+            [x, y] = scaleReverse([
+                [x, y],
+            ], self.options.grid.scale)[0];
+            let movedPos = [x - mousedownPos[0], y - mousedownPos[1]];
             movedPos = steplizePoint(movedPos, step);
 
             const snapShootPath = pickupedObj[0].pathSnapshoot;

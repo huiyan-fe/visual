@@ -19,7 +19,7 @@ function Draw() {
         objects.forEach(obj => {
             switch (obj.type) {
                 case self.sys.objectTypes.line:
-                    DrawLine(self.ctx, obj);
+                    DrawLine(self, obj);
                     break;
                 case self.sys.objectTypes.text:
                     console.log(self.ctx);

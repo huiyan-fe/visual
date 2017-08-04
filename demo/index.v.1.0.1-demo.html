@@ -17,7 +17,7 @@
 <body>
     <div id="content" style="width:300px; height: 300px; border:1px solid #ccc;"></div>
     <div>
-        <input type="text" id="input">
+        <input type="text" id="input" autofocus="autofocus">
         <button id="canvas2textarea">向右</button>
         <button id="textarea2canvas">向左</button>
         <button id="save">保存</button>
@@ -65,11 +65,12 @@
                     window.config = JSON.parse(detail.configData);
 
                     dom.innerHTML = '';
-                    dom.style.height = `${config.global.height}px`;
-                    dom.style.width = `${config.global.width}px`;
+                    dom.style.height = `${config.global.height*10}px`;
+                    dom.style.width = `${config.global.width*10}px`;
                     v = new Visual(dom, {
                         grid: {
-                            step: 10
+                            step: 1,
+                            scale: [10, 10]
                         }
                     });
                     config.components.forEach((item, index) => {

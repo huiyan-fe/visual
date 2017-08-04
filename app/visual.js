@@ -14,7 +14,8 @@ class Visual {
      * @param {Document} dom the init document
      * @param {Object} options
      * @param {Object} options.grid
-     * @param {Object} options.grid.step the step for every move
+     * @param {Number} options.grid.step the step for every move defalut is 1
+     * @param {Array} options.grid.scale the scale of width and height default is [1,1]
      */
     constructor(dom, options = {}) {
         this.sys = {
@@ -29,6 +30,7 @@ class Visual {
         const basicOptions = {
             grid: {
                 step: 1,
+                scale: [1, 1],
             },
         };
         Object.assign(basicOptions, options);

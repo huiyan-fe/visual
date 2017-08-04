@@ -100,7 +100,8 @@ var Visual = function () {
      * @param {Document} dom the init document
      * @param {Object} options
      * @param {Object} options.grid
-     * @param {Object} options.grid.step the step for every move
+     * @param {Number} options.grid.step the step for every move defalut is 1
+     * @param {Array} options.grid.scale the scale of width and height default is [1,1]
      */
     function Visual(dom) {
         var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -118,7 +119,8 @@ var Visual = function () {
         // config
         var basicOptions = {
             grid: {
-                step: 1
+                step: 1,
+                scale: [1, 1]
             }
         };
         Object.assign(basicOptions, options);
@@ -297,7 +299,7 @@ function Draw() {
         objects.forEach(function (obj) {
             switch (obj.type) {
                 case self.sys.objectTypes.line:
-                    (0, _visualDrawLine2.default)(self.ctx, obj);
+                    (0, _visualDrawLine2.default)(self, obj);
                     break;
                 case self.sys.objectTypes.text:
                     console.log(self.ctx);
@@ -324,7 +326,12 @@ exports.default = Draw;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-function DrawLine(ctx, obj) {
+
+var _scalelize = __webpack_require__(10);
+
+function DrawLine(Visual, obj) {
+    // console.log(obj);
+    var ctx = Visual.ctx;
     // draw basic line
     ctx.beginPath();
     ctx.save();
@@ -332,7 +339,8 @@ function DrawLine(ctx, obj) {
     Object.keys(obj.options).forEach(function (key) {
         ctx[key] = obj.options[key];
     });
-    obj.path.forEach(function (item, index) {
+    var usePath = (0, _scalelize.scaleOrder)(obj.path, Visual.options.grid.scale);
+    usePath.forEach(function (item, index) {
         if (index === 0) {
             ctx.moveTo(item[0], item[1]);
         } else {
@@ -351,7 +359,7 @@ function DrawLine(ctx, obj) {
         ctx.beginPath();
         ctx.lineWidth = 4;
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-        obj.path.forEach(function (item, index) {
+        usePath.forEach(function (item, index) {
             if (index === 0) {
                 ctx.moveTo(item[0], item[1]);
             } else {
@@ -365,7 +373,7 @@ function DrawLine(ctx, obj) {
         ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
         ctx.fillStyle = 'rgba(255, 255, 255, 1)';
         ctx.lineWidth = 2;
-        obj.path.forEach(function (item) {
+        usePath.forEach(function (item) {
             ctx.moveTo(item[0] + 4, item[1]);
             ctx.arc(item[0], item[1], 4, 0, Math.PI * 2);
         });
@@ -375,7 +383,7 @@ function DrawLine(ctx, obj) {
         //
         if (obj.isActive.type === 'point' && obj.isActive.length < 10) {
             var index = obj.isActive.index;
-            var point = obj.path[index];
+            var point = usePath[index];
 
             ctx.beginPath();
             ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
@@ -410,6 +418,8 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); /* globals window */
+
 var _match = __webpack_require__(8);
 
 var _match2 = _interopRequireDefault(_match);
@@ -418,9 +428,9 @@ var _steplize = __webpack_require__(9);
 
 var _steplize2 = _interopRequireDefault(_steplize);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _scalelize = __webpack_require__(10);
 
-/* globals window */
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Event = function Event(self) {
     var canvas = self.canvas;
@@ -435,21 +445,38 @@ var Event = function Event(self) {
                 pathSnapshoot: JSON.parse(JSON.stringify(hoveredObj[0].data.path)),
                 origin: Object.assign(hoveredObj[0])
             }];
-            mousedownPos = [e.pageX, e.pageY];
+            mousedownPos = (0, _scalelize.scaleReverse)([[e.pageX, e.pageY]], self.options.grid.scale)[0];
         }
     });
 
     window.addEventListener('mousemove', function (e) {
+        var x = 0;
+        var y = 0;
         if (pickupedObj.length === 0) {
-            var x = e.offsetX;
-            var y = e.offsetY;
+            x = e.offsetX;
+            y = e.offsetY;
             if (e.target !== canvas) {
                 x = -999;
                 y = -999;
             }
+
+            var _scaleReverse$ = _slicedToArray((0, _scalelize.scaleReverse)([[x, y]], self.options.grid.scale)[0], 2);
+
+            x = _scaleReverse$[0];
+            y = _scaleReverse$[1];
+
+
             hoveredObj = _match2.default.match([x, y], self.sys.objects);
         } else {
-            var movedPos = [e.pageX - mousedownPos[0], e.pageY - mousedownPos[1]];
+            x = e.pageX;
+            y = e.pageY;
+
+            var _scaleReverse$2 = _slicedToArray((0, _scalelize.scaleReverse)([[x, y]], self.options.grid.scale)[0], 2);
+
+            x = _scaleReverse$2[0];
+            y = _scaleReverse$2[1];
+
+            var movedPos = [x - mousedownPos[0], y - mousedownPos[1]];
             movedPos = (0, _steplize2.default)(movedPos, step);
 
             var snapShootPath = pickupedObj[0].pathSnapshoot;
@@ -601,6 +628,31 @@ var steplizePoint = function steplizePoint(point, step) {
 };
 
 exports.default = steplizePoint;
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var scaleOrder = function scaleOrder(pointsArr, scaleValue) {
+    return pointsArr.map(function (point) {
+        return [Math.round(point[0] * scaleValue[0]), Math.round(point[1] * scaleValue[1])];
+    });
+};
+
+var scaleReverse = function scaleReverse(pointsArr, scaleValue) {
+    return pointsArr.map(function (point) {
+        return [Math.round(point[0] / scaleValue[0]), Math.round(point[1] / scaleValue[1])];
+    });
+};
+
+exports.scaleOrder = scaleOrder;
+exports.scaleReverse = scaleReverse;
 
 /***/ })
 /******/ ]);
