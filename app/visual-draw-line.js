@@ -28,7 +28,7 @@ function DrawLine(Visual, obj) {
         ctx.save();
         // draw base line
         ctx.beginPath();
-        ctx.lineWidth = 14;
+        ctx.lineWidth = 4;
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
         usePath.forEach((item, index) => {
             if (index === 0) {
