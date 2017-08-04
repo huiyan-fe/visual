@@ -9,7 +9,14 @@ import Event from './visual-event';
 const initCanvas = Symbol('initCanvas');
 
 class Visual {
-    constructor(dom) {
+    /**
+     * Visual
+     * @param {Document} dom the init document
+     * @param {Object} options
+     * @param {Object} options.grid
+     * @param {Object} options.grid.step the step for every move
+     */
+    constructor(dom, options = {}) {
         this.sys = {
             objects: [],
             objectTypes: {
@@ -17,6 +24,17 @@ class Visual {
                 text: Symbol('text'),
             },
         };
+
+        // config
+        const basicOptions = {
+            grid: {
+                step: 1,
+            },
+        };
+        Object.assign(basicOptions, options);
+        this.options = basicOptions;
+
+        //
         this.dom = dom;
         this[initCanvas]();
         Event(this);

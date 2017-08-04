@@ -52,13 +52,11 @@
             let pa = item.split('=');
             param[pa[0]] = pa[1];
         });
+        let v;
         let api = window.api = param.api;
         let dom = document.getElementById('content');
-        let v = new Visual(dom);
-
         let input = document.getElementById('input');
         input.onchange = (e) => {
-
             $.ajax({
                 url: api + '/guidingscreen/screen/detail?id=' + e.target.value,
                 dataType: 'JSONP',
@@ -69,7 +67,11 @@
                     dom.innerHTML = '';
                     dom.style.height = `${config.global.height}px`;
                     dom.style.width = `${config.global.width}px`;
-                    v = new Visual(dom);
+                    v = new Visual(dom, {
+                        grid: {
+                            step: 10
+                        }
+                    });
                     config.components.forEach((item, index) => {
                         if (item.type === 'Road') {
                             item.path.steps.forEach(step => {

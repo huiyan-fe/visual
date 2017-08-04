@@ -95,7 +95,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var initCanvas = Symbol('initCanvas');
 
 var Visual = function () {
+    /**
+     * Visual
+     * @param {Document} dom the init document
+     * @param {Object} options
+     * @param {Object} options.grid
+     * @param {Object} options.grid.step the step for every move
+     */
     function Visual(dom) {
+        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
         _classCallCheck(this, Visual);
 
         this.sys = {
@@ -105,6 +114,17 @@ var Visual = function () {
                 text: Symbol('text')
             }
         };
+
+        // config
+        var basicOptions = {
+            grid: {
+                step: 1
+            }
+        };
+        Object.assign(basicOptions, options);
+        this.options = basicOptions;
+
+        //
         this.dom = dom;
         this[initCanvas]();
         (0, _visualEvent2.default)(this);
@@ -193,24 +213,23 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _steplize = __webpack_require__(9);
+
+var _steplize2 = _interopRequireDefault(_steplize);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var step = 10;
-
-var steplizePoint = function steplizePoint(point) {
-    return point.map(function (item) {
-        return Math.round(item / step) * step;
-    });
-};
 
 var Line = function () {
     function Line(Visual) {
+        var _this = this;
+
         var path = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
         var options = arguments[2];
 
         _classCallCheck(this, Line);
 
-        console.log(path);
         this.Visual = Visual;
         this.id = Symbol('line');
 
@@ -218,7 +237,7 @@ var Line = function () {
             id: this.id,
             type: Visual.sys.objectTypes.line,
             path: path.map(function (point) {
-                return steplizePoint(point);
+                return (0, _steplize2.default)(point, _this.Visual.options.grid.step);
             }),
             options: options
         });
@@ -228,11 +247,11 @@ var Line = function () {
     _createClass(Line, [{
         key: 'remove',
         value: function remove() {
-            var _this = this;
+            var _this2 = this;
 
             var objects = this.Visual.sys.objects;
             this.Visual.sys.objects = objects.filter(function (item) {
-                return item.id !== _this.id;
+                return item.id !== _this2.id;
             });
             this.Visual.draw();
         }
@@ -380,7 +399,121 @@ function DrawLine(ctx, obj) {
 exports.default = DrawLine;
 
 /***/ }),
-/* 5 */
+/* 5 */,
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _match = __webpack_require__(8);
+
+var _match2 = _interopRequireDefault(_match);
+
+var _steplize = __webpack_require__(9);
+
+var _steplize2 = _interopRequireDefault(_steplize);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/* globals window */
+
+var Event = function Event(self) {
+    var canvas = self.canvas;
+    var mousedownPos = [];
+    var hoveredObj = [];
+    var pickupedObj = [];
+    var step = self.options.grid.step;
+
+    canvas.addEventListener('mousedown', function (e) {
+        if (hoveredObj.length >= 1) {
+            pickupedObj = [{
+                pathSnapshoot: JSON.parse(JSON.stringify(hoveredObj[0].data.path)),
+                origin: Object.assign(hoveredObj[0])
+            }];
+            mousedownPos = [e.pageX, e.pageY];
+        }
+    });
+
+    window.addEventListener('mousemove', function (e) {
+        if (pickupedObj.length === 0) {
+            var x = e.offsetX;
+            var y = e.offsetY;
+            if (e.target !== canvas) {
+                x = -999;
+                y = -999;
+            }
+            hoveredObj = _match2.default.match([x, y], self.sys.objects);
+        } else {
+            var movedPos = [e.pageX - mousedownPos[0], e.pageY - mousedownPos[1]];
+            movedPos = (0, _steplize2.default)(movedPos, step);
+
+            var snapShootPath = pickupedObj[0].pathSnapshoot;
+
+            var newPath = [];
+            var isMoveSingle = pickupedObj[0].origin.type === 'point' && pickupedObj[0].origin.length < 10;
+            if (isMoveSingle) {
+                var singleIndex = pickupedObj[0].origin.index;
+                var path = pickupedObj[0].origin.data.path;
+                path[singleIndex][0] = snapShootPath[singleIndex][0] + movedPos[0];
+                path[singleIndex][1] = snapShootPath[singleIndex][1] + movedPos[1];
+                path[singleIndex] = (0, _steplize2.default)(path[singleIndex], step);
+            } else {
+                newPath = snapShootPath.map(function (item) {
+                    var x = item[0];
+                    var y = item[1];
+                    x += movedPos[0];
+                    y += movedPos[1];
+                    return (0, _steplize2.default)([x, y], step);
+                });
+                pickupedObj[0].origin.data.path = newPath;
+            }
+            e.preventDefault();
+        }
+        self.draw();
+    });
+
+    window.addEventListener('mouseup', function () {
+        pickupedObj = [];
+        mousedownPos = [];
+    });
+};
+
+exports.default = Event;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+function Text() {
+    var text = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+    var point = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [0, 0];
+    var options = arguments[2];
+
+    this.sys.objects.push({
+        id: Symbol('text'),
+        type: this.sys.objectTypes.line,
+        text: text,
+        point: point,
+        options: options
+    });
+    this.draw();
+}
+
+exports.default = Text;
+
+/***/ }),
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -452,112 +585,22 @@ var MathTool = {
 exports.default = MathTool;
 
 /***/ }),
-/* 6 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
-
-var _visualMatch = __webpack_require__(5);
-
-var _visualMatch2 = _interopRequireDefault(_visualMatch);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var step = 10; /* globals window */
-
-var steplizePoint = function steplizePoint(point) {
-    return point.map(function (item) {
-        return Math.round(item / step) * step;
-    });
+var steplizePoint = function steplizePoint(point, step) {
+  return point.map(function (item) {
+    return Math.round(item / step) * step;
+  });
 };
 
-var Event = function Event(self) {
-    var canvas = self.canvas;
-    var mousedownPos = [];
-    var hoveredObj = [];
-    var pickupedObj = [];
-
-    window.addEventListener('mousemove', function (e) {
-        if (pickupedObj.length === 0) {
-            hoveredObj = _visualMatch2.default.match([e.offsetX, e.offsetY], self.sys.objects);
-        } else {
-            var movedPos = [e.offsetX - mousedownPos[0], e.offsetY - mousedownPos[1]];
-            movedPos = steplizePoint(movedPos);
-
-            var snapShootPath = pickupedObj[0].pathSnapshoot;
-
-            var newPath = [];
-            var isMoveSingle = pickupedObj[0].origin.type === 'point' && pickupedObj[0].origin.length < 10;
-            if (isMoveSingle) {
-                var singleIndex = pickupedObj[0].origin.index;
-                var path = pickupedObj[0].origin.data.path;
-                path[singleIndex][0] = snapShootPath[singleIndex][0] + movedPos[0];
-                path[singleIndex][1] = snapShootPath[singleIndex][1] + movedPos[1];
-                path[singleIndex] = steplizePoint(path[singleIndex]);
-            } else {
-                newPath = snapShootPath.map(function (item) {
-                    var x = item[0];
-                    var y = item[1];
-                    x += movedPos[0];
-                    y += movedPos[1];
-                    return steplizePoint([x, y]);
-                });
-                pickupedObj[0].origin.data.path = newPath;
-            }
-            e.preventDefault();
-        }
-        self.draw();
-    });
-
-    canvas.addEventListener('mousedown', function (e) {
-        if (hoveredObj.length >= 1) {
-            pickupedObj = [{
-                pathSnapshoot: JSON.parse(JSON.stringify(hoveredObj[0].data.path)),
-                origin: Object.assign(hoveredObj[0])
-            }];
-            mousedownPos = [e.offsetX, e.offsetY];
-        }
-    });
-
-    window.addEventListener('mouseup', function () {
-        pickupedObj = [];
-        mousedownPos = [];
-    });
-};
-
-exports.default = Event;
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-function Text() {
-    var text = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-    var point = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [0, 0];
-    var options = arguments[2];
-
-    this.sys.objects.push({
-        id: Symbol('text'),
-        type: this.sys.objectTypes.line,
-        text: text,
-        point: point,
-        options: options
-    });
-    this.draw();
-}
-
-exports.default = Text;
+exports.default = steplizePoint;
 
 /***/ })
 /******/ ]);
