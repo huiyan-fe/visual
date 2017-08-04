@@ -1,6 +1,6 @@
 /* globals requestAnimationFrame  */
 
-import DrawLine from './visual-draw-line';
+import DrawLine from './draw-line';
 
 let self = null;
 let drawFlat = false;

@@ -1,4 +1,4 @@
-import { scaleOrder } from './tools/scalelize';
+import { scaleOrder } from '../tools/scalelize';
 
 function DrawLine(Visual, obj) {
     // console.log(obj);

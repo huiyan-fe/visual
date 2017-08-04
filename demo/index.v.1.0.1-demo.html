@@ -54,8 +54,8 @@
         </div>
     </div>
     <script>
-        let scale = [1, 1];
-        let step = 5;
+        let scale = [2, 2];
+        let step = 2;
         let locparms = location.search.slice(1).split('&');
         let param = {}
         locparms.forEach(item => {
@@ -119,9 +119,14 @@
         textarea2canvas.onclick = () => {
             config = JSON.parse(document.getElementById('textarea').value);
             dom.innerHTML = '';
-            dom.style.height = `${config.global.height}px`;
-            dom.style.width = `${config.global.width}px`;
-            v = new Visual(dom);
+            dom.style.height = `${config.global.height*scale[0]}px`;
+            dom.style.width = `${config.global.width*scale[1]}px`;
+            v = new Visual(dom, {
+                grid: {
+                    step,
+                    scale
+                }
+            });
             config.components.forEach((item, index) => {
                 if (item.type === 'Road') {
                     item.path.steps.forEach(step => {

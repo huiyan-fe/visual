@@ -2,7 +2,7 @@
 
 import VLine from './visual-line';
 import vText from './visual-text';
-import Draw from './visual-draw';
+import Draw from './draw/draw';
 
 import Event from './visual-event';
 
