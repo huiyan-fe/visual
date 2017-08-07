@@ -22,7 +22,7 @@ const matchLine = (P, datas, res) => {
             const rPBA = Math.acos(cABPB / lABPB);
 
             //
-            if (lPB < 30 || lAP < 30) {
+            if (lPB < 15 || lAP < 15) {
                 res.push({
                     type: 'point',
                     data: datas,
@@ -35,7 +35,7 @@ const matchLine = (P, datas, res) => {
                 const pAOAB = lAO / lAB;
                 const lPO = Math.sin(rPAB) * lAP;
                 const O = [A[0] + (vAB[0] * pAOAB), A[1] + (vAB[1] * pAOAB)];
-                if (lPO < 30) {
+                if (lPO < 15) {
                     res.push({
                         type: 'vertical',
                         data: datas,

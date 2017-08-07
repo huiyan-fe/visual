@@ -26,7 +26,7 @@ function DrawText(Visual, obj) {
 
     if (obj.isActive) {
         // active
-        const padding = [10, 10]
+        const padding = [10, 10];
         const width = obj.sys.measure.width + padding[0];
         const height = obj.sys.measure.height + padding[1];
 
@@ -38,6 +38,12 @@ function DrawText(Visual, obj) {
         switch (ctx.textAlign) {
             case 'left':
                 widthOffset = padding[0] / 2;
+                break;
+            case 'center':
+                widthOffset = (width / 2);
+                break;
+            case 'right':
+                widthOffset = width - (padding[0] / 2);
                 break;
             default:
                 widthOffset = (width / 2);

@@ -118,9 +118,11 @@ const Event = self => {
 
 
     window.addEventListener('mouseup', () => {
-        pickupedObj[0].origin.data.object.emit('finish', {
-            object: pickupedObj[0].origin.data,
-        });
+        if (pickupedObj.length > 0) {
+            pickupedObj[0].origin.data.object.emit('finish', {
+                object: pickupedObj[0].origin.data,
+            });
+        }
         pickupedObj = [];
         mousedownPos = [];
     });
