@@ -26,8 +26,6 @@
     </div>
     <div>
         <input type="text" id="input" autofocus="autofocus">
-        <button id="canvas2textarea">向右</button>
-        <button id="textarea2canvas">向左</button>
         <button id="save">保存</button>
         <button id="release">发布</button>
         <button id="preview">预览</button>
@@ -53,6 +51,41 @@
             <input type="text" id="keyword" style="position:absolute; bottom: -30px; right:0" />
         </div>
     </div>
+
+    <script>
+        const renderConfig = () => {
+            dom.innerHTML = '';
+            dom.style.height = `${config.global.height*scale[0]}px`;
+            dom.style.width = `${config.global.width*scale[1]}px`;
+            v = new Visual(dom, {
+                grid: {
+                    step,
+                    scale
+                }
+            });
+            config.components.forEach((item, index) => {
+                if (item.type === 'Road') {
+                    item.path.steps.forEach(step => {
+                        const line = v.line(step.pixels, {
+                            strokeStyle: '#4df693',
+                            lineWidth: 8
+                        });
+                        line.on('change', (data) => {
+                            step.pixels = data.path;
+                            document.getElementById('textarea').value = JSON.stringify(config, null, 4);
+                        })
+                    })
+                } else if (item.type === 'Text') {
+                    const textobj = v.text(item.label, item.pixel);
+                    textobj.on('change', (data) => {
+                        item.pixel = data.center;
+                        document.getElementById('textarea').value = JSON.stringify(config, null, 4);
+                    });
+                }
+            });
+        }
+    </script>
+
     <script>
         let scale = [2, 2];
         let step = 2;
@@ -73,84 +106,21 @@
                 success: (data) => {
                     window.detail = data.data.detail;
                     window.config = JSON.parse(detail.configData);
-
-                    dom.innerHTML = '';
-                    dom.style.height = `${config.global.height*scale[0]}px`;
-                    dom.style.width = `${config.global.width*scale[1]}px`;
-                    v = new Visual(dom, {
-                        grid: {
-                            step,
-                            scale
-                        }
-                    });
-                    config.components.forEach((item, index) => {
-                        if (item.type === 'Road') {
-                            item.path.steps.forEach(step => {
-                                v.line(step.pixels, {
-                                    strokeStyle: '#4df693',
-                                    lineWidth: 8
-                                });
-                            })
-                        }
-                    });
-
+                    document.getElementById('textarea').value = JSON.stringify(config, null, 4);
+                    renderConfig();
 
                     drawBox();
-                    $('#canvas2textarea').click();
                 }
             })
         }
 
-        let canvas2textarea = document.getElementById('canvas2textarea');
-        canvas2textarea.onclick = () => {
-            let globalindex = 0;
-            config.components.forEach((item, index) => {
-                if (item.type === 'Road') {
-                    item.path.steps.forEach(step => {
-                        step.pixels = v.sys.objects[globalindex].path;
-                        globalindex++;
-                    })
-                }
-            })
-            document.getElementById('textarea').value = JSON.stringify(config, null, 4);
-        }
-
-        let textarea2canvas = document.getElementById('textarea2canvas');
-        textarea2canvas.onclick = () => {
+        document.getElementById('textarea').onkeyup = () => {
             config = JSON.parse(document.getElementById('textarea').value);
-            dom.innerHTML = '';
-            dom.style.height = `${config.global.height*scale[0]}px`;
-            dom.style.width = `${config.global.width*scale[1]}px`;
-            v = new Visual(dom, {
-                grid: {
-                    step,
-                    scale
-                }
-            });
-            config.components.forEach((item, index) => {
-                if (item.type === 'Road') {
-                    item.path.steps.forEach(step => {
-                        v.line(step.pixels, {
-                            strokeStyle: '#4df693',
-                            lineWidth: 8
-                        });
-                    })
-                }
-            })
-        }
+            renderConfig();
+        };
 
         let save = document.getElementById('save');
         save.onclick = () => {
-            // let globalindex = 0;
-            // config.components.forEach((item, index) => {
-            //     if (item.type === 'Road') {
-            //         item.path.steps.forEach(step => {
-            //             step.pixels = v.sys.objects[globalindex].path;
-            //             globalindex++;
-            //         })
-            //     }
-            // })
-            // console.log(config.components[0].path.steps[0].pixels[0])
             detail.configData = JSON.stringify(config);
             $.ajax({
                 url: api + '/guidingscreen/screen/update',
@@ -163,43 +133,6 @@
             })
         }
     </script>
-    <script>
-        // let dom = document.getElementById('content');
-        // let v = new Visual(dom);
-
-        // v.line([
-        //     [85, 86],
-        //     [85, 89],
-        //     [85, 104]
-        // ], {
-        //     strokeStyle: '#4df693',
-        //     lineWidth: 20
-        // });
-
-        // v.line([
-        //     [139, 85],
-        //     [197, 85],
-        //     [224, 85]
-        // ], {
-        //     strokeStyle: '#4df693',
-        //     lineWidth: 20
-        // });
-
-        // let last = v.line([
-        //     [10, 10],
-        //     [400, 10],
-        // ], {
-        //     strokeStyle: '#4df693',
-        //     lineWidth: 10
-        // });
-
-        // last.remove();
-
-        // // v.text('hello', [200, 200]);
-
-        // console.log(v);
-    </script>
-
 
     <script>
         var stats = new Stats();

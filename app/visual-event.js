@@ -58,7 +58,7 @@ const Event = self => {
             ], self.options.grid.scale)[0];
             let movedPos = [x - mousedownPos[0], y - mousedownPos[1]];
             movedPos = steplizePoint(movedPos, step);
-            
+
             const snapShootPath = pickupedObj[0].pathSnapshoot;
             switch (hoveredObj[0].data.type) {
                 case Config.objectTypes.line:
@@ -70,6 +70,13 @@ const Event = self => {
                         path[singleIndex][0] = snapShootPath[singleIndex][0] + movedPos[0];
                         path[singleIndex][1] = snapShootPath[singleIndex][1] + movedPos[1];
                         path[singleIndex] = steplizePoint(path[singleIndex], step);
+                        // emit
+                        pickupedObj[0].origin.data.object.emit('change', {
+                            type: 'point',
+                            index: singleIndex,
+                            changeData: JSON.parse(JSON.stringify(path[singleIndex])),
+                            path: JSON.parse(JSON.stringify(path)),
+                        });
                     } else {
                         newPath = snapShootPath.map(item => {
                             let x = item[0];
@@ -79,13 +86,31 @@ const Event = self => {
                             return steplizePoint([x, y], step);
                         });
                         pickupedObj[0].origin.data.path = newPath;
+                        // emit
+                        pickupedObj[0].origin.data.object.emit('change', {
+                            type: 'line',
+                            changeData: newPath,
+                            path: JSON.parse(JSON.stringify(newPath)),
+                        });
                     }
+
                     break;
                 case Config.objectTypes.text:
                     pickupedObj[0].origin.data.center = [
                         snapShootPath[0] + movedPos[0],
                         snapShootPath[1] + movedPos[1],
                     ];
+                    pickupedObj[0].origin.data.object.emit('change', {
+                        type: 'center',
+                        changeData: JSON.parse(JSON.stringify([
+                            snapShootPath[0] + movedPos[0],
+                            snapShootPath[1] + movedPos[1],
+                        ])),
+                        center: JSON.parse(JSON.stringify([
+                            snapShootPath[0] + movedPos[0],
+                            snapShootPath[1] + movedPos[1],
+                        ])),
+                    });
                     break;
                 default:
             }
