@@ -76,6 +76,7 @@ const Event = self => {
                             index: singleIndex,
                             changeData: JSON.parse(JSON.stringify(path[singleIndex])),
                             path: JSON.parse(JSON.stringify(path)),
+                            object: pickupedObj[0].origin.data,
                         });
                     } else {
                         newPath = snapShootPath.map(item => {
@@ -90,10 +91,9 @@ const Event = self => {
                         pickupedObj[0].origin.data.object.emit('change', {
                             type: 'line',
                             changeData: newPath,
-                            path: JSON.parse(JSON.stringify(newPath)),
+                            object: pickupedObj[0].origin.data,
                         });
                     }
-
                     break;
                 case Config.objectTypes.text:
                     pickupedObj[0].origin.data.center = [
@@ -106,10 +106,7 @@ const Event = self => {
                             snapShootPath[0] + movedPos[0],
                             snapShootPath[1] + movedPos[1],
                         ])),
-                        center: JSON.parse(JSON.stringify([
-                            snapShootPath[0] + movedPos[0],
-                            snapShootPath[1] + movedPos[1],
-                        ])),
+                        object: pickupedObj[0].origin.data,
                     });
                     break;
                 default:
@@ -121,6 +118,9 @@ const Event = self => {
 
 
     window.addEventListener('mouseup', () => {
+        pickupedObj[0].origin.data.object.emit('finish', {
+            object: pickupedObj[0].origin.data,
+        });
         pickupedObj = [];
         mousedownPos = [];
     });

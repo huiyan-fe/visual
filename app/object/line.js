@@ -1,7 +1,9 @@
+import VisualObject from './object';
 import steplizePoint from '../tools/steplize';
 
-class Line {
+class Line extends VisualObject {
     constructor(Visual, pathParams = [], options) {
+        super();
         this.Visual = Visual;
         this.id = Symbol('line');
 
@@ -11,34 +13,10 @@ class Line {
             id: this.id,
             type: Visual.sys.objectTypes.line,
             path: path.map(point => steplizePoint(point, this.Visual.options.grid.step)),
-            options,
+            options: JSON.parse(JSON.stringify(options)),
             object: this,
         });
         this.Visual.draw();
-    }
-
-    remove() {
-        const objects = this.Visual.sys.objects;
-        this.Visual.sys.objects = objects.filter(item => item.id !== this.id);
-        this.Visual.draw();
-    }
-
-    on(type, fn) {
-        this.listens = this.listens || {};
-        this.listens[type] = fn;
-    }
-
-    unbind(type, fn) {
-        this.listens = this.listens || {};
-        this.listens[type] = this.listens[type] || [];
-        this.listens[type].filter(fns => fns !== fn);
-    }
-
-    emit(type, data) {
-        this.listens = this.listens || {};
-        if (this.listens[type]) {
-            this.listens[type](data);
-        }
     }
 }
 

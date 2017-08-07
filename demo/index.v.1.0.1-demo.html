@@ -53,6 +53,8 @@
     </div>
 
     <script>
+        let textareaDom = document.getElementById('textarea');
+
         const renderConfig = () => {
             dom.innerHTML = '';
             dom.style.height = `${config.global.height*scale[0]}px`;
@@ -70,16 +72,19 @@
                             strokeStyle: '#4df693',
                             lineWidth: 8
                         });
-                        line.on('change', (data) => {
-                            step.pixels = data.path;
-                            document.getElementById('textarea').value = JSON.stringify(config, null, 4);
-                        })
+                        line.on('finish', data => {
+                            step.pixels = data.object.path;
+                            textareaDom.value = JSON.stringify(config, null, 4);
+                        });
                     })
                 } else if (item.type === 'Text') {
-                    const textobj = v.text(item.label, item.pixel);
-                    textobj.on('change', (data) => {
-                        item.pixel = data.center;
-                        document.getElementById('textarea').value = JSON.stringify(config, null, 4);
+                    // console.log(item);
+                    const textobj = v.text(item.label, item.pixel, {
+                        fontSize: item.renderOptions.fontSize
+                    });
+                    textobj.on('finish', data => {
+                        item.pixel = data.object.center;
+                        textareaDom.value = JSON.stringify(config, null, 4);
                     });
                 }
             });
@@ -106,16 +111,15 @@
                 success: (data) => {
                     window.detail = data.data.detail;
                     window.config = JSON.parse(detail.configData);
-                    document.getElementById('textarea').value = JSON.stringify(config, null, 4);
+                    textareaDom.value = JSON.stringify(config, null, 4);
                     renderConfig();
-
                     drawBox();
                 }
             })
         }
 
-        document.getElementById('textarea').onkeyup = () => {
-            config = JSON.parse(document.getElementById('textarea').value);
+        textareaDom.onkeyup = () => {
+            config = JSON.parse(textareaDom.value);
             renderConfig();
         };
 
@@ -135,6 +139,19 @@
     </script>
 
     <script>
+        // for test
+        $.ajax({
+            url: api + '/guidingscreen/screen/detail?id=5',
+            dataType: 'JSONP',
+            success: (data) => {
+                window.detail = data.data.detail;
+                window.config = JSON.parse(detail.configData);
+                textareaDom.value = JSON.stringify(config, null, 4);
+                renderConfig();
+                drawBox();
+            }
+        });
+        //
         var stats = new Stats();
         document.body.appendChild(stats.dom);
         requestAnimationFrame(function loop() {

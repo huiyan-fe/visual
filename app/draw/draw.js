@@ -23,6 +23,7 @@ function Draw() {
                     DrawLine(self, obj);
                     break;
                 case self.sys.objectTypes.text:
+                    // console.warn('b', obj)
                     DrawText(self, obj);
                     break;
                 default:
