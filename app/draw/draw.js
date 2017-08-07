@@ -1,17 +1,18 @@
 /* globals requestAnimationFrame  */
 
 import DrawLine from './draw-line';
+import DrawText from './draw-text';
 
 let self = null;
-let drawFlat = false;
+let drawFlag = false;
 
 function Draw() {
     self = this;
-    drawFlat = true;
+    drawFlag = true;
 }
 
 (function DrawDispatch() {
-    if (self && drawFlat) {
+    if (self && drawFlag) {
         self.ctx.clearRect(0, 0, self.ctx.canvas.width, self.ctx.canvas.height);
         self.ctx.canvas.style.cursor = 'default';
 
@@ -22,14 +23,13 @@ function Draw() {
                     DrawLine(self, obj);
                     break;
                 case self.sys.objectTypes.text:
-                    console.log(self.ctx);
-                    // DrawText(self.ctx, obj);
+                    DrawText(self, obj);
                     break;
                 default:
-                    console.log('unkone type', obj.type);
+                    // console.log('unkone type', obj.type);
             }
         });
-        drawFlat = false;
+        drawFlag = false;
     }
     requestAnimationFrame(DrawDispatch);
 }());

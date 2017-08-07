@@ -1,8 +1,9 @@
 /* globals window document getComputedStyle */
 
-import VLine from './visual-line';
-import vText from './visual-text';
+import VLine from './object/line';
+import VText from './object/text';
 import Draw from './draw/draw';
+import Config from './config/config';
 
 import Event from './visual-event';
 
@@ -20,10 +21,7 @@ class Visual {
     constructor(dom, options = {}) {
         this.sys = {
             objects: [],
-            objectTypes: {
-                line: Symbol('line'),
-                text: Symbol('text'),
-            },
+            objectTypes: Config.objectTypes,
         };
 
         // config
@@ -69,7 +67,9 @@ Visual.prototype.line = function line(path = [], options = {}) {
     return new VLine(this, path, options);
 };
 
-Visual.prototype.text = vText;
+Visual.prototype.text = function textfn(text, center = [], options = {}) {
+    return new VText(this, text, center, options);
+};
 
 Visual.prototype.draw = Draw;
 

@@ -1,4 +1,4 @@
-import steplizePoint from './tools/steplize';
+import steplizePoint from '../tools/steplize';
 
 class Line {
     constructor(Visual, path = [], options) {
