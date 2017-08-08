@@ -36,8 +36,19 @@
 
         let a1 = v.text('你 好李高峰', [200, 300], {
             rotate: Math.PI * .5,
-            // splitText: true,
+            splitText: true,
             // textRotate: Math.PI * .5
+        })
+
+        v.circle(10, [200, 200], {
+            fillStyle: 'red'
+        })
+
+        v.circle(10, [200, 100], {
+            fillStyle: 'yellow',
+            strokeStyle: 'skyblue',
+            lineWidth: 5,
+            border: true
         })
     </script>
 

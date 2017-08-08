@@ -2,6 +2,7 @@
 
 import DrawLine from './draw-line';
 import DrawText from './draw-text';
+import DrawCircle from './draw-circle';
 
 let self = null;
 let drawFlag = false;
@@ -18,6 +19,9 @@ function drawFns(obj) {
             break;
         case self.sys.objectTypes.text:
             DrawText(self, obj);
+            break;
+        case self.sys.objectTypes.circle:
+            DrawCircle(self, obj);
             break;
         default:
             // console.log('unkone type', obj.type);

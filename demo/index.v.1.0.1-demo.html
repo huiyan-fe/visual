@@ -87,7 +87,25 @@
                         item.pixel = data.object.center;
                         textareaDom.value = JSON.stringify(config, null, 4);
                     });
+                } else if (item.type === 'Circle') {
+                    const circleObj = v.circle(item.radius, item.center);
+                    circleObj.on('finish', data => {
+                        item.center = data.object.center;
+                        textareaDom.value = JSON.stringify(config, null, 4);
+                    });
+                } else if (item.type === 'TravelTime') {
+                    const textobj = v.text('0', item.pixel, {
+                        fontSize: item.renderOptions.fontSize,
+                        rotate: ((item.renderOptions.rotate || 0) / 360) * Math.PI * 2,
+                        textAlign: 'right',
+                        splitText: !!item.renderOptions.rotate,
+                    });
+                    textobj.on('finish', data => {
+                        item.pixel = data.object.center;
+                        textareaDom.value = JSON.stringify(config, null, 4);
+                    });
                 }
+
             });
         }
     </script>

@@ -10,9 +10,10 @@ function DrawText(Visual, obj) {
 
     // text
     ctx.beginPath();
-    ctx.save();
+
 
     // copy from basicoptions
+    ctx.save();
     const basicOptions = config.ctxStyleConfig;
     Object.keys(basicOptions).forEach(key => {
         ctx[key] = obj.options[key] || basicOptions[key];
@@ -45,6 +46,7 @@ function DrawText(Visual, obj) {
     ctx.restore();
 
     if (obj.isActive) {
+        // console.log(obj.options.textAlign, ctx.textAlign)
         ctx.canvas.style.cursor = 'pointer';
         // active
         const padding = [10, 10];
@@ -52,10 +54,13 @@ function DrawText(Visual, obj) {
         const height = obj.sys.measure.height + padding[1];
 
         ctx.save();
-        Object.assign(ctx, basicOptions);
+        Object.keys(basicOptions).forEach(key => {
+            ctx[key] = obj.options[key] || basicOptions[key];
+        });
 
         let heightOffset = (height / 2);
         let widthOffset = (width / 2);
+        // console.log(ctx.textAlign);
         switch (ctx.textAlign) {
             case 'left':
                 widthOffset = padding[0] / 2;
@@ -65,6 +70,7 @@ function DrawText(Visual, obj) {
                 break;
             case 'right':
                 widthOffset = width - (padding[0] / 2);
+                // console.log(widthOffset)
                 break;
             default:
                 widthOffset = (width / 2);
@@ -98,8 +104,9 @@ function DrawText(Visual, obj) {
         ctx.lineWidth = 1;
         ctx.strokeRect(-widthOffset, -heightOffset, width, height);
         ctx.restore();
-        ctx.save();
 
+        ctx.save();
+        ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
         ctx.fillStyle = 'rgba(255, 255, 255, 1)';

@@ -2,6 +2,9 @@
 
 import VLine from './object/line';
 import VText from './object/text';
+import VCircle from './object/circle';
+
+
 import Draw from './draw/draw';
 import Config from './config/config';
 
@@ -63,12 +66,16 @@ class Visual {
     }
 }
 
-Visual.prototype.line = function line(path = [], options = {}) {
+Visual.prototype.line = function linefn(path = [], options = {}) {
     return new VLine(this, path, options);
 };
 
 Visual.prototype.text = function textfn(text, center = [], options = {}) {
     return new VText(this, text, center, options);
+};
+
+Visual.prototype.circle = function circlefn(redius, center = [], options = {}) {
+    return new VCircle(this, redius, center, options);
 };
 
 Visual.prototype.draw = Draw;

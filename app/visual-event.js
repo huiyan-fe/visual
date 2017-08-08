@@ -21,6 +21,9 @@ const Event = self => {
                 case Config.objectTypes.text:
                     pathSnapshoot = JSON.parse(JSON.stringify(hoveredObj[0].data.center));
                     break;
+                case Config.objectTypes.circle:
+                    pathSnapshoot = JSON.parse(JSON.stringify(hoveredObj[0].data.center));
+                    break;
                 default:
             }
 
@@ -108,6 +111,12 @@ const Event = self => {
                         ])),
                         object: pickupedObj[0].origin.data,
                     });
+                    break;
+                case Config.objectTypes.circle:
+                    pickupedObj[0].origin.data.center = [
+                        snapShootPath[0] + movedPos[0],
+                        snapShootPath[1] + movedPos[1],
+                    ];
                     break;
                 default:
             }
