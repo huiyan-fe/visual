@@ -2,7 +2,7 @@
 
 import config from '../config/config';
 
-const debug = false;
+const debug = !true;
 
 const textCanvas = document.createElement('canvas');
 textCanvas.width = 2000;
@@ -28,15 +28,16 @@ const matchText = (P, datas, res) => {
 
     // offset
     const padding = [10, 10];
-    const basicOptions = config.ctxBaseConfig;
-    Object.assign(basicOptions, datas.options);
-    Object.assign(textCtx, basicOptions);
+
+    Object.keys(config.ctxStyleConfig).forEach(key => {
+        textCtx[key] = datas.options[key] || config.ctxStyleConfig[key];
+    });
 
     let heightOffset = 0;
     let widthOffset = 0;
     switch (textCtx.textAlign) {
         case 'left':
-            widthOffset = padding[0] / 2;
+            widthOffset = -padding[0] / 2;
             break;
         case 'center':
             widthOffset = -(datas.sys.measure.width / 2) - (padding[0] / 2);
@@ -48,10 +49,12 @@ const matchText = (P, datas, res) => {
             widthOffset = -(datas.sys.measure.width / 2) - (padding[0] / 2);
     }
 
-    // console.log(text.textBaseline)
     switch (textCtx.textBaseline) {
         case 'top':
             heightOffset = -(padding[1] / 2);
+            break;
+        case 'alphabetic':
+            heightOffset = -datas.sys.measure.height + (datas.sys.measure.height - textCtx.fontSize) / 2;
             break;
         case 'bottom':
             heightOffset = -datas.sys.measure.height - (padding[1] / 2);
@@ -60,9 +63,14 @@ const matchText = (P, datas, res) => {
             heightOffset = -(datas.sys.measure.height / 2) - (padding[1] / 2);
     }
 
+
+    textCtx.save();
+    textCtx.translate(datas.center[0], datas.center[1]);
+    if (datas.options.rotate) {
+        textCtx.rotate(datas.options.rotate);
+    }
     textCtx.rect(
-        datas.center[0] + widthOffset,
-        datas.center[1] + heightOffset,
+        widthOffset, heightOffset,
         datas.sys.measure.width + padding[0],
         datas.sys.measure.height + padding[1],
     );
@@ -76,6 +84,7 @@ const matchText = (P, datas, res) => {
             length: Math.sqrt((P[0] - datas.center[0]) ** 2, (P[1] - datas.center[1]) ** 2),
         });
     }
+    textCtx.restore();
 };
 
 export default matchText;

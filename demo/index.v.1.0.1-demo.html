@@ -78,9 +78,10 @@
                         });
                     })
                 } else if (item.type === 'Text') {
-                    // console.log(item);
                     const textobj = v.text(item.label, item.pixel, {
-                        fontSize: item.renderOptions.fontSize
+                        fontSize: item.renderOptions.fontSize,
+                        rotate: (item.renderOptions.rotate / 360) * Math.PI * 2,
+                        splitText: !!item.renderOptions.rotate,
                     });
                     textobj.on('finish', data => {
                         item.pixel = data.object.center;

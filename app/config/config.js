@@ -3,10 +3,15 @@ const config = {
         line: Symbol('line'),
         text: Symbol('text'),
     },
-    ctxBaseConfig: {
+    ctxStyleConfig: {
         fontSize: 12,
-        textBaseline: 'bottom',
+        textBaseline: 'alphabetic',
         textAlign: 'left',
+    },
+    ctxOperationConfig: {
+        rotate: 0,
+        textRotate: 0,
+        splitText: false,
     },
 };
 

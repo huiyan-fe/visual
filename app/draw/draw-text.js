@@ -12,19 +12,40 @@ function DrawText(Visual, obj) {
     ctx.beginPath();
     ctx.save();
 
-    const basicOptions = config.ctxBaseConfig;
-    Object.assign(basicOptions, obj.options);
-    Object.assign(ctx, basicOptions);
+    // copy from basicoptions
+    const basicOptions = config.ctxStyleConfig;
+    Object.keys(basicOptions).forEach(key => {
+        ctx[key] = obj.options[key] || basicOptions[key];
+    });
 
+    // copy from operate configs
+    const operateConfig = config.ctxOperationConfig;
+    const operate = {};
+    Object.keys(operateConfig).forEach(key => {
+        operate[key] = obj.options[key] || operateConfig[key];
+    });
 
     ctx.font = `${obj.options.fontSize}px ${obj.options.fontFamily || undefined}`;
-    // ctx.textBaseline = 'middle';
-    // ctx.textAlign = 'center';
     [x, y] = scaleOrder([x, y], Visual.options.grid.scale);
-    ctx.fillText(obj.text, x, y);
+    ctx.translate(x, y);
+    if (operate.textRotate || operate.splitText) {
+        // console.log(operate.textRotate);
+        obj.text.split('').forEach((chart, index) => {
+            const destenct = obj.sys.spaces[index];
+            ctx.translate(destenct * Math.cos(operate.rotate), destenct * Math.sin(operate.rotate));
+            ctx.save();
+            ctx.rotate(operate.textRotate);
+            ctx.fillText(chart, 0, 0);
+            ctx.restore();
+        });
+    } else {
+        ctx.rotate(operate.rotate);
+        ctx.fillText(obj.text, 0, 0);
+    }
     ctx.restore();
 
     if (obj.isActive) {
+        ctx.canvas.style.cursor = 'pointer';
         // active
         const padding = [10, 10];
         const width = obj.sys.measure.width + padding[0];
@@ -54,6 +75,9 @@ function DrawText(Visual, obj) {
             case 'top':
                 heightOffset = padding[1] / 2;
                 break;
+            case 'alphabetic':
+                heightOffset = (height / 2) + ((height - ctx.fontSize) / 2) - (padding[1] / 2);
+                break;
             case 'bottom':
                 heightOffset = height - (padding[1] / 2);
                 break;
@@ -62,21 +86,27 @@ function DrawText(Visual, obj) {
                 console.log(ctx.textBaseline);
         }
 
+
+        ctx.restore();
+        ctx.save();
         ctx.beginPath();
-        ctx.globalAlpha = 0.6;
-        ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
+        ctx.translate(x, y);
+        ctx.rotate(operate.rotate);
+        ctx.strokeStyle = '#999';
         ctx.fillStyle = 'white';
         ctx.lineJoin = 'round';
         ctx.lineWidth = 1;
-        ctx.strokeRect(x - widthOffset, y - heightOffset, width, height);
+        ctx.strokeRect(-widthOffset, -heightOffset, width, height);
+        ctx.restore();
+        ctx.save();
 
         ctx.beginPath();
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+        ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+        ctx.fillStyle = '#fff';
         ctx.arc(x, y, 4, 0, Math.PI * 2);
         ctx.fill();
-        ctx.lineWidth = 2;
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-        ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
-        ctx.fillRect(x - widthOffset, y - heightOffset, width, height);
         ctx.stroke();
         ctx.restore();
     }

@@ -13,8 +13,11 @@ class Text extends VisualObject {
 
         const center = JSON.parse(JSON.stringify(centerParam));
 
-        const basicOptions = config.ctxBaseConfig;
-        Object.assign(basicOptions, options);
+        const basicOptions = {};
+        Object.keys(config.ctxStyleConfig).forEach(key => {
+            basicOptions[key] = options[key] || config.ctxStyleConfig[key];
+        });
+
 
         const span = document.createElement('span');
         span.innerHTML = text;
@@ -29,6 +32,7 @@ class Text extends VisualObject {
         const ctx = Visual.ctx;
         ctx.font = `${basicOptions.fontSize}px ${basicOptions.fontFamily || undefined}`;
         const width = Visual.ctx.measureText(text).width;
+        const spaces = text.split('').map(char => Visual.ctx.measureText(char).width);
         //
 
         this.Visual.sys.objects.push({
@@ -36,13 +40,14 @@ class Text extends VisualObject {
             type: Visual.sys.objectTypes.text,
             text,
             center: steplizePoint(center, this.Visual.options.grid.step),
-            options: JSON.parse(JSON.stringify(basicOptions)),
+            options,
             object: this,
             sys: {
                 measure: {
                     height,
                     width,
                 },
+                spaces,
             },
         });
         this.Visual.draw();
