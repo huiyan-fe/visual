@@ -15,9 +15,11 @@ function DrawText(Visual, obj) {
     // copy from basicoptions
     ctx.save();
     const basicOptions = config.ctxStyleConfig;
+
     Object.keys(basicOptions).forEach(key => {
         ctx[key] = obj.options[key] || basicOptions[key];
     });
+
 
     // copy from operate configs
     const operateConfig = config.ctxOperationConfig;
@@ -26,18 +28,19 @@ function DrawText(Visual, obj) {
         operate[key] = obj.options[key] || operateConfig[key];
     });
 
-    ctx.font = `${obj.options.fontSize}px ${obj.options.fontFamily || undefined}`;
+
+    ctx.font = `${ctx.fontSize}px ${(obj.options.fontFamily || undefined)}`;
     [x, y] = scaleOrder([x, y], Visual.options.grid.scale);
     ctx.translate(x, y);
     if (operate.textRotate || operate.splitText) {
         // console.log(operate.textRotate);
         obj.text.split('').forEach((chart, index) => {
-            const destenct = obj.sys.spaces[index];
-            ctx.translate(destenct * Math.cos(operate.rotate), destenct * Math.sin(operate.rotate));
             ctx.save();
             ctx.rotate(operate.textRotate);
             ctx.fillText(chart, 0, 0);
             ctx.restore();
+            const destenct = obj.sys.spaces[index];
+            ctx.translate(destenct * Math.cos(operate.rotate), destenct * Math.sin(operate.rotate));
         });
     } else {
         ctx.rotate(operate.rotate);
@@ -46,7 +49,6 @@ function DrawText(Visual, obj) {
     ctx.restore();
 
     if (obj.isActive) {
-        // console.log(obj.options.textAlign, ctx.textAlign)
         ctx.canvas.style.cursor = 'pointer';
         // active
         const padding = [10, 10];

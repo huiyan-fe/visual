@@ -32,15 +32,18 @@
             lineWidth: 20
         });
 
-        v.text('你好李高峰', [200, 200])
-
-        let a1 = v.text('你 好李高峰', [200, 300], {
-            rotate: Math.PI * .5,
-            splitText: true,
-            // textRotate: Math.PI * .5
+        v.text('你好李高峰', [200, 300], {
+            rotate: Math.PI * .25,
         })
 
-        v.circle(10, [200, 200], {
+        let a1 = v.text('你 好李高峰', [200, 400], {
+            fontSize: 24,
+            rotate: Math.PI * .25,
+            // // splitText: true,
+            // textRotate: Math.PI * .25
+        })
+
+        v.circle(10, [100, 300], {
             fillStyle: 'red'
         })
 
