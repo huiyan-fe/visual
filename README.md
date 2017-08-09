@@ -105,7 +105,7 @@ let text = visual.text('Hello Mofei', [200, 400], {
 
 大部分的Visual Object都有事件监听，可以通过Visual Object.on('type', Function) 来监听。
 
-#### 3.1 'change'
+#### 3.1 change
 
 当Visual Object发生变化时，会触发该事件，Function中的接收一个Object参数，其通用字段如下：
 
@@ -122,7 +122,7 @@ line类型的change事件返回以下参数:
 |type|String|'point'\|'line' | point:拖拽点的时候返回 <br/> line:移动整条线的时候返回
 |index|Number| - | 移动点的时候返回点的索引号
 
-#### 3.2 'finish'
+#### 3.2 finish
 
 当Visual Object变化结束（通常情况下为拖拽鼠标之后松开），会触发该事件，Function中的接收一个Object参数，其通用字段如下：
 
