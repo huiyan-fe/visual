@@ -24,7 +24,7 @@ let visual = new Visual(dom);
 
 ### 2. Visual Object
 
-2.1 line(path, config)
+#### 2.1 line(path, config)
 
 * **path** `[Array]` 线段的关键点
 * **config** `[Object]` 相关配置，通用配置请查阅配置说明 [config](#1)
@@ -45,7 +45,7 @@ visual.line([
 });
 ```
 
-2.2 text(text, point, config)
+#### 2.2 text(text, point, config)
 
 * **text** `[String]` 绘制的文本坐标
 * **point** `[Array]` 绘制的文字的起始点
@@ -65,6 +65,6 @@ let text = visual.text('Hello Mofei', [200, 400], {
 })
 ```
 
-2.3 circle(redis, center, config)
+#### 2.3 circle(redis, center, config)
 
-[config]: 2.4 config
+#### 2.4 config
