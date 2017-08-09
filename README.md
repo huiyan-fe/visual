@@ -26,7 +26,7 @@ let visual = new Visual(dom);
 
 ### 2. Visual Object
 
-2.1 line(path, config)
+#### 2.1 line(path, config)
 
 |参数|类型|说明|
 |:---|:---|:---|
@@ -49,7 +49,7 @@ visual.line([
 });
 ```
 
-2.2 text(text, point, config)
+#### 2.2 text(text, point, config)
 
 |参数|类型|说明|
 |:---|:---|:---|
@@ -71,7 +71,7 @@ let text = visual.text('Hello Mofei', [200, 400], {
 })
 ```
 
-2.3 circle(redis, center, config)
+#### 2.3 circle(redis, center, config)
 
 |参数|类型|说明|
 |:---|:---|:---|
@@ -89,7 +89,7 @@ let text = visual.text('Hello Mofei', [200, 400], {
 })
 ```
 
-2.4 config
+#### 2.4 config
 
 |参数|类型|说明|
 |:---|:---|:---|
