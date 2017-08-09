@@ -134,7 +134,8 @@ var config = {
     objectTypes: {
         line: Symbol('line'),
         text: Symbol('text'),
-        circle: Symbol('circle')
+        circle: Symbol('circle'),
+        polygon: Symbol('polygon')
     },
     ctxStyleConfig: {
         fontSize: 12,
