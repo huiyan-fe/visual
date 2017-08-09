@@ -883,7 +883,6 @@ var Event = function Event(self) {
                             type: 'point',
                             index: singleIndex,
                             changeData: JSON.parse(JSON.stringify(path[singleIndex])),
-                            path: JSON.parse(JSON.stringify(path)),
                             object: pickupedObj[0].origin.data
                         });
                     } else {

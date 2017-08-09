@@ -31,7 +31,7 @@ let visual = new Visual(dom);
 |参数|类型|说明|
 |:---|:---|:---|
 | **path** | `Array` | 线段的关键点
-| **config** | `Object` | 相关配置，通用配置请查阅配置说明 [config](#24_config)
+| **config** | `Object` | 相关配置，通用配置请查阅配置说明 [config](#24-config)
 
 line方法用来创建一条可以编辑的直线或者折线。
 
@@ -55,10 +55,10 @@ visual.line([
 |:---|:---|:---|
 | **text** | `String` | 绘制的文本坐标
 | **point** | `Array` | 绘制的文字的起始点
-| **config** | `Object` | 相关配置，通用配置请查阅配置说明 [config](#24_config)
+| **config** | `Object` | 相关配置，通用配置请查阅配置说明 [config](#24-config)
 | **config.rotate** | `Number` | 文本的旋转角度
 | **config.splitText** | `Boole` | 文字是否单独绘制，如果为true的情况下，系统自动绘制每一个单独的文字，此时，每个文字的初始旋转角度0°为正上方
-| **config.textRotate** | `Boole` | 单个文字的旋转角度
+| **config.textRotate** | `Number` | 单个文字的旋转角度
 
 text用来绘制文本
 
@@ -77,7 +77,7 @@ let text = visual.text('Hello Mofei', [200, 400], {
 |:---|:---|:---|
 | **redis** | `Number` | 圆的半径
 | **center** | `Array` | 圆的中心点
-| **config** | `Object` | 相关配置，通用配置请查阅配置说明 [config](#24_config)
+| **config** | `Object` | 相关配置，通用配置请查阅配置说明 [config](#24-config)
 | **config.border** | `Boole` | 是否绘制圆的边框
 
 ```javascript
@@ -99,3 +99,34 @@ let text = visual.text('Hello Mofei', [200, 400], {
 | **config.fillStyle** | `String` | 图形填充样式
 | **config.strokeStyle** | `String` | 图形描边样式
 | **config.lineWidth** | `Number` | 线宽
+
+
+### 3. Visual Event
+
+大部分的Visual Object都有事件监听，可以通过Visual Object.on('type', Function) 来监听。
+
+#### 3.1 'change'
+
+当Visual Object发生变化时，会触发该事件，Function中的接收一个Object参数，其通用字段如下：
+
+|参数|类型|值|说明|
+|:---|:---|:---|:---|
+|object|Visual Object| - |当前移动的对象
+
+#### 3.1.1 change for line[Object]
+
+line类型的change事件返回以下参数:
+
+|参数|类型|值|说明|
+|:---|:---|:---|:---|
+|type|String|'point'\|'line' | point:拖拽点的时候返回 <br/> line:移动整条线的时候返回
+|index|Number| - | 移动点的时候返回点的索引号
+
+#### 3.2 'finish'
+
+当Visual Object变化结束（通常情况下为拖拽鼠标之后松开），会触发该事件，Function中的接收一个Object参数，其通用字段如下：
+
+
+|参数|类型|值|说明|
+|:---|:---|:---|:---|
+|object|Visual Object| - |当前移动的对象

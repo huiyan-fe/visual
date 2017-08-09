@@ -78,7 +78,6 @@ const Event = self => {
                             type: 'point',
                             index: singleIndex,
                             changeData: JSON.parse(JSON.stringify(path[singleIndex])),
-                            path: JSON.parse(JSON.stringify(path)),
                             object: pickupedObj[0].origin.data,
                         });
                     } else {
@@ -105,10 +104,10 @@ const Event = self => {
                     ];
                     pickupedObj[0].origin.data.object.emit('change', {
                         type: 'center',
-                        changeData: JSON.parse(JSON.stringify([
-                            snapShootPath[0] + movedPos[0],
-                            snapShootPath[1] + movedPos[1],
-                        ])),
+                        // changeData: JSON.parse(JSON.stringify([
+                        //     snapShootPath[0] + movedPos[0],
+                        //     snapShootPath[1] + movedPos[1],
+                        // ])),
                         object: pickupedObj[0].origin.data,
                     });
                     break;
@@ -117,6 +116,9 @@ const Event = self => {
                         snapShootPath[0] + movedPos[0],
                         snapShootPath[1] + movedPos[1],
                     ];
+                    pickupedObj[0].origin.data.object.emit('change', {
+                        object: pickupedObj[0].origin.data,
+                    });
                     break;
                 default:
             }
