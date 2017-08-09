@@ -11,7 +11,9 @@
 
 ### 1. Visual(dmo)
 
-* **dom** `[HTMLDocument]` 指定Visual的父元素
+|参数|类型|说明|
+|:---|:---|:---|
+| **dom** | `HTMLDocument` | 指定Visual的父元素 |
 
 想要初始化Visual,可以通过`new Visual(dom)`来进行
 
@@ -24,10 +26,12 @@ let visual = new Visual(dom);
 
 ### 2. Visual Object
 
-#### 2.1 line(path, config)
+2.1 line(path, config)
 
-* **path** `[Array]` 线段的关键点
-* **config** `[Object]` 相关配置，通用配置请查阅配置说明 [config](#24-config)
+|参数|类型|说明|
+|:---|:---|:---|
+| **path** | `Array` | 线段的关键点
+| **config** | `Object` | 相关配置，通用配置请查阅配置说明 [config](#24_config)
 
 line方法用来创建一条可以编辑的直线或者折线。
 
@@ -45,14 +49,16 @@ visual.line([
 });
 ```
 
-#### 2.2 text(text, point, config)
+2.2 text(text, point, config)
 
-* **text** `[String]` 绘制的文本坐标
-* **point** `[Array]` 绘制的文字的起始点
-* **config** `[Object]` 相关配置，通用配置请查阅配置说明 [config](#24-config)
-* **config.rotate** `[Number]` 文本的旋转角度
-* **config.splitText** `[Boole]` 文字是否单独绘制
-* **config.textRotate** `[Boole]` 单个文字的旋转角度
+|参数|类型|说明|
+|:---|:---|:---|
+| **text** | `String` | 绘制的文本坐标
+| **point** | `Array` | 绘制的文字的起始点
+| **config** | `Object` | 相关配置，通用配置请查阅配置说明 [config](#24_config)
+| **config.rotate** | `Number` | 文本的旋转角度
+| **config.splitText** | `Boole` | 文字是否单独绘制，如果为true的情况下，系统自动绘制每一个单独的文字，此时，每个文字的初始旋转角度0°为正上方
+| **config.textRotate** | `Boole` | 单个文字的旋转角度
 
 text用来绘制文本
 
@@ -65,6 +71,31 @@ let text = visual.text('Hello Mofei', [200, 400], {
 })
 ```
 
-#### 2.3 circle(redis, center, config)
+2.3 circle(redis, center, config)
 
-#### 2.4 config
+|参数|类型|说明|
+|:---|:---|:---|
+| **redis** | `Number` | 圆的半径
+| **center** | `Array` | 圆的中心点
+| **config** | `Object` | 相关配置，通用配置请查阅配置说明 [config](#24_config)
+| **config.border** | `Boole` | 是否绘制圆的边框
+
+```javascript
+ visual.circle(10, [200, 100], {
+    fillStyle: 'yellow',
+    strokeStyle: 'skyblue',
+    lineWidth: 5,
+    border: true
+})
+```
+
+2.4 config
+
+|参数|类型|说明|
+|:---|:---|:---|
+| **config.fontSize** | `Number` | 文字大小默认12
+| **config.textBaseline** | `String` | 文字的Baseline对齐方式 默认`alphabetic`
+| **config.textAlign** | `String` | 文字的左右对齐方式 默认`left`
+| **config.fillStyle** | `String` | 图形填充样式
+| **config.strokeStyle** | `String` | 图形描边样式
+| **config.lineWidth** | `Number` | 线宽
