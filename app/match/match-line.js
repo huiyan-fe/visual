@@ -37,7 +37,7 @@ const matchLine = (P, datas, res) => {
                 const O = [A[0] + (vAB[0] * pAOAB), A[1] + (vAB[1] * pAOAB)];
                 if (lPO < 15) {
                     res.push({
-                        type: 'vertical',
+                        type: 'object',
                         data: datas,
                         projection: O,
                         length: lPO,

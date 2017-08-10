@@ -19,6 +19,23 @@
         let v = new Visual(dom);
 
         v.line([
+            [0, 0],
+            [0, 100],
+        ], {
+            strokeStyle: '#4df693',
+            lineWidth: 8
+        });
+
+        v.line([
+            [0, 100],
+            [0, 200],
+        ], {
+            strokeStyle: '#4df693',
+            lineWidth: 9
+        });
+
+
+        let line = v.line([
             [85, 86],
             [85, 89],
             [85, 104],
@@ -29,8 +46,13 @@
             [400, 10],
         ], {
             strokeStyle: '#4df693',
-            lineWidth: 20
+            lineWidth: 10
         });
+
+        line.on('finish', (data) => {
+            console.log(JSON.stringify(data.object.path));
+        })
+
 
         v.text('Hello Mofei', [200, 300], {
             rotate: Math.PI * .25,
@@ -43,8 +65,12 @@
             textRotate: Math.PI * .50
         })
 
-        v.circle(10, [100, 300], {
+        let cir = v.circle(10, [100, 300], {
             fillStyle: 'red'
+        })
+
+        cir.on('change', (obj) => {
+            console.log(obj)
         })
 
         v.circle(10, [200, 100], {
@@ -52,6 +78,27 @@
             strokeStyle: 'skyblue',
             lineWidth: 5,
             border: true
+        });
+
+        v.polygon([
+            [300, 100],
+            [250, 150],
+            [350, 150]
+        ], {
+            border: true,
+            fill: false,
+            lineJoin: 'round',
+            lineCap: 'round'
+        })
+
+        v.polygon([
+            [450, 100],
+            [400, 150],
+            [500, 150]
+        ], {
+            border: true,
+            lineJoin: 'round',
+            lineCap: 'round'
         })
     </script>
 

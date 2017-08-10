@@ -12,6 +12,8 @@ const config = {
         fillStyle: 'black',
         strokeStyle: 'black',
         lineWidth: 1,
+        lineJoin: 'miter',
+        lineCap: 'butt',
     },
     ctxOperationConfig: {
         rotate: 0,

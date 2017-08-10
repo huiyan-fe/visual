@@ -1,6 +1,6 @@
 /* globals window */
 import Config from './config/config';
-import MatchTool from './tools/match';
+import MatchTool from './match/match';
 import steplizePoint from './tools/steplize';
 import { scaleReverse } from './tools/scalelize';
 
@@ -16,11 +16,10 @@ const Event = self => {
             let pathSnapshoot;
             switch (hoveredObj[0].data.type) {
                 case Config.objectTypes.line:
+                case Config.objectTypes.polygon:
                     pathSnapshoot = JSON.parse(JSON.stringify(hoveredObj[0].data.path));
                     break;
                 case Config.objectTypes.text:
-                    pathSnapshoot = JSON.parse(JSON.stringify(hoveredObj[0].data.center));
-                    break;
                 case Config.objectTypes.circle:
                     pathSnapshoot = JSON.parse(JSON.stringify(hoveredObj[0].data.center));
                     break;
@@ -64,6 +63,7 @@ const Event = self => {
 
             const snapShootPath = pickupedObj[0].pathSnapshoot;
             switch (hoveredObj[0].data.type) {
+                case Config.objectTypes.polygon:
                 case Config.objectTypes.line:
                     let newPath = [];
                     const isMoveSingle = (pickupedObj[0].origin.type === 'point') && (pickupedObj[0].origin.length < 10);

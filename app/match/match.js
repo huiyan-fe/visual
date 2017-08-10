@@ -2,6 +2,7 @@ import Config from '../config/config';
 import matchLine from './match-line';
 import matchText from './match-text';
 import matchCircle from './match-circle';
+import matchPolygon from './match-polygon';
 
 const MathTool = {
     match(P, datasGroup) {
@@ -18,6 +19,9 @@ const MathTool = {
                     break;
                 case Config.objectTypes.circle:
                     matchCircle(P, datas, res);
+                    break;
+                case Config.objectTypes.polygon:
+                    matchPolygon(P, datas, res);
                     break;
                 default:
                     break;

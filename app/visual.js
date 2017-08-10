@@ -3,6 +3,7 @@
 import VLine from './object/line';
 import VText from './object/text';
 import VCircle from './object/circle';
+import VPolygon from './object/polygon';
 
 
 import Draw from './draw/draw';
@@ -76,6 +77,10 @@ Visual.prototype.text = function textfn(text, center = [], options = {}) {
 
 Visual.prototype.circle = function circlefn(redius, center = [], options = {}) {
     return new VCircle(this, redius, center, options);
+};
+
+Visual.prototype.polygon = function polygonfn(path = [], options = {}) {
+    return new VPolygon(this, path, options);
 };
 
 Visual.prototype.draw = Draw;

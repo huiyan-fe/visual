@@ -60,11 +60,47 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var config = {
+    objectTypes: {
+        line: Symbol('line'),
+        text: Symbol('text'),
+        circle: Symbol('circle'),
+        polygon: Symbol('polygon')
+    },
+    ctxStyleConfig: {
+        fontSize: 12,
+        textBaseline: 'alphabetic',
+        textAlign: 'left',
+        fillStyle: 'black',
+        strokeStyle: 'black',
+        lineWidth: 1,
+        lineJoin: 'miter',
+        lineCap: 'butt'
+    },
+    ctxOperationConfig: {
+        rotate: 0,
+        textRotate: 0,
+        splitText: false
+    }
+};
+
+exports.default = config;
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -84,7 +120,68 @@ var steplizePoint = function steplizePoint() {
 exports.default = steplizePoint;
 
 /***/ }),
-/* 1 */
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var VisualObject = function () {
+    function VisualObject() {
+        _classCallCheck(this, VisualObject);
+    }
+
+    _createClass(VisualObject, [{
+        key: "remove",
+        value: function remove() {
+            var _this = this;
+
+            var objects = this.Visual.sys.objects;
+            this.Visual.sys.objects = objects.filter(function (item) {
+                return item.id !== _this.id;
+            });
+            this.Visual.draw();
+        }
+    }, {
+        key: "on",
+        value: function on(type, fn) {
+            this.listens = this.listens || {};
+            this.listens[type] = fn;
+        }
+    }, {
+        key: "unbind",
+        value: function unbind(type, fn) {
+            this.listens = this.listens || {};
+            this.listens[type] = this.listens[type] || [];
+            this.listens[type].filter(function (fns) {
+                return fns !== fn;
+            });
+        }
+    }, {
+        key: "emit",
+        value: function emit(type, data) {
+            this.listens = this.listens || {};
+            if (this.listens[type]) {
+                this.listens[type](data);
+            }
+        }
+    }]);
+
+    return VisualObject;
+}();
+
+exports.default = VisualObject;
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -121,41 +218,7 @@ exports.scaleOrder = scaleOrder;
 exports.scaleReverse = scaleReverse;
 
 /***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-var config = {
-    objectTypes: {
-        line: Symbol('line'),
-        text: Symbol('text'),
-        circle: Symbol('circle'),
-        polygon: Symbol('polygon')
-    },
-    ctxStyleConfig: {
-        fontSize: 12,
-        textBaseline: 'alphabetic',
-        textAlign: 'left',
-        fillStyle: 'black',
-        strokeStyle: 'black',
-        lineWidth: 1
-    },
-    ctxOperationConfig: {
-        rotate: 0,
-        textRotate: 0,
-        splitText: false
-    }
-};
-
-exports.default = config;
-
-/***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -163,27 +226,31 @@ exports.default = config;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /* globals window document getComputedStyle */
 
-var _line = __webpack_require__(5);
+var _line = __webpack_require__(6);
 
 var _line2 = _interopRequireDefault(_line);
 
-var _text = __webpack_require__(6);
+var _text = __webpack_require__(7);
 
 var _text2 = _interopRequireDefault(_text);
 
-var _circle = __webpack_require__(15);
+var _circle = __webpack_require__(8);
 
 var _circle2 = _interopRequireDefault(_circle);
 
-var _draw = __webpack_require__(7);
+var _polygon = __webpack_require__(9);
+
+var _polygon2 = _interopRequireDefault(_polygon);
+
+var _draw = __webpack_require__(10);
 
 var _draw2 = _interopRequireDefault(_draw);
 
-var _config = __webpack_require__(2);
+var _config = __webpack_require__(0);
 
 var _config2 = _interopRequireDefault(_config);
 
-var _visualEvent = __webpack_require__(10);
+var _visualEvent = __webpack_require__(14);
 
 var _visualEvent2 = _interopRequireDefault(_visualEvent);
 
@@ -278,13 +345,20 @@ Visual.prototype.circle = function circlefn(redius) {
     return new _circle2.default(this, redius, center, options);
 };
 
+Visual.prototype.polygon = function polygonfn() {
+    var path = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    return new _polygon2.default(this, path, options);
+};
+
 Visual.prototype.draw = _draw2.default;
 
 global.Visual = Visual;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports) {
 
 var g;
@@ -311,7 +385,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -321,11 +395,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _object = __webpack_require__(14);
+var _object = __webpack_require__(2);
 
 var _object2 = _interopRequireDefault(_object);
 
-var _steplize = __webpack_require__(0);
+var _steplize = __webpack_require__(1);
 
 var _steplize2 = _interopRequireDefault(_steplize);
 
@@ -372,7 +446,7 @@ var Line = function (_VisualObject) {
 exports.default = Line;
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -382,15 +456,15 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _object = __webpack_require__(14);
+var _object = __webpack_require__(2);
 
 var _object2 = _interopRequireDefault(_object);
 
-var _steplize = __webpack_require__(0);
+var _steplize = __webpack_require__(1);
 
 var _steplize2 = _interopRequireDefault(_steplize);
 
-var _config = __webpack_require__(2);
+var _config = __webpack_require__(0);
 
 var _config2 = _interopRequireDefault(_config);
 
@@ -466,7 +540,7 @@ var Text = function (_VisualObject) {
 exports.default = Text;
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -476,22 +550,145 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _drawLine = __webpack_require__(8);
+var _object = __webpack_require__(2);
 
-var _drawLine2 = _interopRequireDefault(_drawLine);
+var _object2 = _interopRequireDefault(_object);
 
-var _drawText = __webpack_require__(9);
+var _steplize = __webpack_require__(1);
 
-var _drawText2 = _interopRequireDefault(_drawText);
-
-var _drawCircle = __webpack_require__(16);
-
-var _drawCircle2 = _interopRequireDefault(_drawCircle);
+var _steplize2 = _interopRequireDefault(_steplize);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var self = null; /* globals requestAnimationFrame  */
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /* globals */
+
+var Circle = function (_VisualObject) {
+    _inherits(Circle, _VisualObject);
+
+    function Circle(Visual, redius, centerParam, options) {
+        _classCallCheck(this, Circle);
+
+        var _this = _possibleConstructorReturn(this, (Circle.__proto__ || Object.getPrototypeOf(Circle)).call(this));
+
+        _this.Visual = Visual;
+        _this.id = Symbol('circle');
+
+        var center = JSON.parse(JSON.stringify(centerParam));
+
+        _this.Visual.sys.objects.push({
+            id: _this.id,
+            type: Visual.sys.objectTypes.circle,
+            redius: redius,
+            center: (0, _steplize2.default)(center, _this.Visual.options.grid.step),
+            options: options,
+            object: _this
+        });
+        _this.Visual.draw();
+        return _this;
+    }
+
+    return Circle;
+}(_object2.default);
+
+exports.default = Circle;
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _object = __webpack_require__(2);
+
+var _object2 = _interopRequireDefault(_object);
+
+var _steplize = __webpack_require__(1);
+
+var _steplize2 = _interopRequireDefault(_steplize);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Polygon = function (_VisualObject) {
+    _inherits(Polygon, _VisualObject);
+
+    function Polygon(Visual) {
+        var pathParams = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+        var options = arguments[2];
+
+        _classCallCheck(this, Polygon);
+
+        var _this = _possibleConstructorReturn(this, (Polygon.__proto__ || Object.getPrototypeOf(Polygon)).call(this));
+
+        _this.Visual = Visual;
+        _this.id = Symbol('polygon');
+
+        var path = JSON.parse(JSON.stringify(pathParams));
+
+        _this.Visual.sys.objects.push({
+            id: _this.id,
+            type: Visual.sys.objectTypes.polygon,
+            path: path.map(function (point) {
+                return (0, _steplize2.default)(point, _this.Visual.options.grid.step);
+            }),
+            options: JSON.parse(JSON.stringify(options)),
+            object: _this
+        });
+        _this.Visual.draw();
+        return _this;
+    }
+
+    return Polygon;
+}(_object2.default);
+
+exports.default = Polygon;
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _drawLine = __webpack_require__(11);
+
+var _drawLine2 = _interopRequireDefault(_drawLine);
+
+var _drawText = __webpack_require__(12);
+
+var _drawText2 = _interopRequireDefault(_drawText);
+
+var _drawCircle = __webpack_require__(13);
+
+var _drawCircle2 = _interopRequireDefault(_drawCircle);
+
+var _drawPolygon = __webpack_require__(19);
+
+var _drawPolygon2 = _interopRequireDefault(_drawPolygon);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/* globals requestAnimationFrame  */
+
+var self = null;
 var drawFlag = false;
 
 function Draw() {
@@ -509,6 +706,9 @@ function drawFns(obj) {
             break;
         case self.sys.objectTypes.circle:
             (0, _drawCircle2.default)(self, obj);
+            break;
+        case self.sys.objectTypes.polygon:
+            (0, _drawPolygon2.default)(self, obj);
             break;
         default:
         // console.log('unkone type', obj.type);
@@ -541,7 +741,7 @@ function drawFns(obj) {
 exports.default = Draw;
 
 /***/ }),
-/* 8 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -551,7 +751,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _scalelize = __webpack_require__(1);
+var _scalelize = __webpack_require__(3);
+
+var _config = __webpack_require__(0);
+
+var _config2 = _interopRequireDefault(_config);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function DrawLine(Visual, obj) {
     // console.log(obj);
@@ -559,7 +765,11 @@ function DrawLine(Visual, obj) {
     // draw basic line
     ctx.beginPath();
     ctx.save();
-    ctx.lineJoin = 'round';
+    var basicOptions = _config2.default.ctxStyleConfig;
+    Object.keys(basicOptions).forEach(function (key) {
+        ctx[key] = obj.options[key] || basicOptions[key];
+    });
+
     Object.keys(obj.options).forEach(function (key) {
         ctx[key] = obj.options[key];
     });
@@ -571,7 +781,6 @@ function DrawLine(Visual, obj) {
             ctx.lineTo(item[0], item[1]);
         }
     });
-    ctx.lineWidth = 8 * Visual.options.grid.scale[0];
     ctx.stroke();
     ctx.restore();
 
@@ -631,7 +840,7 @@ function DrawLine(Visual, obj) {
 exports.default = DrawLine;
 
 /***/ }),
-/* 9 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -643,9 +852,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-var _scalelize = __webpack_require__(1);
+var _scalelize = __webpack_require__(3);
 
-var _config = __webpack_require__(2);
+var _config = __webpack_require__(0);
 
 var _config2 = _interopRequireDefault(_config);
 
@@ -777,7 +986,63 @@ function DrawText(Visual, obj) {
 exports.default = DrawText;
 
 /***/ }),
-/* 10 */
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _scalelize = __webpack_require__(3);
+
+var _config = __webpack_require__(0);
+
+var _config2 = _interopRequireDefault(_config);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function DrawLine(Visual, obj) {
+    var ctx = Visual.ctx;
+
+    var basicOptions = _config2.default.ctxStyleConfig;
+    Object.keys(basicOptions).forEach(function (key) {
+        ctx[key] = obj.options[key] || basicOptions[key];
+    });
+
+    (0, _scalelize.scaleOrder)(obj.center, Visual.options.grid.scale);
+    ctx.beginPath();
+    ctx.save();
+    ctx.arc(obj.center[0], obj.center[1], obj.redius, 0, Math.PI * 2);
+    ctx.fill();
+    if (obj.options.border) {
+        ctx.stroke();
+    }
+    ctx.restore();
+
+    // active
+    if (obj.isActive) {
+        ctx.canvas.style.cursor = 'pointer';
+        ctx.save();
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+        ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+        ctx.fillStyle = '#fff';
+        ctx.arc(obj.center[0], obj.center[1], 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+    }
+}
+
+exports.default = DrawLine;
+
+/***/ }),
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -790,19 +1055,19 @@ Object.defineProperty(exports, "__esModule", {
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); /* globals window */
 
 
-var _config = __webpack_require__(2);
+var _config = __webpack_require__(0);
 
 var _config2 = _interopRequireDefault(_config);
 
-var _match = __webpack_require__(11);
+var _match = __webpack_require__(20);
 
 var _match2 = _interopRequireDefault(_match);
 
-var _steplize = __webpack_require__(0);
+var _steplize = __webpack_require__(1);
 
 var _steplize2 = _interopRequireDefault(_steplize);
 
-var _scalelize = __webpack_require__(1);
+var _scalelize = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -818,11 +1083,10 @@ var Event = function Event(self) {
             var pathSnapshoot = void 0;
             switch (hoveredObj[0].data.type) {
                 case _config2.default.objectTypes.line:
+                case _config2.default.objectTypes.polygon:
                     pathSnapshoot = JSON.parse(JSON.stringify(hoveredObj[0].data.path));
                     break;
                 case _config2.default.objectTypes.text:
-                    pathSnapshoot = JSON.parse(JSON.stringify(hoveredObj[0].data.center));
-                    break;
                 case _config2.default.objectTypes.circle:
                     pathSnapshoot = JSON.parse(JSON.stringify(hoveredObj[0].data.center));
                     break;
@@ -869,6 +1133,7 @@ var Event = function Event(self) {
 
             var snapShootPath = pickupedObj[0].pathSnapshoot;
             switch (hoveredObj[0].data.type) {
+                case _config2.default.objectTypes.polygon:
                 case _config2.default.objectTypes.line:
                     var newPath = [];
                     var isMoveSingle = pickupedObj[0].origin.type === 'point' && pickupedObj[0].origin.length < 10;
@@ -906,12 +1171,18 @@ var Event = function Event(self) {
                     pickupedObj[0].origin.data.center = [snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]];
                     pickupedObj[0].origin.data.object.emit('change', {
                         type: 'center',
-                        changeData: JSON.parse(JSON.stringify([snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]])),
+                        // changeData: JSON.parse(JSON.stringify([
+                        //     snapShootPath[0] + movedPos[0],
+                        //     snapShootPath[1] + movedPos[1],
+                        // ])),
                         object: pickupedObj[0].origin.data
                     });
                     break;
                 case _config2.default.objectTypes.circle:
                     pickupedObj[0].origin.data.center = [snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]];
+                    pickupedObj[0].origin.data.object.emit('change', {
+                        object: pickupedObj[0].origin.data
+                    });
                     break;
                 default:
             }
@@ -934,7 +1205,11 @@ var Event = function Event(self) {
 exports.default = Event;
 
 /***/ }),
-/* 11 */
+/* 15 */,
+/* 16 */,
+/* 17 */,
+/* 18 */,
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -944,21 +1219,133 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _config = __webpack_require__(2);
+var _scalelize = __webpack_require__(3);
+
+var _config = __webpack_require__(0);
 
 var _config2 = _interopRequireDefault(_config);
 
-var _matchLine = __webpack_require__(12);
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function DrawLine(Visual, obj) {
+    // console.log(obj);
+    var ctx = Visual.ctx;
+    // draw basic line
+    ctx.beginPath();
+    ctx.save();
+    var basicOptions = _config2.default.ctxStyleConfig;
+    Object.keys(basicOptions).forEach(function (key) {
+        ctx[key] = obj.options[key] || basicOptions[key];
+    });
+
+    var usePath = (0, _scalelize.scaleOrder)(obj.path, Visual.options.grid.scale);
+    var firstPoint = [];
+    usePath.forEach(function (item, index) {
+        if (index === 0) {
+            firstPoint = item;
+            ctx.moveTo(item[0], item[1]);
+        } else {
+            ctx.lineTo(item[0], item[1]);
+        }
+    });
+    ctx.lineTo(firstPoint[0], firstPoint[1]);
+
+    if (obj.options.fill !== false) {
+        ctx.fill();
+    }
+    if (obj.options.border) {
+        ctx.stroke();
+    }
+    ctx.restore();
+
+    if (obj && obj.isActive) {
+        ctx.canvas.style.cursor = 'pointer';
+        // console.log(obj.isActive)
+        ctx.save();
+        // draw base line
+        ctx.beginPath();
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = '#a7caff';
+        firstPoint = [];
+        usePath.forEach(function (item, index) {
+            if (index === 0) {
+                firstPoint = item;
+                ctx.moveTo(item[0], item[1]);
+            } else {
+                ctx.lineTo(item[0], item[1]);
+            }
+        });
+        ctx.lineTo(firstPoint[0], firstPoint[1]);
+        ctx.stroke();
+
+        // draw handle
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+        ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+        ctx.lineWidth = 2;
+        usePath.forEach(function (item) {
+            ctx.moveTo(item[0] + 4, item[1]);
+            ctx.arc(item[0], item[1], 4, 0, Math.PI * 2);
+        });
+        ctx.fill();
+        ctx.stroke();
+
+        //
+        if (obj.isActive.type === 'point' && obj.isActive.length < 10) {
+            var index = obj.isActive.index;
+            var point = usePath[index];
+
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+            ctx.fillStyle = '#fff';
+            ctx.arc(point[0], point[1], 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#fff';
+            ctx.fillStyle = '#3385ff';
+            ctx.arc(point[0], point[1], 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        ctx.restore();
+    }
+}
+
+exports.default = DrawLine;
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _config = __webpack_require__(0);
+
+var _config2 = _interopRequireDefault(_config);
+
+var _matchLine = __webpack_require__(21);
 
 var _matchLine2 = _interopRequireDefault(_matchLine);
 
-var _matchText = __webpack_require__(13);
+var _matchText = __webpack_require__(22);
 
 var _matchText2 = _interopRequireDefault(_matchText);
 
-var _matchCircle = __webpack_require__(17);
+var _matchCircle = __webpack_require__(23);
 
 var _matchCircle2 = _interopRequireDefault(_matchCircle);
+
+var _matchPolygon = __webpack_require__(24);
+
+var _matchPolygon2 = _interopRequireDefault(_matchPolygon);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -977,6 +1364,9 @@ var MathTool = {
                     break;
                 case _config2.default.objectTypes.circle:
                     (0, _matchCircle2.default)(P, datas, res);
+                    break;
+                case _config2.default.objectTypes.polygon:
+                    (0, _matchPolygon2.default)(P, datas, res);
                     break;
                 default:
                     break;
@@ -997,7 +1387,7 @@ var MathTool = {
 exports.default = MathTool;
 
 /***/ }),
-/* 12 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1045,7 +1435,7 @@ var matchLine = function matchLine(P, datas, res) {
                 var O = [A[0] + vAB[0] * pAOAB, A[1] + vAB[1] * pAOAB];
                 if (lPO < 15) {
                     res.push({
-                        type: 'vertical',
+                        type: 'object',
                         data: datas,
                         projection: O,
                         length: lPO
@@ -1059,7 +1449,7 @@ var matchLine = function matchLine(P, datas, res) {
 exports.default = matchLine;
 
 /***/ }),
-/* 13 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1069,7 +1459,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _config = __webpack_require__(2);
+var _config = __webpack_require__(0);
 
 var _config2 = _interopRequireDefault(_config);
 
@@ -1158,181 +1548,7 @@ var matchText = function matchText(P, datas, res) {
 exports.default = matchText;
 
 /***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var VisualObject = function () {
-    function VisualObject() {
-        _classCallCheck(this, VisualObject);
-    }
-
-    _createClass(VisualObject, [{
-        key: "remove",
-        value: function remove() {
-            var _this = this;
-
-            var objects = this.Visual.sys.objects;
-            this.Visual.sys.objects = objects.filter(function (item) {
-                return item.id !== _this.id;
-            });
-            this.Visual.draw();
-        }
-    }, {
-        key: "on",
-        value: function on(type, fn) {
-            this.listens = this.listens || {};
-            this.listens[type] = fn;
-        }
-    }, {
-        key: "unbind",
-        value: function unbind(type, fn) {
-            this.listens = this.listens || {};
-            this.listens[type] = this.listens[type] || [];
-            this.listens[type].filter(function (fns) {
-                return fns !== fn;
-            });
-        }
-    }, {
-        key: "emit",
-        value: function emit(type, data) {
-            this.listens = this.listens || {};
-            if (this.listens[type]) {
-                this.listens[type](data);
-            }
-        }
-    }]);
-
-    return VisualObject;
-}();
-
-exports.default = VisualObject;
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _object = __webpack_require__(14);
-
-var _object2 = _interopRequireDefault(_object);
-
-var _steplize = __webpack_require__(0);
-
-var _steplize2 = _interopRequireDefault(_steplize);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /* globals */
-
-var Circle = function (_VisualObject) {
-    _inherits(Circle, _VisualObject);
-
-    function Circle(Visual, redius, centerParam, options) {
-        _classCallCheck(this, Circle);
-
-        var _this = _possibleConstructorReturn(this, (Circle.__proto__ || Object.getPrototypeOf(Circle)).call(this));
-
-        _this.Visual = Visual;
-        _this.id = Symbol('circle');
-
-        var center = JSON.parse(JSON.stringify(centerParam));
-
-        _this.Visual.sys.objects.push({
-            id: _this.id,
-            type: Visual.sys.objectTypes.circle,
-            redius: redius,
-            center: (0, _steplize2.default)(center, _this.Visual.options.grid.step),
-            options: options,
-            object: _this
-        });
-        _this.Visual.draw();
-        return _this;
-    }
-
-    return Circle;
-}(_object2.default);
-
-exports.default = Circle;
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _scalelize = __webpack_require__(1);
-
-var _config = __webpack_require__(2);
-
-var _config2 = _interopRequireDefault(_config);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function DrawLine(Visual, obj) {
-    var ctx = Visual.ctx;
-
-    var basicOptions = _config2.default.ctxStyleConfig;
-    Object.keys(basicOptions).forEach(function (key) {
-        ctx[key] = obj.options[key] || basicOptions[key];
-    });
-
-    (0, _scalelize.scaleOrder)(obj.center, Visual.options.grid.scale);
-    ctx.beginPath();
-    ctx.save();
-    ctx.arc(obj.center[0], obj.center[1], obj.redius, 0, Math.PI * 2);
-    ctx.fill();
-    if (obj.options.border) {
-        ctx.stroke();
-    }
-    ctx.restore();
-
-    // active
-    if (obj.isActive) {
-        ctx.canvas.style.cursor = 'pointer';
-        ctx.save();
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
-        ctx.fillStyle = 'rgba(255, 255, 255, 1)';
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
-        ctx.fillStyle = '#fff';
-        ctx.arc(obj.center[0], obj.center[1], 4, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-        ctx.restore();
-    }
-}
-
-exports.default = DrawLine;
-
-/***/ }),
-/* 17 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1355,6 +1571,75 @@ var matchCircle = function matchCircle(P, datas, res) {
 };
 
 exports.default = matchCircle;
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+/* globals document */
+
+var textCanvas = document.createElement('canvas');
+textCanvas.width = 2000;
+textCanvas.height = 2000;
+textCanvas.style.width = '2000px';
+textCanvas.style.height = '2000px';
+var ctx = textCanvas.getContext('2d');
+
+var matchPolygon = function matchPolygon(P, datas, res) {
+    var useData = datas;
+    useData.isActive = null;
+
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    // object
+
+    var bound = {
+        xMin: Infinity,
+        xMax: -Infinity,
+        yMin: Infinity,
+        yMax: -Infinity
+    };
+
+    datas.path.forEach(function (item, index) {
+        bound.xMin = Math.min(item[0], bound.xMin);
+        bound.xMax = Math.max(item[0], bound.xMax);
+        bound.yMin = Math.min(item[1], bound.yMin);
+        bound.yMax = Math.max(item[1], bound.yMax);
+        if (index === 0) {
+            ctx.moveTo(item[0], item[1]);
+        } else {
+            ctx.lineTo(item[0], item[1]);
+        }
+        // get the length of P and O
+        var lPO = Math.sqrt(Math.pow(P[0] - item[0], 2) + Math.pow(P[1] - item[1], 2));
+        if (lPO < 15) {
+            res.push({
+                type: 'point',
+                index: index,
+                data: datas,
+                length: lPO
+            });
+        }
+    });
+    ctx.fill();
+    var isFit = ctx.isPointInPath(P[0], P[1]);
+    var center = [(bound.xMax + bound.xMin) / 2, (bound.yMax + bound.yMin) / 2];
+    var length = Math.sqrt(Math.pow(P[0] - center[0], 2) + Math.pow(P[1] - center[1], 2));
+    if (isFit) {
+        res.push({
+            type: 'object',
+            data: datas,
+            length: length
+        });
+    }
+};
+
+exports.default = matchPolygon;
 
 /***/ })
 /******/ ]);

@@ -1,6 +1,8 @@
 const package = require("./package.json");
 const path = require('path');
 
+process.traceDeprecation = true;
+
 module.exports = {
     entry: './app/visual.js',
     output: {
@@ -11,10 +13,7 @@ module.exports = {
         loaders: [{
             test: /\.js$/,
             exclude: /(node_modules|bower_components)/,
-            loader: 'babel-loader',
-            query: {
-                presets: ['latest']
-            }
+            loader: 'babel-loader'
         }]
     }
 }

@@ -53,6 +53,8 @@
     </div>
 
     <script>
+        let scale = [1, 1];
+        let step = 2;
         let textareaDom = document.getElementById('textarea');
 
         const renderConfig = () => {
@@ -97,7 +99,7 @@
                     const textobj = v.text('0', item.pixel, {
                         fontSize: item.renderOptions.fontSize,
                         rotate: ((item.renderOptions.rotate || 0) / 360) * Math.PI * 2,
-                        textAlign: 'right',
+                        // textAlign: 'right',
                         splitText: !!item.renderOptions.rotate,
                     });
                     textobj.on('finish', data => {
@@ -111,8 +113,7 @@
     </script>
 
     <script>
-        let scale = [1, 1];
-        let step = 4;
+        
         let locparms = location.search.slice(1).split('&');
         let param = {}
         locparms.forEach(item => {

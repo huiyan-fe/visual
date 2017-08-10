@@ -12,18 +12,24 @@ function DrawLine(Visual, obj) {
         ctx[key] = obj.options[key] || basicOptions[key];
     });
 
-    Object.keys(obj.options).forEach(key => {
-        ctx[key] = obj.options[key];
-    });
     const usePath = scaleOrder(obj.path, Visual.options.grid.scale);
+    let firstPoint = [];
     usePath.forEach((item, index) => {
         if (index === 0) {
+            firstPoint = item;
             ctx.moveTo(item[0], item[1]);
         } else {
             ctx.lineTo(item[0], item[1]);
         }
     });
-    ctx.stroke();
+    ctx.lineTo(firstPoint[0], firstPoint[1]);
+
+    if (obj.options.fill !== false) {
+        ctx.fill();
+    }
+    if (obj.options.border) {
+        ctx.stroke();
+    }
     ctx.restore();
 
     if (obj && obj.isActive) {
@@ -33,14 +39,17 @@ function DrawLine(Visual, obj) {
         // draw base line
         ctx.beginPath();
         ctx.lineWidth = 4;
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.strokeStyle = '#a7caff';
+        firstPoint = [];
         usePath.forEach((item, index) => {
             if (index === 0) {
+                firstPoint = item;
                 ctx.moveTo(item[0], item[1]);
             } else {
                 ctx.lineTo(item[0], item[1]);
             }
         });
+        ctx.lineTo(firstPoint[0], firstPoint[1]);
         ctx.stroke();
 
         // draw handle
