@@ -1617,7 +1617,7 @@ var matchPolygon = function matchPolygon(P, datas, res) {
         }
         // get the length of P and O
         var lPO = Math.sqrt(Math.pow(P[0] - item[0], 2) + Math.pow(P[1] - item[1], 2));
-        if (lPO < 15) {
+        if (lPO < 10) {
             res.push({
                 type: 'point',
                 index: index,

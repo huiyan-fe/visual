@@ -106,6 +106,16 @@
                         item.pixel = data.object.center;
                         textareaDom.value = JSON.stringify(config, null, 4);
                     });
+                } else if (item.type === 'Polygon') {
+                    const polygon = v.polygon(item.pixels, {
+                        strokeStyle: '#4df693',
+                    });
+                    polygon.on('finish', data => {
+                        item.pixels = data.object.path;
+                        textareaDom.value = JSON.stringify(config, null, 4);
+                    });
+                } else {
+                    console.log(item.type)
                 }
 
             });
@@ -113,7 +123,6 @@
     </script>
 
     <script>
-        
         let locparms = location.search.slice(1).split('&');
         let param = {}
         locparms.forEach(item => {

@@ -34,7 +34,7 @@ const matchPolygon = (P, datas, res) => {
         }
         // get the length of P and O
         const lPO = Math.sqrt(((P[0] - item[0]) ** 2) + ((P[1] - item[1]) ** 2));
-        if (lPO < 15) {
+        if (lPO < 10) {
             res.push({
                 type: 'point',
                 index,
