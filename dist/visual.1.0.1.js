@@ -427,6 +427,20 @@ var Line = function (_VisualObject) {
 
         var path = JSON.parse(JSON.stringify(pathParams));
 
+        var outBox = {
+            xMin: Infinity,
+            xMax: -Infinity,
+            yMin: Infinity,
+            yMax: -Infinity
+        };
+
+        path.forEach(function (point) {
+            outBox.xMin = Math.min(outBox.xMin, point[0]);
+            outBox.xMax = Math.max(outBox.xMax, point[0]);
+            outBox.yMin = Math.min(outBox.yMin, point[1]);
+            outBox.yMax = Math.max(outBox.yMax, point[1]);
+        });
+
         _this.Visual.sys.objects.push({
             id: _this.id,
             type: Visual.sys.objectTypes.line,
@@ -434,7 +448,10 @@ var Line = function (_VisualObject) {
                 return (0, _steplize2.default)(point, _this.Visual.options.grid.step);
             }),
             options: JSON.parse(JSON.stringify(options)),
-            object: _this
+            object: _this,
+            sys: {
+                outBox: outBox
+            }
         });
         _this.Visual.draw();
         return _this;
@@ -527,7 +544,8 @@ var Text = function (_VisualObject) {
                     height: height,
                     width: width
                 },
-                spaces: spaces
+                spaces: spaces,
+                outbox: []
             }
         });
         _this.Visual.draw();
@@ -639,6 +657,20 @@ var Polygon = function (_VisualObject) {
 
         var path = JSON.parse(JSON.stringify(pathParams));
 
+        var outBox = {
+            xMin: Infinity,
+            xMax: -Infinity,
+            yMin: Infinity,
+            yMax: -Infinity
+        };
+
+        path.forEach(function (point) {
+            outBox.xMin = Math.min(outBox.xMin, point[0]);
+            outBox.xMax = Math.max(outBox.xMax, point[0]);
+            outBox.yMin = Math.min(outBox.yMin, point[1]);
+            outBox.yMax = Math.max(outBox.yMax, point[1]);
+        });
+
         _this.Visual.sys.objects.push({
             id: _this.id,
             type: Visual.sys.objectTypes.polygon,
@@ -646,7 +678,10 @@ var Polygon = function (_VisualObject) {
                 return (0, _steplize2.default)(point, _this.Visual.options.grid.step);
             }),
             options: JSON.parse(JSON.stringify(options)),
-            object: _this
+            object: _this,
+            sys: {
+                outBox: outBox
+            }
         });
         _this.Visual.draw();
         return _this;
@@ -1274,6 +1309,18 @@ var Event = function Event(self) {
                             object: pickupedObj[0].origin.data
                         });
                     }
+                    // update outBox
+                    var sys = pickupedObj[0].origin.data.sys;
+                    var outBox = sys.outBox;
+                    newPath = pickupedObj[0].origin.data.path;
+                    newPath.forEach(function (point) {
+                        outBox.xMin = Math.min(outBox.xMin, point[0]);
+                        outBox.xMax = Math.max(outBox.xMax, point[0]);
+                        outBox.yMin = Math.min(outBox.yMin, point[1]);
+                        outBox.yMax = Math.max(outBox.yMax, point[1]);
+                    });
+                    sys.outBox = outBox;
+                    //
                     break;
                 case _config2.default.objectTypes.text:
                     pickupedObj[0].origin.data.center = [snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]];
@@ -1481,7 +1528,7 @@ var matchText = function matchText(P, datas, res) {
     var useData = datas;
     useData.isActive = null;
     textCtx.beginPath();
-    if (!debug) {
+    if (debug) {
         textCtx.clearRect(0, 0, textCanvas.width, textCanvas.height);
     }
 
@@ -1529,7 +1576,9 @@ var matchText = function matchText(P, datas, res) {
     }
     textCtx.rect(widthOffset, heightOffset, datas.sys.measure.width + padding[0], datas.sys.measure.height + padding[1]);
 
-    textCtx.fill();
+    if (debug) {
+        textCtx.fill();
+    }
     var isFit = textCtx.isPointInPath(P[0], P[1]);
     if (isFit) {
         res.push({
@@ -1587,25 +1636,24 @@ textCanvas.style.width = '1px';
 textCanvas.style.height = '1px';
 var ctx = textCanvas.getContext('2d');
 
+var offset = 10;
+
 var matchPolygon = function matchPolygon(P, datas, res) {
     var useData = datas;
     useData.isActive = null;
 
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.beginPath();
     // object
+    var outBox = datas.sys.outBox;
 
-    var bound = {
-        xMin: Infinity,
-        xMax: -Infinity,
-        yMin: Infinity,
-        yMax: -Infinity
-    };
+    if (P[0] < outBox.xMin || P[0] > outBox.xMax + offset) {
+        return false;
+    }
+    if (P[1] < outBox.yMin || P[1] > outBox.yMax + offset) {
+        return false;
+    }
 
     datas.path.forEach(function (item, index) {
-        bound.xMin = Math.min(item[0], bound.xMin);
-        bound.xMax = Math.max(item[0], bound.xMax);
-        bound.yMin = Math.min(item[1], bound.yMin);
-        bound.yMax = Math.max(item[1], bound.yMax);
         if (index === 0) {
             ctx.moveTo(item[0], item[1]);
         } else {
@@ -1613,7 +1661,7 @@ var matchPolygon = function matchPolygon(P, datas, res) {
         }
         // get the length of P and O
         var lPO = Math.sqrt(Math.pow(P[0] - item[0], 2) + Math.pow(P[1] - item[1], 2));
-        if (lPO < 10) {
+        if (lPO < offset) {
             res.push({
                 type: 'point',
                 index: index,
@@ -1622,9 +1670,9 @@ var matchPolygon = function matchPolygon(P, datas, res) {
             });
         }
     });
-    ctx.fill();
+    // ctx.fill();
     var isFit = ctx.isPointInPath(P[0], P[1]);
-    var center = [(bound.xMax + bound.xMin) / 2, (bound.yMax + bound.yMin) / 2];
+    var center = [(outBox.xMax + outBox.xMin) / 2, (outBox.yMax + outBox.yMin) / 2];
     var length = Math.sqrt(Math.pow(P[0] - center[0], 2) + Math.pow(P[1] - center[1], 2));
     if (isFit) {
         res.push({

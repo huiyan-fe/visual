@@ -48,6 +48,7 @@ class Text extends VisualObject {
                     width,
                 },
                 spaces,
+                outbox: [],
             },
         });
         this.Visual.draw();

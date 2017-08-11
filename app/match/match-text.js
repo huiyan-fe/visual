@@ -22,7 +22,7 @@ const matchText = (P, datas, res) => {
     const useData = datas;
     useData.isActive = null;
     textCtx.beginPath();
-    if (!debug) {
+    if (debug) {
         textCtx.clearRect(0, 0, textCanvas.width, textCanvas.height);
     }
 
@@ -75,7 +75,9 @@ const matchText = (P, datas, res) => {
         datas.sys.measure.height + padding[1],
     );
 
-    textCtx.fill();
+    if (debug) {
+        textCtx.fill();
+    }
     const isFit = textCtx.isPointInPath(P[0], P[1]);
     if (isFit) {
         res.push({

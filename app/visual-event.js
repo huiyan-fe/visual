@@ -96,6 +96,18 @@ const Event = self => {
                             object: pickupedObj[0].origin.data,
                         });
                     }
+                    // update outBox
+                    const sys = pickupedObj[0].origin.data.sys;
+                    const outBox = sys.outBox;
+                    newPath = pickupedObj[0].origin.data.path;
+                    newPath.forEach(point => {
+                        outBox.xMin = Math.min(outBox.xMin, point[0]);
+                        outBox.xMax = Math.max(outBox.xMax, point[0]);
+                        outBox.yMin = Math.min(outBox.yMin, point[1]);
+                        outBox.yMax = Math.max(outBox.yMax, point[1]);
+                    });
+                    sys.outBox = outBox;
+                    //
                     break;
                 case Config.objectTypes.text:
                     pickupedObj[0].origin.data.center = [
