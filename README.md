@@ -60,10 +60,10 @@ visual.line([
 | **config.splitText** | `Boole` | 文字是否单独绘制，如果为true的情况下，系统自动绘制每一个单独的文字，此时，每个文字的初始旋转角度0°为正上方
 | **config.textRotate** | `Number` | 单个文字的旋转角度
 
-text用来绘制文本
+text用来绘制文本，简单示例如下：
 
-```javascipt
-let text = visual.text('Hello Mofei', [200, 400], {
+```javascript
+visual.text('Hello Mofei', [200, 400], {
 	fontSize: 24,
 	rotate: Math.PI * .25,
 	splitText: true,
@@ -79,6 +79,8 @@ let text = visual.text('Hello Mofei', [200, 400], {
 | **center** | `Array` | 圆的中心点
 | **config** | `Object` | 相关配置，通用配置请查阅配置说明 [config](#24-config)
 | **config.border** | `Boole` | 是否绘制圆的边框
+
+简单示例如下：
 
 ```javascript
  visual.circle(10, [200, 100], {
@@ -104,6 +106,21 @@ let text = visual.text('Hello Mofei', [200, 400], {
 ### 3. Visual Event
 
 大部分的Visual Object都有事件监听，可以通过Visual Object.on('type', Function) 来监听。
+
+简单的Demo如下：
+
+```javascript
+
+// 创建圆对象
+let cir = v.circle(10, [100, 300], {
+	fillStyle: 'red'
+})
+
+// 监听change事件
+cir.on('change', (obj) => {
+	console.log(obj)
+})
+```
 
 #### 3.1 change
 
