@@ -5,10 +5,10 @@ import config from '../config/config';
 const debug = !true;
 
 const textCanvas = document.createElement('canvas');
-textCanvas.width = 2000;
-textCanvas.height = 2000;
-textCanvas.style.width = '2000px';
-textCanvas.style.height = '2000px';
+textCanvas.width = 1;
+textCanvas.height = 1;
+textCanvas.style.width = '1px';
+textCanvas.style.height = '1px';
 const textCtx = textCanvas.getContext('2d');
 
 if (debug) {

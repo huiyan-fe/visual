@@ -112,17 +112,19 @@
             lineCap: 'round'
         })
 
-        v.polygon([
-            [350, 200],
-            [330, 250],
-            [350, 235],
-            [370, 250]
-        ], {
-            border: true,
-            fill: false,
-            lineJoin: 'round',
-            lineCap: 'round'
-        })
+        for (var i = 0; i < 100; i++) {
+            v.polygon([
+                [350, 200],
+                [330, 250],
+                [350, 235],
+                [370, 250]
+            ], {
+                border: true,
+                fill: false,
+                lineJoin: 'round',
+                lineCap: 'round'
+            })
+        }
     </script>
 
 

@@ -129,6 +129,43 @@ exports.default = steplizePoint;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+var scaleOrder = function scaleOrder() {
+    var pointsArr = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+    var scaleValue = arguments[1];
+
+    if (pointsArr[0] instanceof Array) {
+        return pointsArr.map(function (point) {
+            return [Math.round(point[0] * scaleValue[0]), Math.round(point[1] * scaleValue[1])];
+        });
+    }
+    return [Math.round(pointsArr[0] * scaleValue[0]), Math.round(pointsArr[1] * scaleValue[1])];
+};
+
+var scaleReverse = function scaleReverse() {
+    var pointsArr = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+    var scaleValue = arguments[1];
+
+    if (pointsArr[0] instanceof Array) {
+        return pointsArr.map(function (point) {
+            return [Math.round(point[0] / scaleValue[0]), Math.round(point[1] / scaleValue[1])];
+        });
+    }
+    return [Math.round(pointsArr[0] / scaleValue[0]), Math.round(pointsArr[1] / scaleValue[1])];
+};
+
+exports.scaleOrder = scaleOrder;
+exports.scaleReverse = scaleReverse;
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -181,43 +218,6 @@ var VisualObject = function () {
 exports.default = VisualObject;
 
 /***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-var scaleOrder = function scaleOrder() {
-    var pointsArr = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-    var scaleValue = arguments[1];
-
-    if (pointsArr[0] instanceof Array) {
-        return pointsArr.map(function (point) {
-            return [Math.round(point[0] * scaleValue[0]), Math.round(point[1] * scaleValue[1])];
-        });
-    }
-    return [Math.round(pointsArr[0] * scaleValue[0]), Math.round(pointsArr[1] * scaleValue[1])];
-};
-
-var scaleReverse = function scaleReverse() {
-    var pointsArr = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-    var scaleValue = arguments[1];
-
-    if (pointsArr[0] instanceof Array) {
-        return pointsArr.map(function (point) {
-            return [Math.round(point[0] / scaleValue[0]), Math.round(point[1] / scaleValue[1])];
-        });
-    }
-    return [Math.round(pointsArr[0] / scaleValue[0]), Math.round(pointsArr[1] / scaleValue[1])];
-};
-
-exports.scaleOrder = scaleOrder;
-exports.scaleReverse = scaleReverse;
-
-/***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -250,7 +250,7 @@ var _config = __webpack_require__(0);
 
 var _config2 = _interopRequireDefault(_config);
 
-var _visualEvent = __webpack_require__(14);
+var _visualEvent = __webpack_require__(15);
 
 var _visualEvent2 = _interopRequireDefault(_visualEvent);
 
@@ -395,7 +395,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _object = __webpack_require__(2);
+var _object = __webpack_require__(3);
 
 var _object2 = _interopRequireDefault(_object);
 
@@ -456,7 +456,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _object = __webpack_require__(2);
+var _object = __webpack_require__(3);
 
 var _object2 = _interopRequireDefault(_object);
 
@@ -550,7 +550,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _object = __webpack_require__(2);
+var _object = __webpack_require__(3);
 
 var _object2 = _interopRequireDefault(_object);
 
@@ -607,7 +607,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _object = __webpack_require__(2);
+var _object = __webpack_require__(3);
 
 var _object2 = _interopRequireDefault(_object);
 
@@ -680,7 +680,7 @@ var _drawCircle = __webpack_require__(13);
 
 var _drawCircle2 = _interopRequireDefault(_drawCircle);
 
-var _drawPolygon = __webpack_require__(19);
+var _drawPolygon = __webpack_require__(14);
 
 var _drawPolygon2 = _interopRequireDefault(_drawPolygon);
 
@@ -751,7 +751,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _scalelize = __webpack_require__(3);
+var _scalelize = __webpack_require__(2);
 
 var _config = __webpack_require__(0);
 
@@ -852,7 +852,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-var _scalelize = __webpack_require__(3);
+var _scalelize = __webpack_require__(2);
 
 var _config = __webpack_require__(0);
 
@@ -996,7 +996,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _scalelize = __webpack_require__(3);
+var _scalelize = __webpack_require__(2);
 
 var _config = __webpack_require__(0);
 
@@ -1052,6 +1052,114 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _scalelize = __webpack_require__(2);
+
+var _config = __webpack_require__(0);
+
+var _config2 = _interopRequireDefault(_config);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function DrawLine(Visual, obj) {
+    // console.log(obj);
+    var ctx = Visual.ctx;
+    // draw basic line
+    ctx.beginPath();
+    ctx.save();
+    var basicOptions = _config2.default.ctxStyleConfig;
+    Object.keys(basicOptions).forEach(function (key) {
+        ctx[key] = obj.options[key] || basicOptions[key];
+    });
+
+    var usePath = (0, _scalelize.scaleOrder)(obj.path, Visual.options.grid.scale);
+    var firstPoint = [];
+    usePath.forEach(function (item, index) {
+        if (index === 0) {
+            firstPoint = item;
+            ctx.moveTo(item[0], item[1]);
+        } else {
+            ctx.lineTo(item[0], item[1]);
+        }
+    });
+    ctx.lineTo(firstPoint[0], firstPoint[1]);
+
+    if (obj.options.fill !== false) {
+        ctx.fill();
+    }
+    if (obj.options.border) {
+        ctx.stroke();
+    }
+    ctx.restore();
+
+    if (obj && obj.isActive) {
+        ctx.canvas.style.cursor = 'pointer';
+        // console.log(obj.isActive)
+        ctx.save();
+        // draw base line
+        ctx.beginPath();
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = '#a7caff';
+        firstPoint = [];
+        usePath.forEach(function (item, index) {
+            if (index === 0) {
+                firstPoint = item;
+                ctx.moveTo(item[0], item[1]);
+            } else {
+                ctx.lineTo(item[0], item[1]);
+            }
+        });
+        ctx.lineTo(firstPoint[0], firstPoint[1]);
+        ctx.stroke();
+
+        // draw handle
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+        ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+        ctx.lineWidth = 2;
+        usePath.forEach(function (item) {
+            ctx.moveTo(item[0] + 4, item[1]);
+            ctx.arc(item[0], item[1], 4, 0, Math.PI * 2);
+        });
+        ctx.fill();
+        ctx.stroke();
+
+        //
+        if (obj.isActive.type === 'point' && obj.isActive.length < 10) {
+            var index = obj.isActive.index;
+            var point = usePath[index];
+
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+            ctx.fillStyle = '#fff';
+            ctx.arc(point[0], point[1], 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#fff';
+            ctx.fillStyle = '#3385ff';
+            ctx.arc(point[0], point[1], 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        ctx.restore();
+    }
+}
+
+exports.default = DrawLine;
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); /* globals window */
 
 
@@ -1059,7 +1167,7 @@ var _config = __webpack_require__(0);
 
 var _config2 = _interopRequireDefault(_config);
 
-var _match = __webpack_require__(20);
+var _match = __webpack_require__(16);
 
 var _match2 = _interopRequireDefault(_match);
 
@@ -1067,7 +1175,7 @@ var _steplize = __webpack_require__(1);
 
 var _steplize2 = _interopRequireDefault(_steplize);
 
-var _scalelize = __webpack_require__(3);
+var _scalelize = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1205,119 +1313,7 @@ var Event = function Event(self) {
 exports.default = Event;
 
 /***/ }),
-/* 15 */,
-/* 16 */,
-/* 17 */,
-/* 18 */,
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _scalelize = __webpack_require__(3);
-
-var _config = __webpack_require__(0);
-
-var _config2 = _interopRequireDefault(_config);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function DrawLine(Visual, obj) {
-    // console.log(obj);
-    var ctx = Visual.ctx;
-    // draw basic line
-    ctx.beginPath();
-    ctx.save();
-    var basicOptions = _config2.default.ctxStyleConfig;
-    Object.keys(basicOptions).forEach(function (key) {
-        ctx[key] = obj.options[key] || basicOptions[key];
-    });
-
-    var usePath = (0, _scalelize.scaleOrder)(obj.path, Visual.options.grid.scale);
-    var firstPoint = [];
-    usePath.forEach(function (item, index) {
-        if (index === 0) {
-            firstPoint = item;
-            ctx.moveTo(item[0], item[1]);
-        } else {
-            ctx.lineTo(item[0], item[1]);
-        }
-    });
-    ctx.lineTo(firstPoint[0], firstPoint[1]);
-
-    if (obj.options.fill !== false) {
-        ctx.fill();
-    }
-    if (obj.options.border) {
-        ctx.stroke();
-    }
-    ctx.restore();
-
-    if (obj && obj.isActive) {
-        ctx.canvas.style.cursor = 'pointer';
-        // console.log(obj.isActive)
-        ctx.save();
-        // draw base line
-        ctx.beginPath();
-        ctx.lineWidth = 4;
-        ctx.strokeStyle = '#a7caff';
-        firstPoint = [];
-        usePath.forEach(function (item, index) {
-            if (index === 0) {
-                firstPoint = item;
-                ctx.moveTo(item[0], item[1]);
-            } else {
-                ctx.lineTo(item[0], item[1]);
-            }
-        });
-        ctx.lineTo(firstPoint[0], firstPoint[1]);
-        ctx.stroke();
-
-        // draw handle
-        ctx.beginPath();
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
-        ctx.fillStyle = 'rgba(255, 255, 255, 1)';
-        ctx.lineWidth = 2;
-        usePath.forEach(function (item) {
-            ctx.moveTo(item[0] + 4, item[1]);
-            ctx.arc(item[0], item[1], 4, 0, Math.PI * 2);
-        });
-        ctx.fill();
-        ctx.stroke();
-
-        //
-        if (obj.isActive.type === 'point' && obj.isActive.length < 10) {
-            var index = obj.isActive.index;
-            var point = usePath[index];
-
-            ctx.beginPath();
-            ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
-            ctx.fillStyle = '#fff';
-            ctx.arc(point[0], point[1], 8, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-
-            ctx.beginPath();
-            ctx.strokeStyle = '#fff';
-            ctx.fillStyle = '#3385ff';
-            ctx.arc(point[0], point[1], 6, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-        }
-
-        ctx.restore();
-    }
-}
-
-exports.default = DrawLine;
-
-/***/ }),
-/* 20 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1331,19 +1327,19 @@ var _config = __webpack_require__(0);
 
 var _config2 = _interopRequireDefault(_config);
 
-var _matchLine = __webpack_require__(21);
+var _matchLine = __webpack_require__(17);
 
 var _matchLine2 = _interopRequireDefault(_matchLine);
 
-var _matchText = __webpack_require__(22);
+var _matchText = __webpack_require__(18);
 
 var _matchText2 = _interopRequireDefault(_matchText);
 
-var _matchCircle = __webpack_require__(23);
+var _matchCircle = __webpack_require__(19);
 
 var _matchCircle2 = _interopRequireDefault(_matchCircle);
 
-var _matchPolygon = __webpack_require__(24);
+var _matchPolygon = __webpack_require__(20);
 
 var _matchPolygon2 = _interopRequireDefault(_matchPolygon);
 
@@ -1387,7 +1383,7 @@ var MathTool = {
 exports.default = MathTool;
 
 /***/ }),
-/* 21 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1449,7 +1445,7 @@ var matchLine = function matchLine(P, datas, res) {
 exports.default = matchLine;
 
 /***/ }),
-/* 22 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1468,10 +1464,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var debug = !true; /* globals document window */
 
 var textCanvas = document.createElement('canvas');
-textCanvas.width = 2000;
-textCanvas.height = 2000;
-textCanvas.style.width = '2000px';
-textCanvas.style.height = '2000px';
+textCanvas.width = 1;
+textCanvas.height = 1;
+textCanvas.style.width = '1px';
+textCanvas.style.height = '1px';
 var textCtx = textCanvas.getContext('2d');
 
 if (debug) {
@@ -1548,7 +1544,7 @@ var matchText = function matchText(P, datas, res) {
 exports.default = matchText;
 
 /***/ }),
-/* 23 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1573,7 +1569,7 @@ var matchCircle = function matchCircle(P, datas, res) {
 exports.default = matchCircle;
 
 /***/ }),
-/* 24 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1585,10 +1581,10 @@ Object.defineProperty(exports, "__esModule", {
 /* globals document */
 
 var textCanvas = document.createElement('canvas');
-textCanvas.width = 2000;
-textCanvas.height = 2000;
-textCanvas.style.width = '2000px';
-textCanvas.style.height = '2000px';
+textCanvas.width = 1;
+textCanvas.height = 1;
+textCanvas.style.width = '1px';
+textCanvas.style.height = '1px';
 var ctx = textCanvas.getContext('2d');
 
 var matchPolygon = function matchPolygon(P, datas, res) {
