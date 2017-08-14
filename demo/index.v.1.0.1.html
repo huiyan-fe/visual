@@ -16,7 +16,11 @@
     <div id="content" style="width:500px; height: 500px; border:1px solid #ccc;"></div>
     <script>
         let dom = document.getElementById('content');
-        let v = new Visual(dom);
+        let v = new Visual(dom, {
+            grid: {
+                step: 10,
+            }
+        });
 
         v.line([
             [0, 0],

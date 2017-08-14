@@ -9,7 +9,7 @@ import VPolygon from './object/polygon';
 import Draw from './draw/draw';
 import Config from './config/config';
 
-import Event from './visual-event';
+import Event from './event/visual-event';
 
 const initCanvas = Symbol('initCanvas');
 

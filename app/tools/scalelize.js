@@ -1,4 +1,4 @@
-const scaleOrder = (pointsArr = [], scaleValue) => {
+const scaleOrder = (pointsArr = [], scaleValue = [1, 1]) => {
     if (pointsArr[0] instanceof Array) {
         return pointsArr.map(point => [
             Math.round(point[0] * scaleValue[0]),
@@ -11,7 +11,7 @@ const scaleOrder = (pointsArr = [], scaleValue) => {
     ];
 };
 
-const scaleReverse = (pointsArr = [], scaleValue) => {
+const scaleReverse = (pointsArr = [], scaleValue = [1, 1]) => {
     if (pointsArr[0] instanceof Array) {
         return pointsArr.map(point => [
             Math.round(point[0] / scaleValue[0]),
