@@ -106,14 +106,18 @@ function DrawText(Visual, obj) {
         ctx.restore();
 
         ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(operate.rotate);
         ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
-        ctx.fillStyle = 'rgba(255, 255, 255, 1)';
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
-        ctx.fillStyle = '#fff';
-        ctx.arc(x, y, 4, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.strokeStyle = '#d6d6d6';
+        ctx.moveTo(-4, -4);
+        ctx.rect(-4, -4, 8, 8);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.strokeStyle = '#333';
+        ctx.moveTo(-3, -3);
+        ctx.rect(-3, -3, 6, 6);
         ctx.stroke();
         ctx.restore();
     }

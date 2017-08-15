@@ -74,7 +74,6 @@ const Event = self => {
 
                 const snapShootPath = pickupedObj[0].pathSnapshoot;
                 const moveObject = pickupedObj[0].origin;
-
                 move(moveObject, snapShootPath, movedPos, step);
             }
             e.preventDefault();
