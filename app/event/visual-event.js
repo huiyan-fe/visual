@@ -13,8 +13,11 @@ const Event = self => {
     const step = self.options.grid.step;
 
     canvas.addEventListener('mousedown', e => {
-        const x = e.offsetX;
-        const y = e.offsetY;
+        let x = e.offsetX;
+        let y = e.offsetY;
+        [x, y] = scaleReverse([
+            [x, y],
+        ], self.options.grid.scale)[0];
         hoveredObj = MatchTool.match([x, y], self.sys.objects);
 
         if (hoveredObj.length >= 1) {
@@ -51,15 +54,13 @@ const Event = self => {
         if (pickupedObj.length === 0) {
             x = e.offsetX;
             y = e.offsetY;
+            [x, y] = scaleReverse([
+                [x, y],
+            ], self.options.grid.scale)[0];
             if (e.target !== canvas) {
                 x = -999;
                 y = -999;
             }
-
-            [x, y] = scaleReverse([
-                [x, y],
-            ], self.options.grid.scale)[0];
-
             hoveredObj = MatchTool.match([x, y], self.sys.objects);
         } else {
             if (mousedownPos.length > 0) {

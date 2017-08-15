@@ -1,4 +1,3 @@
-import { scaleOrder } from '../tools/scalelize';
 import config from '../config/config';
 
 function DrawLine(Visual, obj) {
@@ -15,7 +14,7 @@ function DrawLine(Visual, obj) {
     Object.keys(obj.options).forEach(key => {
         ctx[key] = obj.options[key];
     });
-    const usePath = scaleOrder(obj.path, Visual.options.grid.scale);
+    const usePath = obj.path;
     usePath.forEach((item, index) => {
         if (index === 0) {
             ctx.moveTo(item[0], item[1]);

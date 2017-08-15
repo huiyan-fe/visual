@@ -1,12 +1,11 @@
-import { scaleOrder } from '../tools/scalelize';
 import config from '../config/config';
 
 function DrawText(Visual, obj) {
     // console.warn('a', obj.options);
     const ctx = Visual.ctx;
 
-    let x = obj.center[0];
-    let y = obj.center[1];
+    const x = obj.center[0];
+    const y = obj.center[1];
 
     // text
     ctx.beginPath();
@@ -30,7 +29,6 @@ function DrawText(Visual, obj) {
 
 
     ctx.font = `${ctx.fontSize}px ${(obj.options.fontFamily || undefined)}`;
-    [x, y] = scaleOrder([x, y], Visual.options.grid.scale);
     ctx.translate(x, y);
     if (operate.textRotate || operate.splitText) {
         // console.log(operate.textRotate);

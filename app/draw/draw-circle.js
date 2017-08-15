@@ -1,4 +1,4 @@
-import { scaleOrder } from '../tools/scalelize';
+
 import config from '../config/config';
 
 function DrawLine(Visual, obj) {
@@ -9,7 +9,6 @@ function DrawLine(Visual, obj) {
         ctx[key] = obj.options[key] || basicOptions[key];
     });
 
-    scaleOrder(obj.center, Visual.options.grid.scale);
     ctx.beginPath();
     ctx.save();
     ctx.arc(obj.center[0], obj.center[1], obj.redius, 0, Math.PI * 2);

@@ -37,6 +37,7 @@ class Visual {
         };
         Object.assign(basicOptions, options);
         this.options = basicOptions;
+        // console.log(this.options)
 
         //
         this.dom = dom;
@@ -56,8 +57,9 @@ class Visual {
         this.canvas.style.width = this.width;
         this.canvas.style.height = this.height;
         this.ctx = this.canvas.getContext('2d');
-        this.ctx.scale(pixelRatio, pixelRatio);
-
+        const xScale = this.options.grid.scale[0];
+        const yScale = this.options.grid.scale[1];
+        this.ctx.scale(pixelRatio * xScale, pixelRatio * yScale);
         this.dom.appendChild(this.canvas);
     }
 

@@ -288,6 +288,7 @@ var Visual = function () {
         };
         Object.assign(basicOptions, options);
         this.options = basicOptions;
+        // console.log(this.options)
 
         //
         this.dom = dom;
@@ -309,8 +310,9 @@ var Visual = function () {
             this.canvas.style.width = this.width;
             this.canvas.style.height = this.height;
             this.ctx = this.canvas.getContext('2d');
-            this.ctx.scale(pixelRatio, pixelRatio);
-
+            var xScale = this.options.grid.scale[0];
+            var yScale = this.options.grid.scale[1];
+            this.ctx.scale(pixelRatio * xScale, pixelRatio * yScale);
             this.dom.appendChild(this.canvas);
         }
     }, {
@@ -786,8 +788,6 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _scalelize = __webpack_require__(2);
-
 var _config = __webpack_require__(0);
 
 var _config2 = _interopRequireDefault(_config);
@@ -808,7 +808,7 @@ function DrawLine(Visual, obj) {
     Object.keys(obj.options).forEach(function (key) {
         ctx[key] = obj.options[key];
     });
-    var usePath = (0, _scalelize.scaleOrder)(obj.path, Visual.options.grid.scale);
+    var usePath = obj.path;
     usePath.forEach(function (item, index) {
         if (index === 0) {
             ctx.moveTo(item[0], item[1]);
@@ -885,10 +885,6 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-var _scalelize = __webpack_require__(2);
-
 var _config = __webpack_require__(0);
 
 var _config2 = _interopRequireDefault(_config);
@@ -921,14 +917,6 @@ function DrawText(Visual, obj) {
     });
 
     ctx.font = ctx.fontSize + 'px ' + (obj.options.fontFamily || undefined);
-
-    var _scaleOrder = (0, _scalelize.scaleOrder)([x, y], Visual.options.grid.scale);
-
-    var _scaleOrder2 = _slicedToArray(_scaleOrder, 2);
-
-    x = _scaleOrder2[0];
-    y = _scaleOrder2[1];
-
     ctx.translate(x, y);
     if (operate.textRotate || operate.splitText) {
         // console.log(operate.textRotate);
@@ -1031,8 +1019,6 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _scalelize = __webpack_require__(2);
-
 var _config = __webpack_require__(0);
 
 var _config2 = _interopRequireDefault(_config);
@@ -1047,7 +1033,6 @@ function DrawLine(Visual, obj) {
         ctx[key] = obj.options[key] || basicOptions[key];
     });
 
-    (0, _scalelize.scaleOrder)(obj.center, Visual.options.grid.scale);
     ctx.beginPath();
     ctx.save();
     ctx.arc(obj.center[0], obj.center[1], obj.redius, 0, Math.PI * 2);
@@ -1087,8 +1072,6 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _scalelize = __webpack_require__(2);
-
 var _config = __webpack_require__(0);
 
 var _config2 = _interopRequireDefault(_config);
@@ -1106,7 +1089,7 @@ function DrawLine(Visual, obj) {
         ctx[key] = obj.options[key] || basicOptions[key];
     });
 
-    var usePath = (0, _scalelize.scaleOrder)(obj.path, Visual.options.grid.scale);
+    var usePath = obj.path;
     var firstPoint = [];
     usePath.forEach(function (item, index) {
         if (index === 0) {
@@ -1228,6 +1211,12 @@ var Event = function Event(self) {
     canvas.addEventListener('mousedown', function (e) {
         var x = e.offsetX;
         var y = e.offsetY;
+
+        var _scaleReverse$ = _slicedToArray((0, _scalelize.scaleReverse)([[x, y]], self.options.grid.scale)[0], 2);
+
+        x = _scaleReverse$[0];
+        y = _scaleReverse$[1];
+
         hoveredObj = _match2.default.match([x, y], self.sys.objects);
 
         if (hoveredObj.length >= 1) {
@@ -1262,27 +1251,26 @@ var Event = function Event(self) {
         if (pickupedObj.length === 0) {
             x = e.offsetX;
             y = e.offsetY;
+
+            var _scaleReverse$2 = _slicedToArray((0, _scalelize.scaleReverse)([[x, y]], self.options.grid.scale)[0], 2);
+
+            x = _scaleReverse$2[0];
+            y = _scaleReverse$2[1];
+
             if (e.target !== canvas) {
                 x = -999;
                 y = -999;
             }
-
-            var _scaleReverse$ = _slicedToArray((0, _scalelize.scaleReverse)([[x, y]], self.options.grid.scale)[0], 2);
-
-            x = _scaleReverse$[0];
-            y = _scaleReverse$[1];
-
-
             hoveredObj = _match2.default.match([x, y], self.sys.objects);
         } else {
             if (mousedownPos.length > 0) {
                 x = e.pageX;
                 y = e.pageY;
 
-                var _scaleReverse$2 = _slicedToArray((0, _scalelize.scaleReverse)([[x, y]], self.options.grid.scale)[0], 2);
+                var _scaleReverse$3 = _slicedToArray((0, _scalelize.scaleReverse)([[x, y]], self.options.grid.scale)[0], 2);
 
-                x = _scaleReverse$2[0];
-                y = _scaleReverse$2[1];
+                x = _scaleReverse$3[0];
+                y = _scaleReverse$3[1];
 
                 var movedPos = [x - mousedownPos[0], y - mousedownPos[1]];
                 movedPos = (0, _steplize2.default)(movedPos, step);
