@@ -87,6 +87,21 @@ const Event = self => {
             pickupedObj[0].origin.data.object.emit('finish', {
                 object: pickupedObj[0].origin.data,
             });
+            // update
+            let pathSnapshoot;
+            switch (pickupedObj[0].origin.data.type) {
+                case Config.objectTypes.line:
+                case Config.objectTypes.polygon:
+                    pathSnapshoot = pickupedObj[0].origin.data.path;
+                    break;
+                case Config.objectTypes.text:
+                case Config.objectTypes.circle:
+                    pathSnapshoot = pickupedObj[0].origin.data.center;
+                    break;
+                default:
+            }
+            pathSnapshoot = JSON.parse(JSON.stringify(pathSnapshoot));
+            pickupedObj[0].pathSnapshoot = pathSnapshoot;
         }
         // pickupedObj = [];
         hoveredObj = [];
@@ -100,6 +115,7 @@ const Event = self => {
             let y = 0;
             switch (e.keyCode) {
                 case 27:
+                    // esc
                     pickupedObj = [];
                     hoveredObj = MatchTool.match([-99999, -99999], self.sys.objects);
                     order = 'cancel';
@@ -142,6 +158,10 @@ const Event = self => {
                 }
                 pathSnapshoot = JSON.parse(JSON.stringify(pathSnapshoot));
                 pickupedObj[0].pathSnapshoot = pathSnapshoot;
+
+                pickupedObj[0].origin.data.object.emit('finish', {
+                    object: pickupedObj[0].origin.data,
+                });
             }
             self.draw();
         }

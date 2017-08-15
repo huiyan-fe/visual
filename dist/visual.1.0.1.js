@@ -250,7 +250,7 @@ var _config = __webpack_require__(0);
 
 var _config2 = _interopRequireDefault(_config);
 
-var _visualEvent = __webpack_require__(21);
+var _visualEvent = __webpack_require__(15);
 
 var _visualEvent2 = _interopRequireDefault(_visualEvent);
 
@@ -1185,7 +1185,207 @@ function DrawLine(Visual, obj) {
 exports.default = DrawLine;
 
 /***/ }),
-/* 15 */,
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); /* globals window */
+
+
+var _config = __webpack_require__(0);
+
+var _config2 = _interopRequireDefault(_config);
+
+var _match = __webpack_require__(16);
+
+var _match2 = _interopRequireDefault(_match);
+
+var _steplize = __webpack_require__(1);
+
+var _steplize2 = _interopRequireDefault(_steplize);
+
+var _scalelize = __webpack_require__(2);
+
+var _move = __webpack_require__(21);
+
+var _move2 = _interopRequireDefault(_move);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Event = function Event(self) {
+    var canvas = self.canvas;
+    var mousedownPos = [];
+    var hoveredObj = [];
+    var pickupedObj = [];
+    var step = self.options.grid.step;
+
+    canvas.addEventListener('mousedown', function (e) {
+        var x = e.offsetX;
+        var y = e.offsetY;
+        hoveredObj = _match2.default.match([x, y], self.sys.objects);
+
+        if (hoveredObj.length >= 1) {
+            var pathSnapshoot = void 0;
+            switch (hoveredObj[0].data.type) {
+                case _config2.default.objectTypes.line:
+                case _config2.default.objectTypes.polygon:
+                    pathSnapshoot = hoveredObj[0].data.path;
+                    break;
+                case _config2.default.objectTypes.text:
+                case _config2.default.objectTypes.circle:
+                    pathSnapshoot = hoveredObj[0].data.center;
+                    break;
+                default:
+            }
+            pathSnapshoot = JSON.parse(JSON.stringify(pathSnapshoot));
+
+            pickupedObj = [{
+                pathSnapshoot: pathSnapshoot,
+                origin: hoveredObj[0]
+            }];
+            mousedownPos = (0, _scalelize.scaleReverse)([[e.pageX, e.pageY]], self.options.grid.scale)[0];
+        } else {
+            pickupedObj = [];
+        }
+        self.draw();
+    });
+
+    window.addEventListener('mousemove', function (e) {
+        var x = 0;
+        var y = 0;
+        if (pickupedObj.length === 0) {
+            x = e.offsetX;
+            y = e.offsetY;
+            if (e.target !== canvas) {
+                x = -999;
+                y = -999;
+            }
+
+            var _scaleReverse$ = _slicedToArray((0, _scalelize.scaleReverse)([[x, y]], self.options.grid.scale)[0], 2);
+
+            x = _scaleReverse$[0];
+            y = _scaleReverse$[1];
+
+
+            hoveredObj = _match2.default.match([x, y], self.sys.objects);
+        } else {
+            if (mousedownPos.length > 0) {
+                x = e.pageX;
+                y = e.pageY;
+
+                var _scaleReverse$2 = _slicedToArray((0, _scalelize.scaleReverse)([[x, y]], self.options.grid.scale)[0], 2);
+
+                x = _scaleReverse$2[0];
+                y = _scaleReverse$2[1];
+
+                var movedPos = [x - mousedownPos[0], y - mousedownPos[1]];
+                movedPos = (0, _steplize2.default)(movedPos, step);
+
+                var snapShootPath = pickupedObj[0].pathSnapshoot;
+                var moveObject = pickupedObj[0].origin;
+
+                (0, _move2.default)(moveObject, snapShootPath, movedPos, step);
+            }
+            e.preventDefault();
+        }
+        self.draw();
+    });
+
+    window.addEventListener('mouseup', function () {
+        if (pickupedObj.length > 0) {
+            pickupedObj[0].origin.data.object.emit('finish', {
+                object: pickupedObj[0].origin.data
+            });
+            // update
+            var pathSnapshoot = void 0;
+            switch (pickupedObj[0].origin.data.type) {
+                case _config2.default.objectTypes.line:
+                case _config2.default.objectTypes.polygon:
+                    pathSnapshoot = pickupedObj[0].origin.data.path;
+                    break;
+                case _config2.default.objectTypes.text:
+                case _config2.default.objectTypes.circle:
+                    pathSnapshoot = pickupedObj[0].origin.data.center;
+                    break;
+                default:
+            }
+            pathSnapshoot = JSON.parse(JSON.stringify(pathSnapshoot));
+            pickupedObj[0].pathSnapshoot = pathSnapshoot;
+        }
+        // pickupedObj = [];
+        hoveredObj = [];
+        mousedownPos = [];
+    });
+
+    window.addEventListener('keydown', function (e) {
+        if (pickupedObj.length > 0) {
+            var order = 'update';
+            var x = 0;
+            var y = 0;
+            switch (e.keyCode) {
+                case 27:
+                    // esc
+                    pickupedObj = [];
+                    hoveredObj = _match2.default.match([-99999, -99999], self.sys.objects);
+                    order = 'cancel';
+                    break;
+                case 37:
+                    // left
+                    x = -1;
+                    break;
+                case 38:
+                    // top
+                    y = -1;
+                    break;
+                case 39:
+                    // right
+                    x = 1;
+                    break;
+                case 40:
+                    // bottom
+                    y = 1;
+                    break;
+                default:
+            }
+
+            if (order === 'update') {
+                var snapShootPath = pickupedObj[0].pathSnapshoot;
+                var moveObject = pickupedObj[0].origin;
+                (0, _move2.default)(moveObject, snapShootPath, [x * step, y * step], step);
+
+                var pathSnapshoot = void 0;
+                switch (pickupedObj[0].origin.data.type) {
+                    case _config2.default.objectTypes.line:
+                    case _config2.default.objectTypes.polygon:
+                        pathSnapshoot = pickupedObj[0].origin.data.path;
+                        break;
+                    case _config2.default.objectTypes.text:
+                    case _config2.default.objectTypes.circle:
+                        pathSnapshoot = pickupedObj[0].origin.data.center;
+                        break;
+                    default:
+                }
+                pathSnapshoot = JSON.parse(JSON.stringify(pathSnapshoot));
+                pickupedObj[0].pathSnapshoot = pathSnapshoot;
+
+                pickupedObj[0].origin.data.object.emit('finish', {
+                    object: pickupedObj[0].origin.data
+                });
+            }
+            self.draw();
+        }
+    });
+};
+
+exports.default = Event;
+
+/***/ }),
 /* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1513,187 +1713,6 @@ exports.default = matchPolygon;
 
 /***/ }),
 /* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); /* globals window */
-
-
-var _config = __webpack_require__(0);
-
-var _config2 = _interopRequireDefault(_config);
-
-var _match = __webpack_require__(16);
-
-var _match2 = _interopRequireDefault(_match);
-
-var _steplize = __webpack_require__(1);
-
-var _steplize2 = _interopRequireDefault(_steplize);
-
-var _scalelize = __webpack_require__(2);
-
-var _move = __webpack_require__(22);
-
-var _move2 = _interopRequireDefault(_move);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var Event = function Event(self) {
-    var canvas = self.canvas;
-    var mousedownPos = [];
-    var hoveredObj = [];
-    var pickupedObj = [];
-    var step = self.options.grid.step;
-
-    canvas.addEventListener('mousedown', function (e) {
-        var x = e.offsetX;
-        var y = e.offsetY;
-        hoveredObj = _match2.default.match([x, y], self.sys.objects);
-
-        if (hoveredObj.length >= 1) {
-            var pathSnapshoot = void 0;
-            switch (hoveredObj[0].data.type) {
-                case _config2.default.objectTypes.line:
-                case _config2.default.objectTypes.polygon:
-                    pathSnapshoot = hoveredObj[0].data.path;
-                    break;
-                case _config2.default.objectTypes.text:
-                case _config2.default.objectTypes.circle:
-                    pathSnapshoot = hoveredObj[0].data.center;
-                    break;
-                default:
-            }
-            pathSnapshoot = JSON.parse(JSON.stringify(pathSnapshoot));
-
-            pickupedObj = [{
-                pathSnapshoot: pathSnapshoot,
-                origin: hoveredObj[0]
-            }];
-            mousedownPos = (0, _scalelize.scaleReverse)([[e.pageX, e.pageY]], self.options.grid.scale)[0];
-        } else {
-            pickupedObj = [];
-        }
-        self.draw();
-    });
-
-    window.addEventListener('mousemove', function (e) {
-        var x = 0;
-        var y = 0;
-        if (pickupedObj.length === 0) {
-            x = e.offsetX;
-            y = e.offsetY;
-            if (e.target !== canvas) {
-                x = -999;
-                y = -999;
-            }
-
-            var _scaleReverse$ = _slicedToArray((0, _scalelize.scaleReverse)([[x, y]], self.options.grid.scale)[0], 2);
-
-            x = _scaleReverse$[0];
-            y = _scaleReverse$[1];
-
-
-            hoveredObj = _match2.default.match([x, y], self.sys.objects);
-        } else {
-            if (mousedownPos.length > 0) {
-                x = e.pageX;
-                y = e.pageY;
-
-                var _scaleReverse$2 = _slicedToArray((0, _scalelize.scaleReverse)([[x, y]], self.options.grid.scale)[0], 2);
-
-                x = _scaleReverse$2[0];
-                y = _scaleReverse$2[1];
-
-                var movedPos = [x - mousedownPos[0], y - mousedownPos[1]];
-                movedPos = (0, _steplize2.default)(movedPos, step);
-
-                var snapShootPath = pickupedObj[0].pathSnapshoot;
-                var moveObject = pickupedObj[0].origin;
-
-                (0, _move2.default)(moveObject, snapShootPath, movedPos, step);
-            }
-            e.preventDefault();
-        }
-        self.draw();
-    });
-
-    window.addEventListener('mouseup', function () {
-        if (pickupedObj.length > 0) {
-            pickupedObj[0].origin.data.object.emit('finish', {
-                object: pickupedObj[0].origin.data
-            });
-        }
-        // pickupedObj = [];
-        hoveredObj = [];
-        mousedownPos = [];
-    });
-
-    window.addEventListener('keydown', function (e) {
-        if (pickupedObj.length > 0) {
-            var order = 'update';
-            var x = 0;
-            var y = 0;
-            switch (e.keyCode) {
-                case 27:
-                    pickupedObj = [];
-                    hoveredObj = _match2.default.match([-99999, -99999], self.sys.objects);
-                    order = 'cancel';
-                    break;
-                case 37:
-                    // left
-                    x = -1;
-                    break;
-                case 38:
-                    // top
-                    y = -1;
-                    break;
-                case 39:
-                    // right
-                    x = 1;
-                    break;
-                case 40:
-                    // bottom
-                    y = 1;
-                    break;
-                default:
-            }
-
-            if (order === 'update') {
-                var snapShootPath = pickupedObj[0].pathSnapshoot;
-                var moveObject = pickupedObj[0].origin;
-                (0, _move2.default)(moveObject, snapShootPath, [x * step, y * step], step);
-
-                var pathSnapshoot = void 0;
-                switch (pickupedObj[0].origin.data.type) {
-                    case _config2.default.objectTypes.line:
-                    case _config2.default.objectTypes.polygon:
-                        pathSnapshoot = pickupedObj[0].origin.data.path;
-                        break;
-                    case _config2.default.objectTypes.text:
-                    case _config2.default.objectTypes.circle:
-                        pathSnapshoot = pickupedObj[0].origin.data.center;
-                        break;
-                    default:
-                }
-                pathSnapshoot = JSON.parse(JSON.stringify(pathSnapshoot));
-                pickupedObj[0].pathSnapshoot = pathSnapshoot;
-            }
-            self.draw();
-        }
-    });
-};
-
-exports.default = Event;
-
-/***/ }),
-/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
