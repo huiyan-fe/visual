@@ -56,14 +56,12 @@ function DrawLine(Visual, obj) {
         ctx.beginPath();
         ctx.strokeStyle = '#d6d6d6';
         usePath.forEach(item => {
-            ctx.moveTo(item[0] - 4, item[1] - 4);
             ctx.rect(item[0] - 4, item[1] - 4, 8, 8);
         });
         ctx.stroke();
         ctx.beginPath();
         ctx.strokeStyle = '#333';
         usePath.forEach(item => {
-            ctx.moveTo(item[0] - 3, item[1] - 3);
             ctx.rect(item[0] - 3, item[1] - 3, 6, 6);
         });
         ctx.stroke();
@@ -75,7 +73,7 @@ function DrawLine(Visual, obj) {
             ctx.beginPath();
             ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
             ctx.fillStyle = '#fff';
-            ctx.arc(point[0], point[1], 8, 0, Math.PI * 2);
+            ctx.rect(point[0] - 6, point[1] - 6, 12, 12, Math.PI * 2);
             ctx.stroke();
         }
 

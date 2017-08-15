@@ -71,7 +71,6 @@ const Event = self => {
                 ], self.options.grid.scale)[0];
                 let movedPos = [x - mousedownPos[0], y - mousedownPos[1]];
                 movedPos = steplizePoint(movedPos, step);
-
                 const snapShootPath = pickupedObj[0].pathSnapshoot;
                 const moveObject = pickupedObj[0].origin;
                 move(moveObject, snapShootPath, movedPos, step);

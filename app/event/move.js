@@ -42,7 +42,12 @@ const move = (moveObject, snapShootPath, movedPos, step) => {
             }
             // update outBox
             const sys = moveObject.data.sys;
-            const outBox = sys.outBox;
+            const outBox = {
+                xMin: Infinity,
+                xMax: -Infinity,
+                yMin: Infinity,
+                yMax: -Infinity,
+            };
             newPath = moveObject.data.path;
             newPath.forEach(point => {
                 outBox.xMin = Math.min(outBox.xMin, point[0]);
