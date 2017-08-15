@@ -9,11 +9,12 @@
 
 ## API
 
-### 1. Visual(dmo)
+### 1. Visual(dmo, options)
 
 |参数|类型|说明|
 |:---|:---|:---|
 | **dom** | `HTMLDocument` | 指定Visual的父元素 |
+| **options** | `Object` | 配置 |
 
 想要初始化Visual,可以通过`new Visual(dom)`来进行
 
@@ -23,6 +24,14 @@
 let dom = document.getElementById('content');
 let visual = new Visual(dom);
 ```
+
+### 1.1 Visual Options
+|参数|类型|说明|
+|:---|:---|:---|
+| **options** | `HTMLDocument` | 配置 |
+| **options.grid** | `Object` | visual的网格属性 |
+| **options.grid.step** | `Number` | visual的网格步长，默认为1 |
+| **options.grid.scale** | `Array` | visual的网格缩放属性，默认为[1,1] |
 
 ### 2. Visual Object
 
