@@ -114,7 +114,29 @@ const Event = self => {
             let order = 'update';
             let x = 0;
             let y = 0;
+
             switch (e.keyCode) {
+                case 9:
+                    order = 'cancel';
+                    let index = pickupedObj[0].origin.index;
+                    if (index === undefined) {
+                        index = -1;
+                    }
+                    if (e.shiftKey) {
+                        index -= 1;
+                    } else {
+                        index += 1;
+                    }
+                    if (index > pickupedObj[0].origin.data.path.length - 1) {
+                        index = 0;
+                    }
+                    if (index < 0) {
+                        index = pickupedObj[0].origin.data.path.length - 1;
+                    }
+                    pickupedObj[0].origin.index = index;
+                    pickupedObj[0].origin.type = 'point';
+                    e.preventDefault();
+                    break;
                 case 8:
                     // delete
                     deleteObj(pickupedObj[0]);
@@ -150,20 +172,22 @@ const Event = self => {
 
 
             // update snapshoot
-            let pathSnapshoot;
-            switch (pickupedObj[0].origin.data.type) {
-                case Config.objectTypes.line:
-                case Config.objectTypes.polygon:
-                    pathSnapshoot = pickupedObj[0].origin.data.path;
-                    break;
-                case Config.objectTypes.text:
-                case Config.objectTypes.circle:
-                    pathSnapshoot = pickupedObj[0].origin.data.center;
-                    break;
-                default:
+            if (pickupedObj.length > 0) {
+                let pathSnapshoot;
+                switch (pickupedObj[0].origin.data.type) {
+                    case Config.objectTypes.line:
+                    case Config.objectTypes.polygon:
+                        pathSnapshoot = pickupedObj[0].origin.data.path;
+                        break;
+                    case Config.objectTypes.text:
+                    case Config.objectTypes.circle:
+                        pathSnapshoot = pickupedObj[0].origin.data.center;
+                        break;
+                    default:
+                }
+                pathSnapshoot = JSON.parse(JSON.stringify(pathSnapshoot));
+                pickupedObj[0].pathSnapshoot = pathSnapshoot;
             }
-            pathSnapshoot = JSON.parse(JSON.stringify(pathSnapshoot));
-            pickupedObj[0].pathSnapshoot = pathSnapshoot;
 
             if (order === 'update') {
                 const snapShootPath = pickupedObj[0].pathSnapshoot;

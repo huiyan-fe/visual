@@ -3130,7 +3130,29 @@ var Event = function Event(self) {
             var order = 'update';
             var x = 0;
             var y = 0;
+
             switch (e.keyCode) {
+                case 9:
+                    order = 'cancel';
+                    var index = pickupedObj[0].origin.index;
+                    if (index === undefined) {
+                        index = -1;
+                    }
+                    if (e.shiftKey) {
+                        index -= 1;
+                    } else {
+                        index += 1;
+                    }
+                    if (index > pickupedObj[0].origin.data.path.length - 1) {
+                        index = 0;
+                    }
+                    if (index < 0) {
+                        index = pickupedObj[0].origin.data.path.length - 1;
+                    }
+                    pickupedObj[0].origin.index = index;
+                    pickupedObj[0].origin.type = 'point';
+                    e.preventDefault();
+                    break;
                 case 8:
                     // delete
                     (0, _delete2.default)(pickupedObj[0]);
@@ -3165,20 +3187,22 @@ var Event = function Event(self) {
             }
 
             // update snapshoot
-            var pathSnapshoot = void 0;
-            switch (pickupedObj[0].origin.data.type) {
-                case _config2.default.objectTypes.line:
-                case _config2.default.objectTypes.polygon:
-                    pathSnapshoot = pickupedObj[0].origin.data.path;
-                    break;
-                case _config2.default.objectTypes.text:
-                case _config2.default.objectTypes.circle:
-                    pathSnapshoot = pickupedObj[0].origin.data.center;
-                    break;
-                default:
+            if (pickupedObj.length > 0) {
+                var pathSnapshoot = void 0;
+                switch (pickupedObj[0].origin.data.type) {
+                    case _config2.default.objectTypes.line:
+                    case _config2.default.objectTypes.polygon:
+                        pathSnapshoot = pickupedObj[0].origin.data.path;
+                        break;
+                    case _config2.default.objectTypes.text:
+                    case _config2.default.objectTypes.circle:
+                        pathSnapshoot = pickupedObj[0].origin.data.center;
+                        break;
+                    default:
+                }
+                pathSnapshoot = JSON.parse((0, _stringify2.default)(pathSnapshoot));
+                pickupedObj[0].pathSnapshoot = pathSnapshoot;
             }
-            pathSnapshoot = JSON.parse((0, _stringify2.default)(pathSnapshoot));
-            pickupedObj[0].pathSnapshoot = pathSnapshoot;
 
             if (order === 'update') {
                 var snapShootPath = pickupedObj[0].pathSnapshoot;

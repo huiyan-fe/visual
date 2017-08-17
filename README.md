@@ -21,7 +21,7 @@
 3. [Visual Event](#3-visual-event)
 	* [change](#31-change)
 	* [finish](#32-finish)
-	* [willDeletePoint](#33-willDeletePoint)
+	* [willDeletePoint](#33-willdeletepoint)
 	
 
 ### 1. Visual(dmo, options)
