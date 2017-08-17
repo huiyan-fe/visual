@@ -40,6 +40,9 @@ let dom = document.getElementById('content');
 let visual = new Visual(dom);
 ```
 
+[在线Demo](https://jsfiddle.net/zhuwenlong/5011tco8/4/)
+
+
 ### 1.1 Visual Options
 |参数|类型|说明|
 |:---|:---|:---|
@@ -94,6 +97,8 @@ visual.text('Hello Mofei', [200, 400], {
 	textRotate: Math.PI * .25
 })
 ```
+
+[在线Demo](https://jsfiddle.net/zhuwenlong/1kbp4z95/1/)
 
 #### 2.3 circle(redis, center, config)
 
@@ -154,6 +159,8 @@ cir.on('change', (obj) => {
 |:---|:---|:---|:---|
 |object|Visual Object| - |当前移动的对象
 
+[在线Demo](https://jsfiddle.net/zhuwenlong/qnjqL9my/)
+
 #### 3.1.1 change for line[Object]
 
 line类型的change事件返回以下参数:
@@ -182,3 +189,6 @@ line类型的change事件返回以下参数:
 |:---|:---|:---|:---|
 |object|Visual Object| - |当前移动的对象
 |index|Number| - | 当前准备删除的点对应的索引号
+
+[在线Demo(首尾点不能被删除)](https://jsfiddle.net/zhuwenlong/rpomufsb/1/)
+
