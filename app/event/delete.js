@@ -1,3 +1,5 @@
+import Config from '../config/config';
+
 const deleteObject = object => {
     // let candelete = object.origin
     const deleteObj = object.origin.data.object;
@@ -9,8 +11,10 @@ const deleteObject = object => {
         }) !== false;
     }
 
+
+    const minPoint = object.origin.data.type === Config.objectTypes.polygon ? 3 : 2;
     if (candelete) {
-        if (object.origin.type === 'point' && object.origin.data.path.length > 2) {
+        if (object.origin.type === 'point' && object.origin.data.path.length > minPoint) {
             object.origin.data.path.splice(object.origin.index, 1);
             if (object.origin.index > object.origin.data.path.length - 1) {
                 object.origin.index--;
