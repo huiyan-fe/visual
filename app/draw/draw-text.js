@@ -89,7 +89,7 @@ function DrawText(Visual, obj) {
                 break;
             default:
                 heightOffset = (height / 2);
-                console.log(ctx.textBaseline);
+                // console.log(ctx.textBaseline);
         }
 
 

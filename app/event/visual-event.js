@@ -4,6 +4,7 @@ import MatchTool from '../match/match';
 import steplizePoint from '../tools/steplize';
 import { scaleReverse } from '../tools/scalelize';
 import move from './move';
+import deleteObj from './delete';
 
 const Event = self => {
     const canvas = self.canvas;
@@ -85,6 +86,7 @@ const Event = self => {
         if (pickupedObj.length > 0) {
             pickupedObj[0].origin.data.object.emit('finish', {
                 object: pickupedObj[0].origin.data,
+                type: 'move',
             });
             // update
             let pathSnapshoot;
@@ -113,6 +115,12 @@ const Event = self => {
             let x = 0;
             let y = 0;
             switch (e.keyCode) {
+                case 8:
+                    // delete
+                    deleteObj(pickupedObj[0]);
+                    order = 'cancel';
+                    // update active index  & reget the active
+                    break;
                 case 27:
                     // esc
                     pickupedObj = [];
@@ -136,31 +144,38 @@ const Event = self => {
                     y = 1;
                     break;
                 default:
+                    order = false;
+                    console.log(e.keyCode);
             }
+
+
+            // update snapshoot
+            let pathSnapshoot;
+            switch (pickupedObj[0].origin.data.type) {
+                case Config.objectTypes.line:
+                case Config.objectTypes.polygon:
+                    pathSnapshoot = pickupedObj[0].origin.data.path;
+                    break;
+                case Config.objectTypes.text:
+                case Config.objectTypes.circle:
+                    pathSnapshoot = pickupedObj[0].origin.data.center;
+                    break;
+                default:
+            }
+            pathSnapshoot = JSON.parse(JSON.stringify(pathSnapshoot));
+            pickupedObj[0].pathSnapshoot = pathSnapshoot;
 
             if (order === 'update') {
                 const snapShootPath = pickupedObj[0].pathSnapshoot;
                 const moveObject = pickupedObj[0].origin;
                 move(moveObject, snapShootPath, [x * step, y * step], step);
 
-                let pathSnapshoot;
-                switch (pickupedObj[0].origin.data.type) {
-                    case Config.objectTypes.line:
-                    case Config.objectTypes.polygon:
-                        pathSnapshoot = pickupedObj[0].origin.data.path;
-                        break;
-                    case Config.objectTypes.text:
-                    case Config.objectTypes.circle:
-                        pathSnapshoot = pickupedObj[0].origin.data.center;
-                        break;
-                    default:
-                }
-                pathSnapshoot = JSON.parse(JSON.stringify(pathSnapshoot));
-                pickupedObj[0].pathSnapshoot = pathSnapshoot;
 
                 pickupedObj[0].origin.data.object.emit('finish', {
                     object: pickupedObj[0].origin.data,
+                    type: 'move',
                 });
+                e.preventDefault();
             }
             self.draw();
         }

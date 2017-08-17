@@ -9,6 +9,21 @@
 
 ## API
 
+### 目录
+
+1. [初始化](#1-visualdmo-options)
+	* [Visual Options](#11-visual-options)
+2. [Visual 对象](#2-visual-object)
+	* [line](#21-linepath-config)
+	* [text](#22-texttext-point-config)
+	* [circle](#23-circleredis-center-config)
+	* [Visual 对象 config](#24-config)
+3. [Visual Event](#3-visual-event)
+	* [change](#31-change)
+	* [finish](#32-finish)
+	* [willDeletePoint](#33-willDeletePoint)
+	
+
 ### 1. Visual(dmo, options)
 
 |参数|类型|说明|
@@ -156,3 +171,14 @@ line类型的change事件返回以下参数:
 |参数|类型|值|说明|
 |:---|:---|:---|:---|
 |object|Visual Object| - |当前移动的对象
+|type|String| 'move'\|'deletePoint' | finish的类型
+
+
+#### 3.3 willDeletePoint
+
+当用户触发删除点操作时会被触发，如果回调函数返回false，将会阻止点的删除。
+
+|参数|类型|值|说明|
+|:---|:---|:---|:---|
+|object|Visual Object| - |当前移动的对象
+|index|Number| - | 当前准备删除的点对应的索引号

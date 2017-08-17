@@ -48,7 +48,7 @@ function DrawLine(Visual, obj) {
             const xOffset = item[0] > center[0] ? 1 : -1;
             const yOffset = item[1] > center[1] ? 1 : -1;
             if (index === 0) {
-                console.log(index, obj.sys.outBox, item, xOffset, yOffset);
+                // console.log(index, obj.sys.outBox, item, xOffset, yOffset);
             }
             if (index === 0) {
                 firstPoint = item;
