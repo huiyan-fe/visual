@@ -68,11 +68,15 @@
             rotate: Math.PI * .25,
         })
 
-        let a1 = v.text('Hello Mofei', [200, 400], {
+        let t1 = v.text('Hello Mofei', [200, 400], {
             fontSize: 24,
             rotate: Math.PI * .25,
             // splitText: true,
             textRotate: Math.PI * .50
+        })
+
+        t1.on('finish', (...arg) => {
+            console.log('xxx', arg)
         })
 
         let cir = v.circle(10, [100, 300], {

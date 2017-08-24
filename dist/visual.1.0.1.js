@@ -2992,7 +2992,7 @@ var Event = function Event(self) {
     var pickupedObj = [];
     var step = self.options.grid.step;
 
-    canvas.addEventListener('mousedown', function (e) {
+    window.addEventListener('mousedown', function (e) {
         var x = e.offsetX;
         var y = e.offsetY;
 
@@ -3000,6 +3000,12 @@ var Event = function Event(self) {
 
         x = _scaleReverse$[0];
         y = _scaleReverse$[1];
+
+
+        if (e.target !== canvas) {
+            x = -9999;
+            y = -9999;
+        }
 
         hoveredObj = _match2.default.match([x, y], self.sys.objects);
 
