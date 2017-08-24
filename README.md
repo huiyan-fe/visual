@@ -134,7 +134,11 @@ visual.text('Hello Mofei', [200, 400], {
 
 ### 3. Visual Event
 
-大部分的Visual Object都有事件监听，可以通过Visual Object.on('type', Function) 来监听。
+大部分的Visual Object都有事件监听
+
+可以通过`Visual Object.on('type', Function)` 来监听。
+
+可以通过`Visual Object.unbind('type', Function)` 来取消监听。
 
 简单的Demo如下：
 
