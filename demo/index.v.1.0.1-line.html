@@ -23,7 +23,7 @@
             }
         });
 
-        let line = v.line([
+        var line = v.line([
             [85, 86],
             [85, 89],
             [85, 104],
@@ -37,14 +37,41 @@
             lineWidth: 10
         });
 
-        // line.on('finish', (data) => {
-        //     console.log(JSON.stringify(data.object.path));
-        // })
+        line.on('finish', (data) => {
+            console.log('click');
+            console.log(JSON.stringify(data.object.path));
+            line.set('dragable',false)
+        })
 
-        // line.on('willDeletePoint', obj => {
-        //     console.log(obj);
-        //     // return false;
-        // })
+        line.on('willDeletePoint', obj => {
+            console.log(obj);
+            // return false;
+        })
+
+        var line2 = v.line([
+            [185, 86],
+            [185, 89],
+            [185, 104],
+            [139, 185],
+            [197, 185],
+            [224, 185],
+            [10, 110],
+            [400, 110],
+        ], {
+            strokeStyle: '#4df693',
+            lineWidth: 10
+        });
+
+        line2.on('finish', (data) => {
+            console.log('click');
+            console.log(JSON.stringify(data.object.path));
+            // line.set('dragable',false)
+        })
+
+        line2.on('willDeletePoint', obj => {
+            console.log(obj);
+            // return false;
+        })
     </script>
 
 

@@ -22,7 +22,8 @@
 	* [change](#31-change)
 	* [finish](#32-finish)
 	* [willDeletePoint](#33-willdeletepoint)
-	
+4. [Visual Properties](#4-visual-properties)
+
 
 ### 1. Visual(dmo, options)
 
@@ -196,3 +197,6 @@ line类型的change事件返回以下参数:
 
 [在线Demo(首尾点不能被删除)](https://jsfiddle.net/zhuwenlong/rpomufsb/1/)
 
+### 4. visual Properties
+ 用户可以通过设置Visual 的实例（line/circle...）的属性，控制实例是否可以拖拽
+ 例如：line.set('dragable',false)

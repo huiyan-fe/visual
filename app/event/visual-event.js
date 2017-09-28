@@ -6,7 +6,7 @@ import { scaleReverse } from '../tools/scalelize';
 import move from './move';
 import deleteObj from './delete';
 
-const Event = self => {
+const Event = (self) => {
     const canvas = self.canvas;
     let mousedownPos = [];
     let hoveredObj = [];
@@ -81,7 +81,10 @@ const Event = self => {
                 movedPos = steplizePoint(movedPos, step);
                 const snapShootPath = pickupedObj[0].pathSnapshoot;
                 const moveObject = pickupedObj[0].origin;
-                move(moveObject, snapShootPath, movedPos, step);
+                console.log(moveObject);
+                if (moveObject.data.object.userSet.dragable) {
+                    move(moveObject, snapShootPath, movedPos, step);
+                }
             }
             e.preventDefault();
         }

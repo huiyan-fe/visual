@@ -519,6 +519,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var VisualObject = function () {
     function VisualObject() {
         (0, _classCallCheck3.default)(this, VisualObject);
+
+        this.userSet = {
+            dragable: true
+        };
     }
 
     (0, _createClass3.default)(VisualObject, [{
@@ -537,6 +541,13 @@ var VisualObject = function () {
         value: function on(type, fn) {
             this.listens = this.listens || {};
             this.listens[type] = fn;
+        }
+    }, {
+        key: "set",
+        value: function set(type, value) {
+            // line.set('disableDrag',true)
+            this.userSet = this.userSet || {};
+            this.userSet[type] = value;
         }
     }, {
         key: "unbind",
@@ -1250,15 +1261,12 @@ var Visual = function () {
             var domStyle = getComputedStyle(this.dom);
             this.width = domStyle.width;
             this.height = domStyle.height;
-
             // canvas.width设置 canvas画布的大小
             this.canvas.width = parseInt(this.width, 10) * pixelRatio;
             this.canvas.height = parseInt(this.height, 10) * pixelRatio;
-
             // canvas.style.width设置 canvas画布容器的大小
             this.canvas.style.width = this.width;
             this.canvas.style.height = this.height;
-
             // 设置canvas 画图时的比例缩放
             var xScale = this.options.grid.scale[0];
             var yScale = this.options.grid.scale[1];
@@ -3191,7 +3199,10 @@ var Event = function Event(self) {
                 movedPos = (0, _steplize2.default)(movedPos, step);
                 var snapShootPath = pickupedObj[0].pathSnapshoot;
                 var moveObject = pickupedObj[0].origin;
-                (0, _move2.default)(moveObject, snapShootPath, movedPos, step);
+                console.log(moveObject);
+                if (moveObject.data.object.userSet.dragable) {
+                    (0, _move2.default)(moveObject, snapShootPath, movedPos, step);
+                }
             }
             e.preventDefault();
         }

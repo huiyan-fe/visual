@@ -1,4 +1,9 @@
 class VisualObject {
+    constructor() {
+        this.userSet = {
+            dragable: true,
+        };
+    }
 
     remove() {
         const objects = this.Visual.sys.objects;
@@ -9,6 +14,12 @@ class VisualObject {
     on(type, fn) {
         this.listens = this.listens || {};
         this.listens[type] = fn;
+    }
+
+    set(type, value) {
+        // line.set('disableDrag',true)
+        this.userSet = this.userSet || {};
+        this.userSet[type] = value;
     }
 
     unbind(type, fn) {

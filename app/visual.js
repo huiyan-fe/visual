@@ -82,15 +82,12 @@ class Visual {
         const domStyle = getComputedStyle(this.dom);
         this.width = domStyle.width;
         this.height = domStyle.height;
-
         // canvas.width设置 canvas画布的大小
         this.canvas.width = parseInt(this.width, 10) * pixelRatio;
         this.canvas.height = parseInt(this.height, 10) * pixelRatio;
-
         // canvas.style.width设置 canvas画布容器的大小
         this.canvas.style.width = this.width;
         this.canvas.style.height = this.height;
-
         // 设置canvas 画图时的比例缩放
         const xScale = this.options.grid.scale[0];
         const yScale = this.options.grid.scale[1];
