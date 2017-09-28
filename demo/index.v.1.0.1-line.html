@@ -37,25 +37,25 @@
             lineWidth: 10
         });
 
-        line.on('finish', (data) => {
-            console.log(JSON.stringify(data.object.path));
-        })
+        // line.on('finish', (data) => {
+        //     console.log(JSON.stringify(data.object.path));
+        // })
 
-        line.on('willDeletePoint', obj => {
-            console.log(obj);
-            // return false;
-        })
+        // line.on('willDeletePoint', obj => {
+        //     console.log(obj);
+        //     // return false;
+        // })
     </script>
 
 
-    <script>
+    <!-- <script>
         var stats = new Stats();
         document.body.appendChild(stats.dom);
         requestAnimationFrame(function loop() {
             stats.update();
             requestAnimationFrame(loop)
         });
-    </script>
+    </script> -->
 </body>
 
 </html>

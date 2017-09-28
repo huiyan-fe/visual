@@ -1,0 +1,56 @@
+//这里就上完整的代码片段了
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Document</title>
+</head>
+<style type="text/css">
+canvas{
+    background: lawngreen;//画布背景色,画布放大缩小,好看出效果
+}
+</style>
+<body>
+<canvas id="canvas" width="300" height="300"></canvas>
+ <button id="add">add</button><button id="sub">sub</button>
+</body>
+<script type="text/javascript">
+    var content=document.getElementById("canvas").getContext("2d")
+    content.fillRect(50,50,100,100);
+    content.fillStyle="black"
+    //为了对比看出效果,先绘制一个黑色的矩形
+
+    //绑定加大画布的操作放在按钮add上
+    document.getElementById("add").onclick=function(){
+        //获取画布的宽和高
+        var width=canvas.getAttribute("width")
+        var height=canvas.getAttribute("height");
+
+        //获取画布的图像信息,一个副本
+        var data=content.getImageData(0,0,width,height)
+        console.log(data)
+        //重新设置画布的大小
+        width=parseInt(width)+10
+        height=parseInt(height)+10
+        canvas.setAttribute("width",width)
+        canvas.setAttribute("height",height)
+        //将获得的图像副本,重新绘制到画布,完成画布的大小改变
+        // content.putImageData(data,0,0)
+    }
+        //方法和上面相同,就是减小而已.
+        document.getElementById("sub").onclick=function(){
+            var width=canvas.getAttribute("width")
+            var height=canvas.getAttribute("height");
+
+            var data=content.getImageData(0,0,width,height)
+
+
+            width=parseInt(width)-10
+            height=parseInt(height)-10
+            canvas.setAttribute("width",width)
+            canvas.setAttribute("height",height)
+
+            content.putImageData(data,0,0)
+    }
+</script>
+</html>

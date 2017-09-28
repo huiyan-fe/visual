@@ -1,0 +1,77 @@
+<html>
+
+<head>
+    <title>Demo of visual</title>
+    <meta charset="utf-8" />
+    <style>
+        #content {
+            margin-top: 60px;
+            background-color: black;
+        }
+    </style>
+    <script src="../dist/visual.1.0.1.js"></script>
+</head>
+
+<body>
+    <button id="add">add</button><button id="sub">sub</button>
+    <div id="content" style="width:500px; height: 500px; border:1px solid #ccc;"></div>
+    <script>
+        let dom = document.getElementById('content');
+        let v = new Visual(dom, {
+            grid: {
+                step: 1,
+                scale: [1, 1]
+            }
+        });
+
+        let line = v.line([
+            [85, 86],
+            [85, 89],
+            [85, 104],
+            [139, 85],
+            [197, 85],
+            [224, 85],
+            [10, 10],
+            [400, 10],
+        ], {
+                strokeStyle: '#4df693',
+                lineWidth: 10
+            });
+        var content = v.ctx
+
+        document.getElementById("add").onclick = function () {
+            //获取画布的宽和高
+            var width = v.canvas.getAttribute("width")
+            var height = v.canvas.getAttribute("height");
+
+            //获取画布的图像信息,一个副本
+            var data = content.getImageData(0, 0, width, height)
+            console.log(data)
+            //重新设置画布的大小
+            width = parseInt(width) + 10
+            height = parseInt(height) + 10
+            v.canvas.setAttribute("width", width)
+            v.canvas.setAttribute("height", height)
+            //将获得的图像副本,重新绘制到画布,完成画布的大小改变
+            // content.putImageData(data,0,0)
+        }
+        //方法和上面相同,就是减小而已.
+        document.getElementById("sub").onclick = function () {
+            var width = v.canvas.getAttribute("width")
+            var height = v.canvas.getAttribute("height");
+
+            var data = content.getImageData(0, 0, width, height)
+
+            width = parseInt(width) - 10
+            height = parseInt(height) - 10
+            v.canvas.setAttribute("width", width)
+            v.canvas.setAttribute("height", height)
+
+            content.putImageData(data, 0, 0)
+        }
+    </script>
+
+
+</body>
+
+</html>

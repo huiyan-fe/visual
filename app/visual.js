@@ -67,6 +67,36 @@ class Visual {
         this.sys.objects = [];
         this.draw();
     }
+
+    update(dom, options = {}) {
+        const basicOptions = {
+            grid: {
+                step: 1,
+                scale: [1, 1],
+            },
+        };
+        Object.assign(basicOptions, options);
+        this.options = basicOptions;
+
+        const pixelRatio = (window.devicePixelRatio || 1);
+        const domStyle = getComputedStyle(this.dom);
+        this.width = domStyle.width;
+        this.height = domStyle.height;
+
+        // canvas.width设置 canvas画布的大小
+        this.canvas.width = parseInt(this.width, 10) * pixelRatio;
+        this.canvas.height = parseInt(this.height, 10) * pixelRatio;
+
+        // canvas.style.width设置 canvas画布容器的大小
+        this.canvas.style.width = this.width;
+        this.canvas.style.height = this.height;
+
+        // 设置canvas 画图时的比例缩放
+        const xScale = this.options.grid.scale[0];
+        const yScale = this.options.grid.scale[1];
+        this.ctx.scale(pixelRatio * xScale, pixelRatio * yScale);
+        this.draw();
+    }
 }
 
 Visual.prototype.line = function linefn(path = [], options = {}) {
