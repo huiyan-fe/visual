@@ -81,7 +81,6 @@ const Event = (self) => {
                 movedPos = steplizePoint(movedPos, step);
                 const snapShootPath = pickupedObj[0].pathSnapshoot;
                 const moveObject = pickupedObj[0].origin;
-                console.log(moveObject);
                 if (moveObject.data.object.userSet.dragable) {
                     move(moveObject, snapShootPath, movedPos, step);
                 }
@@ -177,7 +176,6 @@ const Event = (self) => {
                     break;
                 default:
                     order = false;
-                    console.log(e.keyCode);
             }
 
 

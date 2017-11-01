@@ -3199,7 +3199,6 @@ var Event = function Event(self) {
                 movedPos = (0, _steplize2.default)(movedPos, step);
                 var snapShootPath = pickupedObj[0].pathSnapshoot;
                 var moveObject = pickupedObj[0].origin;
-                console.log(moveObject);
                 if (moveObject.data.object.userSet.dragable) {
                     (0, _move2.default)(moveObject, snapShootPath, movedPos, step);
                 }
@@ -3294,7 +3293,6 @@ var Event = function Event(self) {
                     break;
                 default:
                     order = false;
-                    console.log(e.keyCode);
             }
 
             // update snapshoot
