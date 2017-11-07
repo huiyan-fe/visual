@@ -5,23 +5,24 @@ import matchCircle from './match-circle';
 import matchPolygon from './match-polygon';
 
 const MathTool = {
-    match(P, datasGroup) {
+    // eventType : mousedown/mousemove/keydown
+    match(P, datasGroup, eventType) {
         const res = [];
 
         datasGroup.forEach(datas => {
             switch (datas.type) {
                 case Config.objectTypes.line:
                     // for line
-                    matchLine(P, datas, res);
+                    matchLine(P, datas, eventType, res);
                     break;
                 case Config.objectTypes.text:
-                    matchText(P, datas, res);
+                    matchText(P, datas, eventType, res);
                     break;
                 case Config.objectTypes.circle:
-                    matchCircle(P, datas, res);
+                    matchCircle(P, datas, eventType, res);
                     break;
                 case Config.objectTypes.polygon:
-                    matchPolygon(P, datas, res);
+                    matchPolygon(P, datas, eventType, res);
                     break;
                 default:
                     break;
@@ -32,6 +33,8 @@ const MathTool = {
 
         if (res[0]) {
             res[0].data.isActive = res[0];
+            console.log('res');
+            console.log(res);
         }
         return res;
     },

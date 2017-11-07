@@ -2,10 +2,11 @@ import VisualObject from './object';
 import steplizePoint from '../tools/steplize';
 
 class Line extends VisualObject {
-    constructor(Visual, pathParams = [], options) {
+    constructor(Visual, pathParams = [], options, userSet) {
         super();
         this.Visual = Visual;
         this.id = Symbol('line');
+        Object.assign(this.userSet, userSet);
 
         const path = JSON.parse(JSON.stringify(pathParams));
 

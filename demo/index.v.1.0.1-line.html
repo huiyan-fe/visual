@@ -23,6 +23,12 @@
             }
         });
 
+        const userSet1 = {
+            dragable: true,
+            clickable: false,
+            bufferSize: 2,
+        };
+
         var line = v.line([
             [85, 86],
             [85, 89],
@@ -33,14 +39,14 @@
             [10, 10],
             [400, 10],
         ], {
-            strokeStyle: '#4df693',
-            lineWidth: 10
-        });
+                strokeStyle: '#4df693',
+                lineWidth: 10
+            }, userSet1);
 
         line.on('finish', (data) => {
             console.log('click');
             console.log(JSON.stringify(data.object.path));
-            line.set('dragable',false)
+            line.set('dragable', false)
         })
 
         line.on('willDeletePoint', obj => {
@@ -48,6 +54,12 @@
             // return false;
         })
 
+        const userSet2 = {
+            dragable: true,
+            mouseOverEventEnable: false,
+            clickable: true,
+            bufferSize: 15,
+        };
         var line2 = v.line([
             [185, 86],
             [185, 89],
@@ -58,9 +70,9 @@
             [10, 110],
             [400, 110],
         ], {
-            strokeStyle: '#4df693',
-            lineWidth: 10
-        });
+                strokeStyle: '#4df693',
+                lineWidth: 10
+            }, userSet2);
 
         line2.on('finish', (data) => {
             console.log('click');

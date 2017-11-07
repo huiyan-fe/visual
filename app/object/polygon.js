@@ -2,11 +2,11 @@ import VisualObject from './object';
 import steplizePoint from '../tools/steplize';
 
 class Polygon extends VisualObject {
-    constructor(Visual, pathParams = [], options) {
+    constructor(Visual, pathParams = [], options, userSet) {
         super();
         this.Visual = Visual;
         this.id = Symbol('polygon');
-
+        Object.assign(this.userSet, userSet);
         const path = JSON.parse(JSON.stringify(pathParams));
 
         const outBox = {

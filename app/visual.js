@@ -96,20 +96,20 @@ class Visual {
     }
 }
 
-Visual.prototype.line = function linefn(path = [], options = {}) {
-    return new VLine(this, path, options);
+Visual.prototype.line = function linefn(path = [], options = {}, userSet) {
+    return new VLine(this, path, options, userSet);
 };
 
-Visual.prototype.text = function textfn(text, center = [], options = {}) {
-    return new VText(this, text, center, options);
+Visual.prototype.text = function textfn(text, center = [], options = {}, userSet) {
+    return new VText(this, text, center, options, userSet);
 };
 
-Visual.prototype.circle = function circlefn(redius, center = [], options = {}) {
-    return new VCircle(this, redius, center, options);
+Visual.prototype.circle = function circlefn(redius, center = [], options = {}, userSet) {
+    return new VCircle(this, redius, center, options, userSet);
 };
 
-Visual.prototype.polygon = function polygonfn(path = [], options = {}) {
-    return new VPolygon(this, path, options);
+Visual.prototype.polygon = function polygonfn(path = [], options = {}, userSet) {
+    return new VPolygon(this, path, options, userSet);
 };
 
 Visual.prototype.draw = Draw;

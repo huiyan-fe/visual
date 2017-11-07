@@ -2,6 +2,10 @@ class VisualObject {
     constructor() {
         this.userSet = {
             dragable: true,
+            mouseOverEventEnable: true,
+            clickable: true,
+            bufferSize: 15,
+            active: false,
         };
     }
 

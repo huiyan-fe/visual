@@ -18,7 +18,7 @@ if (debug) {
     };
 }
 
-const matchText = (P, datas, res) => {
+const matchText = (P, datas, eventType, res) => {
     const useData = datas;
     useData.isActive = null;
     textCtx.beginPath();
@@ -80,11 +80,20 @@ const matchText = (P, datas, res) => {
     }
     const isFit = textCtx.isPointInPath(P[0], P[1]);
     if (isFit) {
-        res.push({
-            data: datas,
-            projection: P,
-            length: Math.sqrt((P[0] - datas.center[0]) ** 2, (P[1] - datas.center[1]) ** 2),
-        });
+        const userSet = datas.object.userSet;
+        // const bufferSize = userSet.bufferSize;
+        // mouseOverEventEnable: false,
+        // clickable: true,
+        if ((eventType === 'mousemove' && !userSet.mouseOverEventEnable)
+            || (eventType === 'mousedown' && !userSet.clickable)) {
+            // res.length = 0;
+        } else {
+            res.push({
+                data: datas,
+                projection: P,
+                length: Math.sqrt((P[0] - datas.center[0]) ** 2, (P[1] - datas.center[1]) ** 2),
+            });
+        }
     }
     textCtx.restore();
 };

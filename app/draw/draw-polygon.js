@@ -30,7 +30,13 @@ function DrawLine(Visual, obj) {
         ctx.stroke();
     }
     ctx.restore();
-
+    const userSet = obj.object.userSet;
+    if (userSet && userSet.active) {
+        if (!(obj && obj.isActive)) {
+            // userSet.active = false;
+            obj['isActive'] = { data: obj };
+        }
+    }
     if (obj && obj.isActive) {
         ctx.canvas.style.cursor = 'pointer';
         ctx.save();

@@ -24,8 +24,8 @@ const Event = (self) => {
             x = -9999;
             y = -9999;
         }
-
-        hoveredObj = MatchTool.match([x, y], self.sys.objects);
+        const eventType = 'mousedown';
+        hoveredObj = MatchTool.match([x, y], self.sys.objects, eventType);
 
         if (hoveredObj.length >= 1) {
             let pathSnapshoot;
@@ -69,7 +69,8 @@ const Event = (self) => {
                 x = -999;
                 y = -999;
             }
-            hoveredObj = MatchTool.match([x, y], self.sys.objects);
+            const eventType = 'mousemove';
+            hoveredObj = MatchTool.match([x, y], self.sys.objects, eventType);
         } else {
             if (mousedownPos.length > 0) {
                 x = e.pageX;
@@ -123,6 +124,7 @@ const Event = (self) => {
             let order = 'update';
             let x = 0;
             let y = 0;
+            const eventType = 'keydown';
 
             switch (e.keyCode) {
                 case 9:
@@ -155,7 +157,7 @@ const Event = (self) => {
                 case 27:
                     // esc
                     pickupedObj = [];
-                    hoveredObj = MatchTool.match([-99999, -99999], self.sys.objects);
+                    hoveredObj = MatchTool.match([-99999, -99999], self.sys.objects, eventType);
                     order = 'cancel';
                     break;
                 case 37:
@@ -177,7 +179,6 @@ const Event = (self) => {
                 default:
                     order = false;
             }
-
 
             // update snapshoot
             if (pickupedObj.length > 0) {
@@ -201,7 +202,6 @@ const Event = (self) => {
                 const snapShootPath = pickupedObj[0].pathSnapshoot;
                 const moveObject = pickupedObj[0].origin;
                 move(moveObject, snapShootPath, [x * step, y * step], step);
-
 
                 pickupedObj[0].origin.data.object.emit('finish', {
                     object: pickupedObj[0].origin.data,

@@ -6,11 +6,11 @@ import steplizePoint from '../tools/steplize';
 import config from '../config/config';
 
 class Text extends VisualObject {
-    constructor(Visual, text, centerParam = [], options) {
+    constructor(Visual, text, centerParam = [], options, userSet) {
         super();
         this.Visual = Visual;
         this.id = Symbol('text');
-
+        Object.assign(this.userSet, userSet);
         const center = JSON.parse(JSON.stringify(centerParam));
 
         const basicOptions = {};

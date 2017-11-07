@@ -46,6 +46,13 @@ function DrawText(Visual, obj) {
     }
     ctx.restore();
 
+    const userSet = obj.object.userSet;
+    if (userSet && userSet.active) {
+        if (!(obj && obj.isActive)) {
+            // userSet.active = false;
+            obj['isActive'] = { data: obj };
+        }
+    }
     if (obj.isActive) {
         ctx.canvas.style.cursor = 'pointer';
         // active
@@ -89,7 +96,7 @@ function DrawText(Visual, obj) {
                 break;
             default:
                 heightOffset = (height / 2);
-                // console.log(ctx.textBaseline);
+            // console.log(ctx.textBaseline);
         }
 
 

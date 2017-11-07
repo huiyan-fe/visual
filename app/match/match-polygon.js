@@ -9,7 +9,7 @@ const ctx = textCanvas.getContext('2d');
 
 const offset = 10;
 
-const matchPolygon = (P, datas, res) => {
+const matchPolygon = (P, datas, eventType, res) => {
     const useData = datas;
     useData.isActive = null;
 
@@ -24,33 +24,42 @@ const matchPolygon = (P, datas, res) => {
         return false;
     }
 
-    datas.path.forEach((item, index) => {
-        if (index === 0) {
-            ctx.moveTo(item[0], item[1]);
-        } else {
-            ctx.lineTo(item[0], item[1]);
-        }
-        // get the length of P and O
-        const lPO = Math.sqrt(((P[0] - item[0]) ** 2) + ((P[1] - item[1]) ** 2));
-        if (lPO < offset) {
+    const userSet = datas.object.userSet;
+    const bufferSize = userSet.bufferSize;
+    // mouseOverEventEnable: false,
+    // clickable: true,
+    if ((eventType === 'mousemove' && !userSet.mouseOverEventEnable)
+        || (eventType === 'mousedown' && !userSet.clickable)) {
+        // res.length = 0;
+    } else {
+        datas.path.forEach((item, index) => {
+            if (index === 0) {
+                ctx.moveTo(item[0], item[1]);
+            } else {
+                ctx.lineTo(item[0], item[1]);
+            }
+            // get the length of P and O
+            const lPO = Math.sqrt(((P[0] - item[0]) ** 2) + ((P[1] - item[1]) ** 2));
+            if (lPO < offset) {
+                res.push({
+                    type: 'point',
+                    index,
+                    data: datas,
+                    length: lPO,
+                });
+            }
+        });
+        // ctx.fill();
+        const isFit = ctx.isPointInPath(P[0], P[1]);
+        const center = [((outBox.xMax + outBox.xMin) / 2), ((outBox.yMax + outBox.yMin) / 2)];
+        const length = Math.sqrt(((P[0] - center[0]) ** 2) + ((P[1] - center[1]) ** 2));
+        if (isFit) {
             res.push({
-                type: 'point',
-                index,
+                type: 'object',
                 data: datas,
-                length: lPO,
+                length,
             });
         }
-    });
-    // ctx.fill();
-    const isFit = ctx.isPointInPath(P[0], P[1]);
-    const center = [((outBox.xMax + outBox.xMin) / 2), ((outBox.yMax + outBox.yMin) / 2)];
-    const length = Math.sqrt(((P[0] - center[0]) ** 2) + ((P[1] - center[1]) ** 2));
-    if (isFit) {
-        res.push({
-            type: 'object',
-            data: datas,
-            length,
-        });
     }
 };
 

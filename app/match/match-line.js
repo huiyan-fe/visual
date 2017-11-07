@@ -1,5 +1,5 @@
 
-const matchLine = (P, datas, res) => {
+const matchLine = (P, datas, eventType, res) => {
     const useData = datas;
     useData.isActive = null;
     datas.path.forEach((data, index) => {
@@ -21,27 +21,39 @@ const matchLine = (P, datas, res) => {
             const lABPB = lAB * Math.sqrt((vPB[0] ** 2) + (vPB[1] ** 2));
             const rPBA = Math.acos(cABPB / lABPB);
 
-            //
-            if (lPB < 15 || lAP < 15) {
-                res.push({
-                    type: 'point',
-                    data: datas,
-                    projection: lPB < lAP ? B : A,
-                    length: lPB < lAP ? lPB : lAP,
-                    index: lPB < lAP ? index : (index - 1),
-                });
-            } else if (rPAB < Math.PI / 2 && rPBA < Math.PI / 2) {
-                const lAO = Math.cos(rPAB) * lAP;
-                const pAOAB = lAO / lAB;
-                const lPO = Math.sin(rPAB) * lAP;
-                const O = [A[0] + (vAB[0] * pAOAB), A[1] + (vAB[1] * pAOAB)];
-                if (lPO < 15) {
+            const userSet = datas.object.userSet;
+            const bufferSize = userSet.bufferSize;
+            // mouseOverEventEnable: false,
+            // clickable: true,
+            if ((eventType === 'mousemove' && !userSet.mouseOverEventEnable)
+                || (eventType === 'mousedown' && !userSet.clickable)) {
+                // res.length = 0;
+            } else {
+                if (lPB < bufferSize || lAP < bufferSize) {
                     res.push({
-                        type: 'object',
+                        type: 'point',
                         data: datas,
-                        projection: O,
-                        length: lPO,
+                        projection: lPB < lAP ? B : A,
+                        length: lPB < lAP ? lPB : lAP,
+                        index: lPB < lAP ? index : (index - 1),
                     });
+                } else if (rPAB < Math.PI / 2 && rPBA < Math.PI / 2) {
+                    const lAO = Math.cos(rPAB) * lAP;
+                    const pAOAB = lAO / lAB;
+                    const lPO = Math.sin(rPAB) * lAP;
+                    const O = [A[0] + (vAB[0] * pAOAB), A[1] + (vAB[1] * pAOAB)];
+                    if (lPO < bufferSize) {
+                        res.push({
+                            type: 'object',
+                            data: datas,
+                            projection: O,
+                            length: lPO,
+                        });
+                    }
+                }
+                if (res.length > 0) {
+                    console.log('选中');
+                    console.log(res);
                 }
             }
         }
