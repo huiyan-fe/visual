@@ -521,7 +521,11 @@ var VisualObject = function () {
         (0, _classCallCheck3.default)(this, VisualObject);
 
         this.userSet = {
-            dragable: true
+            dragable: true,
+            mouseOverEventEnable: true,
+            clickable: true,
+            bufferSize: 15,
+            active: false
         };
     }
 
@@ -1280,29 +1284,33 @@ var Visual = function () {
 Visual.prototype.line = function linefn() {
     var path = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var userSet = arguments[2];
 
-    return new _line2.default(this, path, options);
+    return new _line2.default(this, path, options, userSet);
 };
 
 Visual.prototype.text = function textfn(text) {
     var center = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
     var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+    var userSet = arguments[3];
 
-    return new _text2.default(this, text, center, options);
+    return new _text2.default(this, text, center, options, userSet);
 };
 
 Visual.prototype.circle = function circlefn(redius) {
     var center = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
     var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+    var userSet = arguments[3];
 
-    return new _circle2.default(this, redius, center, options);
+    return new _circle2.default(this, redius, center, options, userSet);
 };
 
 Visual.prototype.polygon = function polygonfn() {
     var path = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var userSet = arguments[2];
 
-    return new _polygon2.default(this, path, options);
+    return new _polygon2.default(this, path, options, userSet);
 };
 
 Visual.prototype.draw = _draw2.default;
@@ -1939,6 +1947,10 @@ var _stringify = __webpack_require__(15);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
+var _assign = __webpack_require__(59);
+
+var _assign2 = _interopRequireDefault(_assign);
+
 var _symbol = __webpack_require__(9);
 
 var _symbol2 = _interopRequireDefault(_symbol);
@@ -1975,12 +1987,14 @@ var Line = function (_VisualObject) {
     function Line(Visual) {
         var pathParams = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
         var options = arguments[2];
+        var userSet = arguments[3];
         (0, _classCallCheck3.default)(this, Line);
 
         var _this = (0, _possibleConstructorReturn3.default)(this, (Line.__proto__ || (0, _getPrototypeOf2.default)(Line)).call(this));
 
         _this.Visual = Visual;
         _this.id = (0, _symbol2.default)('line');
+        (0, _assign2.default)(_this.userSet, userSet);
 
         var path = JSON.parse((0, _stringify2.default)(pathParams));
 
@@ -2267,6 +2281,10 @@ var _stringify = __webpack_require__(15);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
+var _assign = __webpack_require__(59);
+
+var _assign2 = _interopRequireDefault(_assign);
+
 var _symbol = __webpack_require__(9);
 
 var _symbol2 = _interopRequireDefault(_symbol);
@@ -2307,13 +2325,14 @@ var Text = function (_VisualObject) {
     function Text(Visual, text) {
         var centerParam = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
         var options = arguments[3];
+        var userSet = arguments[4];
         (0, _classCallCheck3.default)(this, Text);
 
         var _this = (0, _possibleConstructorReturn3.default)(this, (Text.__proto__ || (0, _getPrototypeOf2.default)(Text)).call(this));
 
         _this.Visual = Visual;
         _this.id = (0, _symbol2.default)('text');
-
+        (0, _assign2.default)(_this.userSet, userSet);
         var center = JSON.parse((0, _stringify2.default)(centerParam));
 
         var basicOptions = {};
@@ -2402,6 +2421,10 @@ var _stringify = __webpack_require__(15);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
+var _assign = __webpack_require__(59);
+
+var _assign2 = _interopRequireDefault(_assign);
+
 var _symbol = __webpack_require__(9);
 
 var _symbol2 = _interopRequireDefault(_symbol);
@@ -2437,14 +2460,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var Circle = function (_VisualObject) {
     (0, _inherits3.default)(Circle, _VisualObject);
 
-    function Circle(Visual, redius, centerParam, options) {
+    function Circle(Visual, redius, centerParam, options, userSet) {
         (0, _classCallCheck3.default)(this, Circle);
 
         var _this = (0, _possibleConstructorReturn3.default)(this, (Circle.__proto__ || (0, _getPrototypeOf2.default)(Circle)).call(this));
 
         _this.Visual = Visual;
         _this.id = (0, _symbol2.default)('circle');
-
+        _this.userSet.bufferSize = 5;
+        (0, _assign2.default)(_this.userSet, userSet);
         var center = JSON.parse((0, _stringify2.default)(centerParam));
 
         _this.Visual.sys.objects.push({
@@ -2478,6 +2502,10 @@ Object.defineProperty(exports, "__esModule", {
 var _stringify = __webpack_require__(15);
 
 var _stringify2 = _interopRequireDefault(_stringify);
+
+var _assign = __webpack_require__(59);
+
+var _assign2 = _interopRequireDefault(_assign);
 
 var _symbol = __webpack_require__(9);
 
@@ -2515,13 +2543,14 @@ var Polygon = function (_VisualObject) {
     function Polygon(Visual) {
         var pathParams = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
         var options = arguments[2];
+        var userSet = arguments[3];
         (0, _classCallCheck3.default)(this, Polygon);
 
         var _this = (0, _possibleConstructorReturn3.default)(this, (Polygon.__proto__ || (0, _getPrototypeOf2.default)(Polygon)).call(this));
 
         _this.Visual = Visual;
         _this.id = (0, _symbol2.default)('polygon');
-
+        (0, _assign2.default)(_this.userSet, userSet);
         var path = JSON.parse((0, _stringify2.default)(pathParams));
 
         var outBox = {
@@ -2689,9 +2718,18 @@ function DrawLine(Visual, obj) {
     ctx.stroke();
     ctx.restore();
 
+    var userSet = obj.object.userSet;
+    if (userSet && userSet.active) {
+        if (!(obj && obj.isActive)) {
+            // userSet.active = false;
+            obj['isActive'] = { data: obj };
+        }
+    }
+
     if (obj && obj.isActive) {
         ctx.canvas.style.cursor = 'pointer';
-        // console.log(obj.isActive)
+        console.log('obj.isActive');
+        console.log(obj);
         ctx.save();
         // draw base line
         ctx.lineWidth = 1;
@@ -2732,6 +2770,7 @@ function DrawLine(Visual, obj) {
 
         //
         if (obj.isActive.type === 'point' && obj.isActive.length < 10) {
+            console.log('line active');
             var index = obj.isActive.index;
             var point = usePath[index];
             ctx.beginPath();
@@ -2811,6 +2850,13 @@ function DrawText(Visual, obj) {
     }
     ctx.restore();
 
+    var userSet = obj.object.userSet;
+    if (userSet && userSet.active) {
+        if (!(obj && obj.isActive)) {
+            // userSet.active = false;
+            obj['isActive'] = { data: obj };
+        }
+    }
     if (obj.isActive) {
         ctx.canvas.style.cursor = 'pointer';
         // active
@@ -2927,6 +2973,14 @@ function DrawLine(Visual, obj) {
     }
     ctx.restore();
 
+    var userSet = obj.object.userSet;
+    if (userSet && userSet.active) {
+        if (!(obj && obj.isActive)) {
+            // userSet.active = false;
+            obj['isActive'] = { data: obj };
+        }
+    }
+
     // active
     if (obj.isActive) {
         ctx.lineWidth = 1;
@@ -2996,7 +3050,13 @@ function DrawLine(Visual, obj) {
         ctx.stroke();
     }
     ctx.restore();
-
+    var userSet = obj.object.userSet;
+    if (userSet && userSet.active) {
+        if (!(obj && obj.isActive)) {
+            // userSet.active = false;
+            obj['isActive'] = { data: obj };
+        }
+    }
     if (obj && obj.isActive) {
         ctx.canvas.style.cursor = 'pointer';
         ctx.save();
@@ -3139,8 +3199,8 @@ var Event = function Event(self) {
             x = -9999;
             y = -9999;
         }
-
-        hoveredObj = _match2.default.match([x, y], self.sys.objects);
+        var eventType = 'mousedown';
+        hoveredObj = _match2.default.match([x, y], self.sys.objects, eventType);
 
         if (hoveredObj.length >= 1) {
             var pathSnapshoot = void 0;
@@ -3184,7 +3244,8 @@ var Event = function Event(self) {
                 x = -999;
                 y = -999;
             }
-            hoveredObj = _match2.default.match([x, y], self.sys.objects);
+            var eventType = 'mousemove';
+            hoveredObj = _match2.default.match([x, y], self.sys.objects, eventType);
         } else {
             if (mousedownPos.length > 0) {
                 x = e.pageX;
@@ -3240,6 +3301,7 @@ var Event = function Event(self) {
             var order = 'update';
             var x = 0;
             var y = 0;
+            var eventType = 'keydown';
 
             switch (e.keyCode) {
                 case 9:
@@ -3272,7 +3334,7 @@ var Event = function Event(self) {
                 case 27:
                     // esc
                     pickupedObj = [];
-                    hoveredObj = _match2.default.match([-99999, -99999], self.sys.objects);
+                    hoveredObj = _match2.default.match([-99999, -99999], self.sys.objects, eventType);
                     order = 'cancel';
                     break;
                 case 37:
@@ -3495,23 +3557,24 @@ var _matchPolygon2 = _interopRequireDefault(_matchPolygon);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var MathTool = {
-    match: function match(P, datasGroup) {
+    // eventType : mousedown/mousemove/keydown
+    match: function match(P, datasGroup, eventType) {
         var res = [];
 
         datasGroup.forEach(function (datas) {
             switch (datas.type) {
                 case _config2.default.objectTypes.line:
                     // for line
-                    (0, _matchLine2.default)(P, datas, res);
+                    (0, _matchLine2.default)(P, datas, eventType, res);
                     break;
                 case _config2.default.objectTypes.text:
-                    (0, _matchText2.default)(P, datas, res);
+                    (0, _matchText2.default)(P, datas, eventType, res);
                     break;
                 case _config2.default.objectTypes.circle:
-                    (0, _matchCircle2.default)(P, datas, res);
+                    (0, _matchCircle2.default)(P, datas, eventType, res);
                     break;
                 case _config2.default.objectTypes.polygon:
-                    (0, _matchPolygon2.default)(P, datas, res);
+                    (0, _matchPolygon2.default)(P, datas, eventType, res);
                     break;
                 default:
                     break;
@@ -3524,6 +3587,8 @@ var MathTool = {
 
         if (res[0]) {
             res[0].data.isActive = res[0];
+            console.log('res');
+            console.log(res);
         }
         return res;
     }
@@ -3542,7 +3607,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var matchLine = function matchLine(P, datas, res) {
+var matchLine = function matchLine(P, datas, eventType, res) {
     var useData = datas;
     useData.isActive = null;
     datas.path.forEach(function (data, index) {
@@ -3564,27 +3629,38 @@ var matchLine = function matchLine(P, datas, res) {
             var lABPB = lAB * Math.sqrt(Math.pow(vPB[0], 2) + Math.pow(vPB[1], 2));
             var rPBA = Math.acos(cABPB / lABPB);
 
-            //
-            if (lPB < 15 || lAP < 15) {
-                res.push({
-                    type: 'point',
-                    data: datas,
-                    projection: lPB < lAP ? B : A,
-                    length: lPB < lAP ? lPB : lAP,
-                    index: lPB < lAP ? index : index - 1
-                });
-            } else if (rPAB < Math.PI / 2 && rPBA < Math.PI / 2) {
-                var lAO = Math.cos(rPAB) * lAP;
-                var pAOAB = lAO / lAB;
-                var lPO = Math.sin(rPAB) * lAP;
-                var O = [A[0] + vAB[0] * pAOAB, A[1] + vAB[1] * pAOAB];
-                if (lPO < 15) {
+            var userSet = datas.object.userSet;
+            var bufferSize = userSet.bufferSize;
+            // mouseOverEventEnable: false,
+            // clickable: true,
+            if (eventType === 'mousemove' && !userSet.mouseOverEventEnable || eventType === 'mousedown' && !userSet.clickable) {
+                // res.length = 0;
+            } else {
+                if (lPB < bufferSize || lAP < bufferSize) {
                     res.push({
-                        type: 'object',
+                        type: 'point',
                         data: datas,
-                        projection: O,
-                        length: lPO
+                        projection: lPB < lAP ? B : A,
+                        length: lPB < lAP ? lPB : lAP,
+                        index: lPB < lAP ? index : index - 1
                     });
+                } else if (rPAB < Math.PI / 2 && rPBA < Math.PI / 2) {
+                    var lAO = Math.cos(rPAB) * lAP;
+                    var pAOAB = lAO / lAB;
+                    var lPO = Math.sin(rPAB) * lAP;
+                    var O = [A[0] + vAB[0] * pAOAB, A[1] + vAB[1] * pAOAB];
+                    if (lPO < bufferSize) {
+                        res.push({
+                            type: 'object',
+                            data: datas,
+                            projection: O,
+                            length: lPO
+                        });
+                    }
+                }
+                if (res.length > 0) {
+                    console.log('选中');
+                    console.log(res);
                 }
             }
         }
@@ -3630,7 +3706,7 @@ if (debug) {
     };
 }
 
-var matchText = function matchText(P, datas, res) {
+var matchText = function matchText(P, datas, eventType, res) {
     var useData = datas;
     useData.isActive = null;
     textCtx.beginPath();
@@ -3687,11 +3763,19 @@ var matchText = function matchText(P, datas, res) {
     }
     var isFit = textCtx.isPointInPath(P[0], P[1]);
     if (isFit) {
-        res.push({
-            data: datas,
-            projection: P,
-            length: Math.sqrt(Math.pow(P[0] - datas.center[0], 2), Math.pow(P[1] - datas.center[1], 2))
-        });
+        var userSet = datas.object.userSet;
+        // const bufferSize = userSet.bufferSize;
+        // mouseOverEventEnable: false,
+        // clickable: true,
+        if (eventType === 'mousemove' && !userSet.mouseOverEventEnable || eventType === 'mousedown' && !userSet.clickable) {
+            // res.length = 0;
+        } else {
+            res.push({
+                data: datas,
+                projection: P,
+                length: Math.sqrt(Math.pow(P[0] - datas.center[0], 2), Math.pow(P[1] - datas.center[1], 2))
+            });
+        }
     }
     textCtx.restore();
 };
@@ -3708,16 +3792,22 @@ exports.default = matchText;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-var matchCircle = function matchCircle(P, datas, res) {
+var matchCircle = function matchCircle(P, datas, eventType, res) {
     var useData = datas;
     useData.isActive = null;
+    var userSet = datas.object.userSet;
+    var bufferSize = userSet.bufferSize;
 
     var lPC = Math.sqrt(Math.pow(P[0] - datas.center[0], 2) + Math.pow(P[1] - datas.center[1], 2));
-    if (lPC <= datas.redius + 5) {
-        res.push({
-            data: datas,
-            length: lPC
-        });
+    if (lPC <= datas.redius + bufferSize) {
+        if (eventType === 'mousemove' && !userSet.mouseOverEventEnable || eventType === 'mousedown' && !userSet.clickable) {
+            // res.length = 0;
+        } else {
+            res.push({
+                data: datas,
+                length: lPC
+            });
+        }
     }
 };
 
@@ -3744,7 +3834,7 @@ var ctx = textCanvas.getContext('2d');
 
 var offset = 10;
 
-var matchPolygon = function matchPolygon(P, datas, res) {
+var matchPolygon = function matchPolygon(P, datas, eventType, res) {
     var useData = datas;
     useData.isActive = null;
 
@@ -3759,33 +3849,41 @@ var matchPolygon = function matchPolygon(P, datas, res) {
         return false;
     }
 
-    datas.path.forEach(function (item, index) {
-        if (index === 0) {
-            ctx.moveTo(item[0], item[1]);
-        } else {
-            ctx.lineTo(item[0], item[1]);
-        }
-        // get the length of P and O
-        var lPO = Math.sqrt(Math.pow(P[0] - item[0], 2) + Math.pow(P[1] - item[1], 2));
-        if (lPO < offset) {
+    var userSet = datas.object.userSet;
+    var bufferSize = userSet.bufferSize;
+    // mouseOverEventEnable: false,
+    // clickable: true,
+    if (eventType === 'mousemove' && !userSet.mouseOverEventEnable || eventType === 'mousedown' && !userSet.clickable) {
+        // res.length = 0;
+    } else {
+        datas.path.forEach(function (item, index) {
+            if (index === 0) {
+                ctx.moveTo(item[0], item[1]);
+            } else {
+                ctx.lineTo(item[0], item[1]);
+            }
+            // get the length of P and O
+            var lPO = Math.sqrt(Math.pow(P[0] - item[0], 2) + Math.pow(P[1] - item[1], 2));
+            if (lPO < offset) {
+                res.push({
+                    type: 'point',
+                    index: index,
+                    data: datas,
+                    length: lPO
+                });
+            }
+        });
+        // ctx.fill();
+        var isFit = ctx.isPointInPath(P[0], P[1]);
+        var center = [(outBox.xMax + outBox.xMin) / 2, (outBox.yMax + outBox.yMin) / 2];
+        var length = Math.sqrt(Math.pow(P[0] - center[0], 2) + Math.pow(P[1] - center[1], 2));
+        if (isFit) {
             res.push({
-                type: 'point',
-                index: index,
+                type: 'object',
                 data: datas,
-                length: lPO
+                length: length
             });
         }
-    });
-    // ctx.fill();
-    var isFit = ctx.isPointInPath(P[0], P[1]);
-    var center = [(outBox.xMax + outBox.xMin) / 2, (outBox.yMax + outBox.yMin) / 2];
-    var length = Math.sqrt(Math.pow(P[0] - center[0], 2) + Math.pow(P[1] - center[1], 2));
-    if (isFit) {
-        res.push({
-            type: 'object',
-            data: datas,
-            length: length
-        });
     }
 };
 
