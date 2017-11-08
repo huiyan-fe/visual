@@ -26,6 +26,7 @@ class Visual {
         this.sys = {
             objects: [],
             objectTypes: Config.objectTypes,
+            pickupedObjs: [],
         };
 
         // config

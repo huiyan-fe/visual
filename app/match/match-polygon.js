@@ -40,7 +40,9 @@ const matchPolygon = (P, datas, eventType, res) => {
             }
             // get the length of P and O
             const lPO = Math.sqrt(((P[0] - item[0]) ** 2) + ((P[1] - item[1]) ** 2));
+            
             if (lPO < offset) {
+                // console.log(index)
                 res.push({
                     type: 'point',
                     index,

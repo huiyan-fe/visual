@@ -33,8 +33,8 @@ const MathTool = {
 
         if (res[0]) {
             res[0].data.isActive = res[0];
-            console.log('res');
-            console.log(res);
+            // console.log('res');
+            // console.log(res);
         }
         return res;
     },

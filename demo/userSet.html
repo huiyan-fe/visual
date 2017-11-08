@@ -25,7 +25,7 @@
 
         const userSet1 = {
             dragable: true,
-            clickable: false,
+            clickable: true,
             bufferSize: 2,
             mouseOverEventEnable: false,
             active: true
@@ -60,15 +60,17 @@
             border: true
         }, {
                 dragable: true,
-                clickable: false,
+                clickable: true,
                 bufferSize: 1,
-                active:true
+                // active:true
             });
 
         window.p = v.polygon([
             [300, 100],
             [250, 150],
-            [350, 150]
+            [250, 250],
+            [350, 150],
+            [350, 250]
         ], {
                 border: true,
                 fill: false,
@@ -77,9 +79,14 @@
             }, {
                 dragable: true,
                 clickable: true,
-                mouseOverEventEnable: false,
-                active: true
+                mouseOverEventEnable: true,
+                // bufferSize:,
+                // active: true
             })
+        window.p.on('finish',(data)=>{
+            console.log('p finish');
+            console.log(data);
+        })
 
     </script>
 

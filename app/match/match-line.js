@@ -52,8 +52,8 @@ const matchLine = (P, datas, eventType, res) => {
                     }
                 }
                 if (res.length > 0) {
-                    console.log('选中');
-                    console.log(res);
+                    // console.log('选中');
+                    // console.log(res);
                 }
             }
         }

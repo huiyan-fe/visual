@@ -1202,7 +1202,8 @@ var Visual = function () {
 
         this.sys = {
             objects: [],
-            objectTypes: _config2.default.objectTypes
+            objectTypes: _config2.default.objectTypes,
+            pickupedObjs: []
         };
 
         // config
@@ -2728,8 +2729,8 @@ function DrawLine(Visual, obj) {
 
     if (obj && obj.isActive) {
         ctx.canvas.style.cursor = 'pointer';
-        console.log('obj.isActive');
-        console.log(obj);
+        // console.log('obj.isActive');
+        // console.log(obj);
         ctx.save();
         // draw base line
         ctx.lineWidth = 1;
@@ -2770,7 +2771,7 @@ function DrawLine(Visual, obj) {
 
         //
         if (obj.isActive.type === 'point' && obj.isActive.length < 10) {
-            console.log('line active');
+            // console.log('line active');
             var index = obj.isActive.index;
             var point = usePath[index];
             ctx.beginPath();
@@ -3182,10 +3183,14 @@ var Event = function Event(self) {
     var canvas = self.canvas;
     var mousedownPos = [];
     var hoveredObj = [];
-    var pickupedObj = [];
+    var mousedown = false;
     var step = self.options.grid.step;
-
+    var events = {
+        ctrl: false,
+        shift: false
+    };
     window.addEventListener('mousedown', function (e) {
+        mousedown = true;
         var x = e.offsetX;
         var y = e.offsetY;
 
@@ -3214,16 +3219,18 @@ var Event = function Event(self) {
                     pathSnapshoot = hoveredObj[0].data.center;
                     break;
                 default:
+                    break;
             }
             pathSnapshoot = JSON.parse((0, _stringify2.default)(pathSnapshoot));
 
-            pickupedObj = [{
+            self.sys.pickupedObjs.push({
                 pathSnapshoot: pathSnapshoot,
                 origin: hoveredObj[0]
-            }];
+            });
+
             mousedownPos = (0, _scalelize.scaleReverse)([[e.pageX, e.pageY]], self.options.grid.scale)[0];
         } else {
-            pickupedObj = [];
+            self.sys.pickupedObjs = [];
         }
         self.draw();
     });
@@ -3231,7 +3238,8 @@ var Event = function Event(self) {
     window.addEventListener('mousemove', function (e) {
         var x = 0;
         var y = 0;
-        if (pickupedObj.length === 0) {
+
+        if (self.sys.pickupedObjs.length === 0) {
             x = e.offsetX;
             y = e.offsetY;
 
@@ -3247,7 +3255,7 @@ var Event = function Event(self) {
             var eventType = 'mousemove';
             hoveredObj = _match2.default.match([x, y], self.sys.objects, eventType);
         } else {
-            if (mousedownPos.length > 0) {
+            if (mousedownPos.length > 0 && mousedown) {
                 x = e.pageX;
                 y = e.pageY;
 
@@ -3258,46 +3266,105 @@ var Event = function Event(self) {
 
                 var movedPos = [x - mousedownPos[0], y - mousedownPos[1]];
                 movedPos = (0, _steplize2.default)(movedPos, step);
-                var snapShootPath = pickupedObj[0].pathSnapshoot;
-                var moveObject = pickupedObj[0].origin;
-                if (moveObject.data.object.userSet.dragable) {
-                    (0, _move2.default)(moveObject, snapShootPath, movedPos, step);
-                }
+                self.sys.pickupedObjs.map(function (pos, index) {
+                    var snapShootPath = pos.pathSnapshoot;
+                    var moveObject = pos.origin;
+                    if (moveObject.data.object.userSet.dragable) {
+                        (0, _move2.default)(moveObject, snapShootPath, movedPos, step);
+                    }
+                });
             }
             e.preventDefault();
         }
         self.draw();
     });
 
-    window.addEventListener('mouseup', function () {
-        if (pickupedObj.length > 0) {
-            pickupedObj[0].origin.data.object.emit('finish', {
-                object: pickupedObj[0].origin.data,
-                type: 'move'
-            });
-            // update
-            var pathSnapshoot = void 0;
-            switch (pickupedObj[0].origin.data.type) {
-                case _config2.default.objectTypes.line:
-                case _config2.default.objectTypes.polygon:
-                    pathSnapshoot = pickupedObj[0].origin.data.path;
-                    break;
-                case _config2.default.objectTypes.text:
-                case _config2.default.objectTypes.circle:
-                    pathSnapshoot = pickupedObj[0].origin.data.center;
-                    break;
-                default:
+    var uniqueArr = function uniqueArr(arr) {
+        var result = [],
+            hash = {};
+        for (var i = 0, elem; (elem = arr[i]) != null; i++) {
+            if (!hash[elem]) {
+                result.push(elem);
+                hash[elem] = true;
             }
-            pathSnapshoot = JSON.parse((0, _stringify2.default)(pathSnapshoot));
-            pickupedObj[0].pathSnapshoot = pathSnapshoot;
         }
-        // pickupedObj = [];
-        hoveredObj = [];
-        mousedownPos = [];
+        return result;
+    };
+
+    window.addEventListener('mouseup', function () {
+        mousedown = false;
+        if (events.shift) {
+            if (self.sys.pickupedObjs.length > 1) {
+                var a = self.sys.pickupedObjs[0];
+                var oneObj = true;
+                var indexs = self.sys.pickupedObjs.map(function (obj) {
+                    if (a.origin.data.id !== obj.origin.data.id) {
+                        oneObj = false;
+                    }
+                    return obj.origin.index;
+                });
+
+                var uniIndexs = uniqueArr(indexs);
+                if (oneObj) {
+                    a.origin.data.object.emit('finish', {
+                        object: a.origin.data,
+                        index: uniIndexs,
+                        type: 'multichose'
+                    });
+                }
+            }
+        } else {
+            if (self.sys.pickupedObjs.length === 1) {
+                self.sys.pickupedObjs.forEach(function (vObj) {
+                    vObj.origin.data.object.emit('finish', {
+                        object: vObj.origin.data,
+                        type: 'move'
+                    });
+                    // update
+                    var pathSnapshoot = void 0;
+                    switch (vObj.origin.data.type) {
+                        case _config2.default.objectTypes.line:
+                        case _config2.default.objectTypes.polygon:
+                            pathSnapshoot = vObj.origin.data.path;
+                            break;
+                        case _config2.default.objectTypes.text:
+                        case _config2.default.objectTypes.circle:
+                            pathSnapshoot = vObj.origin.data.center;
+                            break;
+                        default:
+                    }
+                    pathSnapshoot = JSON.parse((0, _stringify2.default)(pathSnapshoot));
+                    vObj.pathSnapshoot = pathSnapshoot;
+                });
+            }
+
+            self.sys.pickupedObjs = [];
+            hoveredObj.length = 0;
+            mousedownPos.length = 0;
+        }
+    });
+
+    window.addEventListener('keyup', function (e) {
+        switch (e.keyCode) {
+            case 16:
+                // shift
+                events.shift = false;
+                break;
+            case 17:
+                // ctrl
+                events.ctrl = false;
+                break;
+            default:
+                break;
+        }
     });
 
     window.addEventListener('keydown', function (e) {
-        if (pickupedObj.length > 0) {
+        if (e.keyCode == 16) {
+            // shift
+            events.shift = true;
+        }
+        if (self.sys.pickupedObjs.length > 0) {
             var order = 'update';
             var x = 0;
             var y = 0;
@@ -3306,7 +3373,7 @@ var Event = function Event(self) {
             switch (e.keyCode) {
                 case 9:
                     order = 'cancel';
-                    var index = pickupedObj[0].origin.index;
+                    var index = self.sys.pickupedObjs[0].origin.index;
                     if (index === undefined) {
                         index = -1;
                     }
@@ -3315,25 +3382,33 @@ var Event = function Event(self) {
                     } else {
                         index += 1;
                     }
-                    if (index > pickupedObj[0].origin.data.path.length - 1) {
+                    if (index > self.sys.pickupedObjs[0].origin.data.path.length - 1) {
                         index = 0;
                     }
                     if (index < 0) {
-                        index = pickupedObj[0].origin.data.path.length - 1;
+                        index = self.sys.pickupedObjs[0].origin.data.path.length - 1;
                     }
-                    pickupedObj[0].origin.index = index;
-                    pickupedObj[0].origin.type = 'point';
+                    self.sys.pickupedObjs[0].origin.index = index;
+                    self.sys.pickupedObjs[0].origin.type = 'point';
                     e.preventDefault();
                     break;
                 case 8:
-                    // delete
-                    (0, _delete2.default)(pickupedObj[0]);
+                    // BackSpace
+                    (0, _delete2.default)(self.sys.pickupedObjs[0]);
                     order = 'cancel';
                     // update active index  & reget the active
                     break;
+                case 16:
+                    // shift
+                    events.shift = true;
+                    break;
+                case 17:
+                    // ctrl
+                    events.ctrl = true;
+                    break;
                 case 27:
                     // esc
-                    pickupedObj = [];
+                    self.sys.pickupedObjs = [];
                     hoveredObj = _match2.default.match([-99999, -99999], self.sys.objects, eventType);
                     order = 'cancel';
                     break;
@@ -3358,30 +3433,30 @@ var Event = function Event(self) {
             }
 
             // update snapshoot
-            if (pickupedObj.length > 0) {
+            if (self.sys.pickupedObjs.length > 0) {
                 var pathSnapshoot = void 0;
-                switch (pickupedObj[0].origin.data.type) {
+                switch (self.sys.pickupedObjs[0].origin.data.type) {
                     case _config2.default.objectTypes.line:
                     case _config2.default.objectTypes.polygon:
-                        pathSnapshoot = pickupedObj[0].origin.data.path;
+                        pathSnapshoot = self.sys.pickupedObjs[0].origin.data.path;
                         break;
                     case _config2.default.objectTypes.text:
-                    case _config2.default.objectTypes.circle:
-                        pathSnapshoot = pickupedObj[0].origin.data.center;
+                    case _config2.default.objectTyfpes.circle:
+                        pathSnapshoot = self.sys.pickupedObjs[0].origin.data.center;
                         break;
                     default:
                 }
                 pathSnapshoot = JSON.parse((0, _stringify2.default)(pathSnapshoot));
-                pickupedObj[0].pathSnapshoot = pathSnapshoot;
+                self.sys.pickupedObjs[0].pathSnapshoot = pathSnapshoot;
             }
 
             if (order === 'update') {
-                var snapShootPath = pickupedObj[0].pathSnapshoot;
-                var moveObject = pickupedObj[0].origin;
+                var snapShootPath = self.sys.pickupedObjs[0].pathSnapshoot;
+                var moveObject = self.sys.pickupedObjs[0].origin;
                 (0, _move2.default)(moveObject, snapShootPath, [x * step, y * step], step);
 
-                pickupedObj[0].origin.data.object.emit('finish', {
-                    object: pickupedObj[0].origin.data,
+                self.sys.pickupedObjs[0].origin.data.object.emit('finish', {
+                    object: self.sys.pickupedObjs[0].origin.data,
                     type: 'move'
                 });
                 e.preventDefault();
@@ -3587,8 +3662,8 @@ var MathTool = {
 
         if (res[0]) {
             res[0].data.isActive = res[0];
-            console.log('res');
-            console.log(res);
+            // console.log('res');
+            // console.log(res);
         }
         return res;
     }
@@ -3659,8 +3734,8 @@ var matchLine = function matchLine(P, datas, eventType, res) {
                     }
                 }
                 if (res.length > 0) {
-                    console.log('选中');
-                    console.log(res);
+                    // console.log('选中');
+                    // console.log(res);
                 }
             }
         }
@@ -3864,7 +3939,9 @@ var matchPolygon = function matchPolygon(P, datas, eventType, res) {
             }
             // get the length of P and O
             var lPO = Math.sqrt(Math.pow(P[0] - item[0], 2) + Math.pow(P[1] - item[1], 2));
+
             if (lPO < offset) {
+                // console.log(index)
                 res.push({
                     type: 'point',
                     index: index,
