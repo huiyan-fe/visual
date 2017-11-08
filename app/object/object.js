@@ -1,12 +1,23 @@
+import Config from '../config/config';
+
 class VisualObject {
-    constructor() {
+    constructor(config = {}) {
         this.userSet = {
-            dragable: true,
             mouseOverEventEnable: true,
             clickable: true,
-            bufferSize: 15,
             active: false,
         };
+
+        // set the default config from config
+        Object.keys(Config.objectUserSets).forEach(configKey => {
+            if (config[configKey] === undefined) {
+                this.userSet[configKey] = Config.objectUserSets[configKey];
+            } else {
+                this.userSet[configKey] = config[configKey];
+            }
+        });
+
+        // console.log(this.userSet.pointEditable);
     }
 
     remove() {

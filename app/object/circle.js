@@ -6,7 +6,7 @@ import steplizePoint from '../tools/steplize';
 
 class Circle extends VisualObject {
     constructor(Visual, redius, centerParam, options, userSet) {
-        super();
+        super(options);
         this.Visual = Visual;
         this.id = Symbol('circle');
         this.userSet.bufferSize = 5;

@@ -3,7 +3,7 @@ import steplizePoint from '../tools/steplize';
 
 class Polygon extends VisualObject {
     constructor(Visual, pathParams = [], options, userSet) {
-        super();
+        super(options);
         this.Visual = Visual;
         this.id = Symbol('polygon');
         Object.assign(this.userSet, userSet);

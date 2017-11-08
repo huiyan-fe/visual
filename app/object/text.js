@@ -7,7 +7,7 @@ import config from '../config/config';
 
 class Text extends VisualObject {
     constructor(Visual, text, centerParam = [], options, userSet) {
-        super();
+        super(options);
         this.Visual = Visual;
         this.id = Symbol('text');
         Object.assign(this.userSet, userSet);

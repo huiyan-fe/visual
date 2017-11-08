@@ -13,7 +13,7 @@
 </head>
 
 <body>
-    <div id="content" style="width:500px; height: 500px; border:1px solid #ccc;"></div>
+    <div id="content" style="width:800px; height: 500px; border:1px solid #ccc;"></div>
     <script>
         let dom = document.getElementById('content');
         let v = new Visual(dom, {
@@ -139,6 +139,33 @@
                 lineCap: 'round'
             })
         }
+
+        // Edit disable polygon
+        v.polygon([
+            [650, 10],
+            [600, 60],
+            [700, 60]
+        ], {
+            border: true,
+            lineJoin: 'round',
+            lineCap: 'round',
+            pointEditable: false
+        });
+        v.text('Edit disable polygon', [650, 80], {
+            textAlign: 'center'
+        });
+
+        // Edit disable line
+        v.line([
+            [650, 100],
+            [600, 150],
+            [700, 150]
+        ], {
+            pointEditable: false
+        });
+        v.text('Edit disable line', [650, 180], {
+            textAlign: 'center'
+        });
     </script>
 
 

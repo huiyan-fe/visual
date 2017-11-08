@@ -35,8 +35,6 @@ function DrawLine(Visual, obj) {
 
     if (obj && obj.isActive) {
         ctx.canvas.style.cursor = 'pointer';
-        console.log('obj.isActive');
-        console.log(obj);
         ctx.save();
         // draw base line
         ctx.lineWidth = 1;
@@ -77,7 +75,6 @@ function DrawLine(Visual, obj) {
 
         //
         if (obj.isActive.type === 'point' && obj.isActive.length < 10) {
-            console.log('line active');
             const index = obj.isActive.index;
             const point = usePath[index];
             ctx.beginPath();

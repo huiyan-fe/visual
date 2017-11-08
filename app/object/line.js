@@ -3,7 +3,7 @@ import steplizePoint from '../tools/steplize';
 
 class Line extends VisualObject {
     constructor(Visual, pathParams = [], options, userSet) {
-        super();
+        super(options);
         this.Visual = Visual;
         this.id = Symbol('line');
         Object.assign(this.userSet, userSet);

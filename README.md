@@ -132,7 +132,7 @@ visual.text('Hello Mofei', [200, 400], {
 | **config.fillStyle** | `String` | 图形填充样式
 | **config.strokeStyle** | `String` | 图形描边样式
 | **config.lineWidth** | `Number` | 线宽
-
+| **config.pointEditable** | `Boolean` | 多边形的或者有节点的线等物体的每个点是否可编辑 默认`true`，false情况下只能整体移动物体
 
 #### 2.5 userSet
 
