@@ -18,6 +18,7 @@
 	* [text](#22-texttext-point-config)
 	* [circle](#23-circleredis-center-config)
 	* [Visual 对象 config](#24-config)
+	* [Visual 对象 userSet](#25-userSet)
 3. [Visual Event](#3-visual-event)
 	* [change](#31-change)
 	* [finish](#32-finish)
@@ -131,6 +132,17 @@ visual.text('Hello Mofei', [200, 400], {
 | **config.fillStyle** | `String` | 图形填充样式
 | **config.strokeStyle** | `String` | 图形描边样式
 | **config.lineWidth** | `Number` | 线宽
+
+
+#### 2.5 userSet
+
+|参数|类型|说明|
+|:---|:---|:---|
+| **userSet.dragable** | `Boolean` | 对象是否支持拖拽，默认 `true`
+| **userSet.clickable** | `Boolean` | 是否支持点击事件，默认`true`
+| **userSet.bufferSize** | `Number` | 选中 visual 对象的缓冲距离 ,Circle 默认为`5`，其他默认`15`
+| **userSet.mouseOverEventEnable** | `Boolean` | 是否支持鼠标划过事件，默认`true`
+| **userSet.active** | `Boolean` | visual 对象是否为选中状态，默认`false`
 
 
 ### 3. Visual Event
