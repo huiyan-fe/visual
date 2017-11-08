@@ -6,7 +6,7 @@ import { scaleReverse } from '../tools/scalelize';
 import move from './move';
 import deleteObj from './delete';
 
-const Event = (self) => {
+const Event = self => {
     const canvas = self.canvas;
     let mousedownPos = [];
     let hoveredObj = [];
