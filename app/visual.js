@@ -2,6 +2,7 @@
 
 import VLine from './object/line';
 import VText from './object/text';
+import VTextGroup from './object/textgroup';
 import VCircle from './object/circle';
 import VPolygon from './object/polygon';
 
@@ -95,6 +96,10 @@ Visual.prototype.line = function linefn(path = [], options = {}, userSet) {
 
 Visual.prototype.text = function textfn(text, center = [], options = {}, userSet) {
     return new VText(this, text, center, options, userSet);
+};
+
+Visual.prototype.textGroup = function textfn(text, point = [], options = {}, userSet) {
+    return new VTextGroup(this, text, point, options);
 };
 
 Visual.prototype.circle = function circlefn(redius, center = [], options = {}, userSet) {

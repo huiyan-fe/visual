@@ -32,6 +32,7 @@ const Event = self => {
             switch (hoveredObj[0].data.type) {
                 case Config.objectTypes.line:
                 case Config.objectTypes.polygon:
+                case Config.objectTypes.textGroup:
                     pathSnapshoot = hoveredObj[0].data.path;
                     break;
                 case Config.objectTypes.text:
@@ -103,6 +104,7 @@ const Event = self => {
             switch (pickupedObj[0].origin.data.type) {
                 case Config.objectTypes.line:
                 case Config.objectTypes.polygon:
+                case Config.objectTypes.textGroup:
                     pathSnapshoot = pickupedObj[0].origin.data.path;
                     break;
                 case Config.objectTypes.text:
@@ -186,6 +188,7 @@ const Event = self => {
                 switch (pickupedObj[0].origin.data.type) {
                     case Config.objectTypes.line:
                     case Config.objectTypes.polygon:
+                    case Config.objectTypes.textGroup:
                         pathSnapshoot = pickupedObj[0].origin.data.path;
                         break;
                     case Config.objectTypes.text:

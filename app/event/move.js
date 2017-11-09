@@ -9,6 +9,7 @@ const move = (moveObject, snapShootPath, movedPos, step) => {
     switch (moveObject.data.type) {
         case Config.objectTypes.polygon:
         case Config.objectTypes.line:
+        case Config.objectTypes.textGroup:
             let newPath = [];
             const isMoveSingle = (moveObject.type === 'point') && (moveObject.length < 10);
             if (isMoveSingle) {

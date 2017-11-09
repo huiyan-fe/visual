@@ -16,8 +16,6 @@ class VisualObject {
                 this.userSet[configKey] = config[configKey];
             }
         });
-
-        // console.log(this.userSet.pointEditable);
     }
 
     remove() {

@@ -1,6 +1,14 @@
 # visual
 
-## 2017年08月17日
+## 2017/11/09
+
+1. support `textGroup`
+
+## 2017/11/08
+1. 支持`config.pointEditable`选项
+
+
+## 2017/08/17
 
 1.  支持键盘delete删除点
 2.  新增`willDeletePoint`事件

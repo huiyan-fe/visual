@@ -82,7 +82,7 @@ visual.line([
 
 |参数|类型|说明|
 |:---|:---|:---|
-| **text** | `String` | 绘制的文本坐标
+| **text** | `String` | 绘制的文本
 | **point** | `Array` | 绘制的文字的起始点
 | **config** | `Object` | 相关配置，通用配置请查阅配置说明 [config](#24-config)
 | **config.rotate** | `Number` | 文本的旋转角度
@@ -100,9 +100,33 @@ visual.text('Hello Mofei', [200, 400], {
 })
 ```
 
+
+#### 2.3 textGroup(text, path, config)
+
+|参数|类型|说明|
+|:---|:---|:---|
+| **text** | `String` | 绘制的文本
+| **path** | `Array` | 绘制的文字的坐标，可以为[x,y]或者[[x1,y1],[x2,y2],...]第一种形式为指定起点坐标，第二种形式为指定每个点的坐标，如果path的长度和字符的长度不匹配，Visual会自动计算出后续文字的坐标。
+| **config** | `Object` | 相关配置，通用配置请查阅配置说明 [config](#25-config)
+| **config.textRotate** | `Number` | 单个文字的旋转角度
+
+text用来绘制文本，简单示例如下：
+
+```javascript
+visua.textGroup('TextGroup with path points', [
+	[600, 250],
+	[610, 260],
+	[620, 250],
+	[630, 260],
+	[640, 250]
+], {
+	textRotate: Math.PI * .1
+});
+```
+
 [在线Demo](https://jsfiddle.net/zhuwenlong/1kbp4z95/1/)
 
-#### 2.3 circle(redis, center, config)
+#### 2.4 circle(redis, center, config)
 
 |参数|类型|说明|
 |:---|:---|:---|
@@ -122,7 +146,7 @@ visual.text('Hello Mofei', [200, 400], {
 })
 ```
 
-#### 2.4 config
+#### 2.5 config
 
 |参数|类型|说明|
 |:---|:---|:---|
@@ -134,7 +158,7 @@ visual.text('Hello Mofei', [200, 400], {
 | **config.lineWidth** | `Number` | 线宽
 | **config.pointEditable** | `Boolean` | 多边形的或者有节点的线等物体的每个点是否可编辑 默认`true`，false情况下只能整体移动物体
 
-#### 2.5 userSet
+#### 2.6 userSet
 
 |参数|类型|说明|
 |:---|:---|:---|

@@ -12,7 +12,7 @@ const MathTool = {
         datasGroup.forEach(datas => {
             switch (datas.type) {
                 case Config.objectTypes.line:
-                    // for line
+                case Config.objectTypes.textGroup:
                     matchLine(P, datas, eventType, res);
                     break;
                 case Config.objectTypes.text:

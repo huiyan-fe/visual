@@ -2,6 +2,7 @@
 
 import DrawLine from './draw-line';
 import DrawText from './draw-text';
+import DrawTextGroup from './draw-textgroup';
 import DrawCircle from './draw-circle';
 import DrawPolygon from './draw-polygon';
 
@@ -20,6 +21,9 @@ function drawFns(obj) {
             break;
         case self.sys.objectTypes.text:
             DrawText(self, obj);
+            break;
+        case self.sys.objectTypes.textGroup:
+            DrawTextGroup(self, obj);
             break;
         case self.sys.objectTypes.circle:
             DrawCircle(self, obj);
