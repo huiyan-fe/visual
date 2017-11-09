@@ -3934,8 +3934,9 @@ var MathTool = {
 
         objects.forEach(function (object) {
             // remove all the objects' active;
+            // console.log(multichose)
             if (!multichose) {
-                objects.isActive = null;
+                object.isActive = null;
             } else {
                 // console.log('multichose match');
             }
