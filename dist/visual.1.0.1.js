@@ -4123,7 +4123,6 @@ var move = function move(moveObject, snapShootPath, movedPos, step) {
                 object.path[moveIndex] = (0, _steplize2.default)(object.path[moveIndex], step);
             } else {
                 if (needBoundaryCheck) {
-                    console.log('xxx');
                     var _maxBound = [moveObject.object.Visual.canvas.width, moveObject.object.Visual.canvas.height];
                     object.path = (0, _boundaryCheck2.default)(snapShootPath.map(function (item) {
                         return (0, _steplize2.default)([item[0] + movedPos[0], item[1] + movedPos[1]], step);
@@ -4150,7 +4149,17 @@ var move = function move(moveObject, snapShootPath, movedPos, step) {
             break;
         case _config2.default.objectTypes.text:
         case _config2.default.objectTypes.circle:
-            object.center = [snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]];
+            if (needBoundaryCheck) {
+                var _maxBound2 = [moveObject.object.Visual.canvas.width, moveObject.object.Visual.canvas.height];
+                // console.log([
+                //     snapShootPath[0] + movedPos[0],
+                //     snapShootPath[1] + movedPos[1],
+                // ])
+                object.center = (0, _boundaryCheck2.default)([[snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]]], _maxBound2)[0];
+            } else {
+                object.center = [snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]];
+            }
+
             break;
         default:
     }

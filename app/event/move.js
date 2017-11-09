@@ -36,7 +36,6 @@ const move = (moveObject, snapShootPath, movedPos, step) => {
                 object.path[moveIndex] = steplizePoint(object.path[moveIndex], step);
             } else {
                 if (needBoundaryCheck) {
-                    console.log('xxx')
                     const maxBound = [moveObject.object.Visual.canvas.width, moveObject.object.Visual.canvas.height];
                     object.path = boundaryLize(snapShootPath.map(
                         item => steplizePoint([item[0] + movedPos[0], item[1] + movedPos[1]], step),
@@ -63,10 +62,25 @@ const move = (moveObject, snapShootPath, movedPos, step) => {
             break;
         case Config.objectTypes.text:
         case Config.objectTypes.circle:
-            object.center = [
-                snapShootPath[0] + movedPos[0],
-                snapShootPath[1] + movedPos[1],
-            ];
+            if (needBoundaryCheck) {
+                const maxBound = [moveObject.object.Visual.canvas.width, moveObject.object.Visual.canvas.height];
+                // console.log([
+                //     snapShootPath[0] + movedPos[0],
+                //     snapShootPath[1] + movedPos[1],
+                // ])
+                object.center = boundaryLize([
+                    [
+                        snapShootPath[0] + movedPos[0],
+                        snapShootPath[1] + movedPos[1],
+                    ],
+                ], maxBound)[0];
+            } else {
+                object.center = [
+                    snapShootPath[0] + movedPos[0],
+                    snapShootPath[1] + movedPos[1],
+                ];
+            }
+
             break;
         default:
     }
