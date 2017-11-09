@@ -1,22 +1,27 @@
 import Config from '../config/config';
 
 const deleteObject = object => {
+    // console.log(object.origin.isActive)
     // let candelete = object.origin
-    const deleteObj = object.origin.data.object;
+    // console.log(object)
+    const deleteObj = object.origin.innerObject;
     let candelete = true;
+
+    // console.log('@@@@@@@@@@@', object.origin, object.origin.index)
     if (deleteObj.listens.willDeletePoint) {
         candelete = deleteObj.listens.willDeletePoint({
-            object: object.origin.data,
+            object: object.origin.innerObject,
             index: object.origin.index,
         }) !== false;
     }
 
-    const minPoint = object.origin.data.type === Config.objectTypes.polygon ? 3 : 2;
+    const minPoint = object.origin.innerObject.type === Config.objectTypes.polygon ? 3 : 2;
     if (candelete) {
-        if (object.origin.type === 'point' && object.origin.data.path.length > minPoint) {
-            object.origin.data.path.splice(object.origin.index, 1);
-            if (object.origin.index > object.origin.data.path.length - 1) {
+        if (object.origin.type === 'point' && object.origin.innerObject.path.length > minPoint) {
+            object.origin.innerObject.path.splice(object.origin.index, 1);
+            if (object.origin.index > object.origin.innerObject.path.length - 1) {
                 object.origin.index -= 1;
+                object.origin.innerObject.isActive.index -= 1;
             }
         } else {
             object.origin.type = 'object';

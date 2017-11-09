@@ -23,16 +23,24 @@ class Polygon extends VisualObject {
             outBox.yMax = Math.max(outBox.yMax, point[1]);
         });
 
-        this.Visual.sys.objects.push({
-            id: this.id,
-            type: Visual.sys.objectTypes.polygon,
-            path: path.map(point => steplizePoint(point, this.Visual.options.grid.step)),
-            options: JSON.parse(JSON.stringify(options)),
-            object: this,
-            sys: {
-                outBox,
-            },
-        });
+        this.type = Visual.sys.objectTypes.polygon;
+        this.path = path.map(point => steplizePoint(point, this.Visual.options.grid.step));
+        this.options = JSON.parse(JSON.stringify(options));
+        this.sys = {
+            outBox,
+        };
+
+        this.Visual.sys.objects.push(this);
+        // this.Visual.sys.objects.push({
+        //     id: this.id,
+        //     type: Visual.sys.objectTypes.polygon,
+        //     path: path.map(point => steplizePoint(point, this.Visual.options.grid.step)),
+        //     options: JSON.parse(JSON.stringify(options)),
+        //     object: this,
+        //     sys: {
+        //         outBox,
+        //     },
+        // });
         this.Visual.draw();
     }
 }

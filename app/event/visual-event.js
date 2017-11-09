@@ -82,7 +82,7 @@ const Event = self => {
                 movedPos = steplizePoint(movedPos, step);
                 const snapShootPath = pickupedObj[0].pathSnapshoot;
                 const moveObject = pickupedObj[0].origin;
-                if (moveObject.innerObject.object.userSet.dragable) {
+                if (moveObject.innerObject.userSet.dragable) {
                     move(moveObject, snapShootPath, movedPos, step);
                 }
             }
@@ -94,7 +94,7 @@ const Event = self => {
 
     window.addEventListener('mouseup', () => {
         if (pickupedObj.length > 0) {
-            pickupedObj[0].origin.innerObject.object.emit('finish', {
+            pickupedObj[0].origin.innerObject.emit('finish', {
                 object: pickupedObj[0].origin.innerObject,
                 type: 'move',
             });
@@ -152,6 +152,7 @@ const Event = self => {
                 case 8:
                     // delete
                     deleteObj(pickupedObj[0]);
+                    // console.log('**********', pickupedObj[0])
                     order = 'cancel';
                     // update active index  & reget the active
                     break;
@@ -205,7 +206,7 @@ const Event = self => {
                 const moveObject = pickupedObj[0].origin;
                 move(moveObject, snapShootPath, [x * step, y * step], step);
 
-                pickupedObj[0].origin.innerObject.object.emit('finish', {
+                pickupedObj[0].origin.innerObject.emit('finish', {
                     object: pickupedObj[0].origin.innerObject,
                     type: 'move',
                 });

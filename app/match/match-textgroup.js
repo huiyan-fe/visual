@@ -78,7 +78,7 @@ const matchText = (P, datas, eventType, res) => {
     }
     const isFit = textCtx.isPointInPath(P[0], P[1]);
     if (isFit) {
-        const userSet = datas.object.userSet;
+        const userSet = datas.userSet;
         // const bufferSize = userSet.bufferSize;
         // mouseOverEventEnable: false,
         // clickable: true,

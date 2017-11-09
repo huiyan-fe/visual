@@ -51,10 +51,10 @@ const move = (moveObject, snapShootPath, movedPos, step) => {
     // emit
     const emitObj = {
         type: moveType || 'object',
-        object: moveObject.data,
+        object: moveObject.innerObject,
         index: moveIndex,
     };
-    innerObject.object.emit('change', emitObj);
+    innerObject.emit('change', emitObj);
 };
 
 export default move;

@@ -8,7 +8,7 @@ textCanvas.style.height = '1px';
 const ctx = textCanvas.getContext('2d');
 
 const matchPolygon = (P, datas, eventType, res) => {
-    const userSet = datas.object.userSet;
+    const userSet = datas.userSet;
     const bufferSize = userSet.bufferSize;
 
     ctx.beginPath();
@@ -33,7 +33,7 @@ const matchPolygon = (P, datas, eventType, res) => {
             }
             // get the length of P and O
             const lPO = Math.sqrt(((P[0] - item[0]) ** 2) + ((P[1] - item[1]) ** 2));
-            if (lPO < bufferSize && datas.object.userSet.pointEditable) {
+            if (lPO < bufferSize && datas.userSet.pointEditable) {
                 // pointEditable: when pointEditable is true, we push the active point to res
                 res.push({
                     type: 'point',

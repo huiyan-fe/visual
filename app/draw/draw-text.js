@@ -35,7 +35,7 @@ function DrawText(Visual, obj) {
     }
     ctx.restore();
 
-    const userSet = obj.object.userSet;
+    const userSet = obj.userSet;
     if (userSet && userSet.active) {
         if (!(obj && obj.isActive)) {
             // userSet.active = false;

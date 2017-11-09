@@ -18,7 +18,7 @@ const matchLine = (P, datas, eventType, res) => {
             const lABPB = lAB * Math.sqrt((vPB[0] ** 2) + (vPB[1] ** 2));
             const rPBA = Math.acos(cABPB / lABPB);
 
-            const userSet = datas.object.userSet;
+            const userSet = datas.userSet;
             const bufferSize = userSet.bufferSize;
             // mouseOverEventEnable: false,
             // clickable: true,
@@ -26,7 +26,7 @@ const matchLine = (P, datas, eventType, res) => {
                 (eventType === 'mousedown' && !userSet.clickable)) {
                 // res.length = 0;
             } else {
-                if ((lPB < bufferSize || lAP < bufferSize) && datas.object.userSet.pointEditable) {
+                if ((lPB < bufferSize || lAP < bufferSize) && datas.userSet.pointEditable) {
                     // pointEditable: when pointEditable is true, we push the active point to res
                     res.push({
                         type: 'point',

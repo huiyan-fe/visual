@@ -35,22 +35,36 @@ class Text extends VisualObject {
         const spaces = text.split('').map(char => Visual.ctx.measureText(char).width);
         //
 
-        this.Visual.sys.objects.push({
-            id: this.id,
-            type: Visual.sys.objectTypes.text,
-            text,
-            center: steplizePoint(center, this.Visual.options.grid.step),
-            options,
-            object: this,
-            sys: {
-                measure: {
-                    height,
-                    width,
-                },
-                spaces,
-                outbox: [],
+        this.type = Visual.sys.objectTypes.text;
+        this.text = text;
+        this.center = steplizePoint(center, this.Visual.options.grid.step);
+        this.options = options;
+        this.sys = {
+            measure: {
+                height,
+                width,
             },
-        });
+            spaces,
+            outbox: [],
+        };
+
+        this.Visual.sys.objects.push(this);
+        // this.Visual.sys.objects.push({
+        //     id: this.id,
+        //     type: Visual.sys.objectTypes.text,
+        //     text,
+        //     center: steplizePoint(center, this.Visual.options.grid.step),
+        //     options,
+        //     object: this,
+        //     sys: {
+        //         measure: {
+        //             height,
+        //             width,
+        //         },
+        //         spaces,
+        //         outbox: [],
+        //     },
+        // });
         this.Visual.draw();
     }
 }
