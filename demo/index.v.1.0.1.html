@@ -182,6 +182,19 @@
         ], {
             textRotate: Math.PI * .1
         });
+
+        v.polygon([
+            [660, 280],
+            [710, 330],
+            [540, 330]
+        ], {
+            boundaryCheck: true
+        })
+
+        // Edit disable line
+        v.text('polygn with boundaryCheck', [660, 350], {
+            textAlign: 'center'
+        });
     </script>
 
 

@@ -38,7 +38,7 @@ const matchPolygon = (P, datas, eventType, res) => {
                 res.push({
                     type: 'point',
                     index,
-                    data: datas,
+                    innerObject: datas,
                     length: lPO,
                 });
             }
@@ -50,7 +50,7 @@ const matchPolygon = (P, datas, eventType, res) => {
         if (isFit) {
             res.push({
                 type: 'object',
-                data: datas,
+                innerObject: datas,
                 length,
             });
         }

@@ -30,7 +30,7 @@ const matchLine = (P, datas, eventType, res) => {
                     // pointEditable: when pointEditable is true, we push the active point to res
                     res.push({
                         type: 'point',
-                        data: datas,
+                        innerObject: datas,
                         projection: lPB < lAP ? B : A,
                         length: lPB < lAP ? lPB : lAP,
                         index: lPB < lAP ? index : (index - 1),
@@ -43,7 +43,7 @@ const matchLine = (P, datas, eventType, res) => {
                     if (lPO < bufferSize) {
                         res.push({
                             type: 'object',
-                            data: datas,
+                            innerObject: datas,
                             projection: O,
                             length: lPO,
                         });

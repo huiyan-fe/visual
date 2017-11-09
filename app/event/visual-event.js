@@ -29,15 +29,15 @@ const Event = self => {
 
         if (hoveredObj.length >= 1) {
             let pathSnapshoot;
-            switch (hoveredObj[0].data.type) {
+            switch (hoveredObj[0].innerObject.type) {
                 case Config.objectTypes.line:
                 case Config.objectTypes.polygon:
                 case Config.objectTypes.textGroup:
-                    pathSnapshoot = hoveredObj[0].data.path;
+                    pathSnapshoot = hoveredObj[0].innerObject.path;
                     break;
                 case Config.objectTypes.text:
                 case Config.objectTypes.circle:
-                    pathSnapshoot = hoveredObj[0].data.center;
+                    pathSnapshoot = hoveredObj[0].innerObject.center;
                     break;
                 default:
             }
@@ -82,7 +82,7 @@ const Event = self => {
                 movedPos = steplizePoint(movedPos, step);
                 const snapShootPath = pickupedObj[0].pathSnapshoot;
                 const moveObject = pickupedObj[0].origin;
-                if (moveObject.data.object.userSet.dragable) {
+                if (moveObject.innerObject.object.userSet.dragable) {
                     move(moveObject, snapShootPath, movedPos, step);
                 }
             }
@@ -94,21 +94,21 @@ const Event = self => {
 
     window.addEventListener('mouseup', () => {
         if (pickupedObj.length > 0) {
-            pickupedObj[0].origin.data.object.emit('finish', {
-                object: pickupedObj[0].origin.data,
+            pickupedObj[0].origin.innerObject.object.emit('finish', {
+                object: pickupedObj[0].origin.innerObject,
                 type: 'move',
             });
             // update
             let pathSnapshoot;
-            switch (pickupedObj[0].origin.data.type) {
+            switch (pickupedObj[0].origin.innerObject.type) {
                 case Config.objectTypes.line:
                 case Config.objectTypes.polygon:
                 case Config.objectTypes.textGroup:
-                    pathSnapshoot = pickupedObj[0].origin.data.path;
+                    pathSnapshoot = pickupedObj[0].origin.innerObject.path;
                     break;
                 case Config.objectTypes.text:
                 case Config.objectTypes.circle:
-                    pathSnapshoot = pickupedObj[0].origin.data.center;
+                    pathSnapshoot = pickupedObj[0].origin.innerObject.center;
                     break;
                 default:
             }
@@ -139,11 +139,11 @@ const Event = self => {
                     } else {
                         index += 1;
                     }
-                    if (index > pickupedObj[0].origin.data.path.length - 1) {
+                    if (index > pickupedObj[0].origin.innerObject.path.length - 1) {
                         index = 0;
                     }
                     if (index < 0) {
-                        index = pickupedObj[0].origin.data.path.length - 1;
+                        index = pickupedObj[0].origin.innerObject.path.length - 1;
                     }
                     pickupedObj[0].origin.index = index;
                     pickupedObj[0].origin.type = 'point';
@@ -184,15 +184,15 @@ const Event = self => {
             // update snapshoot
             if (pickupedObj.length > 0) {
                 let pathSnapshoot;
-                switch (pickupedObj[0].origin.data.type) {
+                switch (pickupedObj[0].origin.innerObject.type) {
                     case Config.objectTypes.line:
                     case Config.objectTypes.polygon:
                     case Config.objectTypes.textGroup:
-                        pathSnapshoot = pickupedObj[0].origin.data.path;
+                        pathSnapshoot = pickupedObj[0].origin.innerObject.path;
                         break;
                     case Config.objectTypes.text:
                     case Config.objectTypes.circle:
-                        pathSnapshoot = pickupedObj[0].origin.data.center;
+                        pathSnapshoot = pickupedObj[0].origin.innerObject.center;
                         break;
                     default:
                 }
@@ -205,8 +205,8 @@ const Event = self => {
                 const moveObject = pickupedObj[0].origin;
                 move(moveObject, snapShootPath, [x * step, y * step], step);
 
-                pickupedObj[0].origin.data.object.emit('finish', {
-                    object: pickupedObj[0].origin.data,
+                pickupedObj[0].origin.innerObject.object.emit('finish', {
+                    object: pickupedObj[0].origin.innerObject,
                     type: 'move',
                 });
                 e.preventDefault();

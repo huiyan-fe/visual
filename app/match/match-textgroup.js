@@ -87,7 +87,7 @@ const matchText = (P, datas, eventType, res) => {
             // res.length = 0;
         } else {
             res.push({
-                data: datas,
+                innerObject: datas,
                 projection: P,
                 length: Math.sqrt((P[0] - datas.center[0]) ** 2, (P[1] - datas.center[1]) ** 2),
             });

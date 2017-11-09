@@ -36,7 +36,12 @@ const MathTool = {
         res.sort((a, b) => a.length - b.length);
 
         if (res[0]) {
-            res[0].data.isActive = res[0];
+            Object.keys(res[0]).forEach(key => {
+                if (key !== 'innerObject') {
+                    res[0].innerObject.isActive = res[0].innerObject.isActive || {};
+                    res[0].innerObject.isActive[key] = res[0][key];
+                }
+            });
         }
         return res;
     },

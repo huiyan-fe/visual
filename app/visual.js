@@ -6,7 +6,6 @@ import VTextGroup from './object/textgroup';
 import VCircle from './object/circle';
 import VPolygon from './object/polygon';
 
-
 import Draw from './draw/draw';
 import Config from './config/config';
 
