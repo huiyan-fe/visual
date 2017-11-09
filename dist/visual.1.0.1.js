@@ -1369,7 +1369,7 @@ Visual.prototype.line = function linefn() {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     var userSet = arguments[2];
 
-    return new _line2.default(Visual, path, options, userSet);
+    return new _line2.default(this, path, options, userSet);
 };
 
 Visual.prototype.text = function textfn(text) {
@@ -1404,6 +1404,7 @@ Visual.prototype.polygon = function polygonfn() {
 };
 
 // draw
+
 Visual.prototype.draw = _draw2.default;
 
 global.Visual = Visual;

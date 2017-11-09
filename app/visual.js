@@ -92,7 +92,7 @@ class Visual {
 
 // for every object
 Visual.prototype.line = function linefn(path = [], options = {}, userSet) {
-    return new VLine(Visual, path, options, userSet);
+    return new VLine(this, path, options, userSet);
 };
 
 Visual.prototype.text = function textfn(text, center = [], options = {}, userSet) {
@@ -112,6 +112,7 @@ Visual.prototype.polygon = function polygonfn(path = [], options = {}, userSet) 
 };
 
 // draw
+
 Visual.prototype.draw = Draw;
 
 global.Visual = Visual;
