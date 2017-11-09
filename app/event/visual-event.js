@@ -6,7 +6,7 @@ import { scaleReverse } from '../tools/scalelize';
 import move from './move';
 import deleteObj from './delete';
 
-const Event = (self) => {
+const Event = self => {
     const canvas = self.canvas;
     let mousedownPos = [];
     let hoveredObj = [];
@@ -55,7 +55,9 @@ const Event = (self) => {
                 [e.pageX, e.pageY],
             ], self.options.grid.scale)[0];
         } else {
-            self.sys.pickupedObjs = [];
+            if (!events.shift) {
+                self.sys.pickupedObjs = [];
+            }
         }
         self.draw();
     });
@@ -156,7 +158,7 @@ const Event = (self) => {
                 });
             }
 
-            self.sys.pickupedObjs = [];
+            // self.sys.pickupedObjs = [];
             hoveredObj.length = 0;
             mousedownPos.length = 0;
         }

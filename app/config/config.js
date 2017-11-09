@@ -5,6 +5,11 @@ const config = {
         circle: Symbol('circle'),
         polygon: Symbol('polygon'),
     },
+    objectUserSets: {
+        dragable: true, // true: user can drag the objet by using mouse
+        bufferSize: 15, // the maximum offset of the point or object that can choose is
+        pointEditable: true, // true: user can eidt the point of one object
+    },
     ctxStyleConfig: {
         fontSize: 12,
         textBaseline: 'alphabetic',

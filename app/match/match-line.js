@@ -1,4 +1,3 @@
-
 const matchLine = (P, datas, eventType, res) => {
     const useData = datas;
     useData.isActive = null;
@@ -25,11 +24,12 @@ const matchLine = (P, datas, eventType, res) => {
             const bufferSize = userSet.bufferSize;
             // mouseOverEventEnable: false,
             // clickable: true,
-            if ((eventType === 'mousemove' && !userSet.mouseOverEventEnable)
-                || (eventType === 'mousedown' && !userSet.clickable)) {
+            if ((eventType === 'mousemove' && !userSet.mouseOverEventEnable) ||
+                (eventType === 'mousedown' && !userSet.clickable)) {
                 // res.length = 0;
             } else {
-                if (lPB < bufferSize || lAP < bufferSize) {
+                if ((lPB < bufferSize || lAP < bufferSize) && datas.object.userSet.pointEditable) {
+                    // pointEditable: when pointEditable is true, we push the active point to res
                     res.push({
                         type: 'point',
                         data: datas,
@@ -51,10 +51,7 @@ const matchLine = (P, datas, eventType, res) => {
                         });
                     }
                 }
-                if (res.length > 0) {
-                    // console.log('选中');
-                    // console.log(res);
-                }
+                if (res.length > 0) {}
             }
         }
     });

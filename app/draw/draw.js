@@ -14,7 +14,6 @@ function Draw() {
 }
 
 function drawFns(obj) {
-
     switch (obj.type) {
         case self.sys.objectTypes.line:
             DrawLine(self, obj);

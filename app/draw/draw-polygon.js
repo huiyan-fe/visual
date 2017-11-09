@@ -30,13 +30,15 @@ function DrawLine(Visual, obj) {
         ctx.stroke();
     }
     ctx.restore();
-    const userSet = obj.object.userSet;
-    if (userSet && userSet.active) {
-        if (!(obj && obj.isActive)) {
-            // userSet.active = false;
-            obj['isActive'] = { data: obj };
-        }
-    }
+
+    // const userSet = obj.object.userSet;
+    // if (userSet && userSet.active) {
+    //     if (!(obj && obj.isActive)) {
+    //         // userSet.active = false;
+    //         obj['isActive'] = { data: obj };
+    //     }
+    // }
+
     if (obj && obj.isActive) {
         ctx.canvas.style.cursor = 'pointer';
         ctx.save();
@@ -97,7 +99,7 @@ function DrawLine(Visual, obj) {
         });
         ctx.stroke();
 
-        //
+        // 
         if (obj.isActive.type === 'point' && obj.isActive.length < 10) {
             const index = obj.isActive.index;
             const point = usePath[index];

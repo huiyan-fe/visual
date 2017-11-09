@@ -83,8 +83,9 @@
                 // bufferSize:,
                 // active: true
             })
-        window.p.on('finish',(data)=>{
+        window.p.on('finish', (data) => {
             console.log('p finish');
+            console.log(window.l.Visual.sys.pickupedObjs);
             console.log(data);
         })
 

@@ -31,10 +31,10 @@ const MathTool = {
 
         res.sort((a, b) => a.length - b.length);
 
-        if (res[0]) {
-            res[0].data.isActive = res[0];
-            // console.log('res');
-            // console.log(res);
+        if (res && res.length > 0) {
+            res.forEach(re => {
+                re.data.isActive = re;
+            });
         }
         return res;
     },

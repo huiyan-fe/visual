@@ -7,31 +7,31 @@ textCanvas.style.width = '1px';
 textCanvas.style.height = '1px';
 const ctx = textCanvas.getContext('2d');
 
-const offset = 10;
-
 const matchPolygon = (P, datas, eventType, res) => {
+    // console.log()
     const useData = datas;
     useData.isActive = null;
+
+    const userSet = datas.object.userSet;
+    const bufferSize = userSet.bufferSize;
 
     ctx.beginPath();
     // object
     const outBox = datas.sys.outBox;
 
-    if (P[0] < (outBox.xMin) || P[0] > (outBox.xMax + offset)) {
+    if (P[0] < (outBox.xMin - bufferSize) || P[0] > (outBox.xMax + bufferSize)) {
         return false;
     }
-    if (P[1] < (outBox.yMin) || P[1] > (outBox.yMax + offset)) {
+    if (P[1] < (outBox.yMin - bufferSize) || P[1] > (outBox.yMax + bufferSize)) {
         return false;
     }
-
-    const userSet = datas.object.userSet;
-    const bufferSize = userSet.bufferSize;
     // mouseOverEventEnable: false,
     // clickable: true,
-    if ((eventType === 'mousemove' && !userSet.mouseOverEventEnable)
-        || (eventType === 'mousedown' && !userSet.clickable)) {
+    if ((eventType === 'mousemove' && !userSet.mouseOverEventEnable) ||
+        (eventType === 'mousedown' && !userSet.clickable)) {
         // res.length = 0;
     } else {
+
         datas.path.forEach((item, index) => {
             if (index === 0) {
                 ctx.moveTo(item[0], item[1]);
@@ -40,9 +40,9 @@ const matchPolygon = (P, datas, eventType, res) => {
             }
             // get the length of P and O
             const lPO = Math.sqrt(((P[0] - item[0]) ** 2) + ((P[1] - item[1]) ** 2));
-            
-            if (lPO < offset) {
-                // console.log(index)
+            // console.log(lPO);
+            if (lPO < bufferSize && datas.object.userSet.pointEditable) {
+                // pointEditable: when pointEditable is true, we push the active point to res
                 res.push({
                     type: 'point',
                     index,
@@ -63,6 +63,8 @@ const matchPolygon = (P, datas, eventType, res) => {
             });
         }
     }
+
+    return res;
 };
 
 export default matchPolygon;

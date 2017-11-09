@@ -25,18 +25,18 @@ function DrawLine(Visual, obj) {
     ctx.stroke();
     ctx.restore();
 
-    const userSet = obj.object.userSet;
-    if (userSet && userSet.active) {
-        if (!(obj && obj.isActive)) {
-            // userSet.active = false;
-            obj['isActive'] = { data: obj };
-        }
-    }
+    // const userSet = obj.object.userSet;
+    // if (userSet && userSet.active) {
+    //     if (!(obj && obj.isActive)) {
+    //         // userSet.active = false;
+    //         console.log('active:')
+    //         console.log(obj)
+    //         obj['isActive'] = { data: obj };
+    //     }
+    // }
 
     if (obj && obj.isActive) {
         ctx.canvas.style.cursor = 'pointer';
-        // console.log('obj.isActive');
-        // console.log(obj);
         ctx.save();
         // draw base line
         ctx.lineWidth = 1;
