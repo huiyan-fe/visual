@@ -5,7 +5,7 @@ import steplizePoint from '../tools/steplize';
 
 
 class Circle extends VisualObject {
-    constructor(Visual, redius, centerParam, options, userSet) {
+    constructor(Visual, radius, centerParam, options, userSet) {
         super(options);
         this.Visual = Visual;
         this.id = Symbol('circle');
@@ -14,7 +14,7 @@ class Circle extends VisualObject {
         const center = JSON.parse(JSON.stringify(centerParam));
 
         this.type = Visual.sys.objectTypes.circle;
-        this.redius = redius;
+        this.radius = radius;
         this.center = steplizePoint(center, this.Visual.options.grid.step);
         this.options = options;
 
@@ -22,11 +22,18 @@ class Circle extends VisualObject {
         // this.Visual.sys.objects.push({
         //     id: this.id,
         //     type: Visual.sys.objectTypes.circle,
-        //     redius,
+        //     radius,
         //     center: steplizePoint(center, this.Visual.options.grid.step),
         //     options,
         //     object: this,
         // });
+        this.Visual.draw();
+    }
+
+    setRadiusCenter(radius, centerParam) {
+        const center = JSON.parse(JSON.stringify(centerParam));
+        this.radius = radius;
+        this.center = steplizePoint(center, this.Visual.options.grid.step);
         this.Visual.draw();
     }
 }

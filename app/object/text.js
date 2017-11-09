@@ -67,6 +67,13 @@ class Text extends VisualObject {
         // });
         this.Visual.draw();
     }
+
+    setPath(paths) {
+        const path = JSON.parse(JSON.stringify(paths));
+        this.center = path.map(point => steplizePoint(point, this.Visual.options.grid.step));
+        this.Visual.draw();
+    }
+
 }
 
 export default Text;
