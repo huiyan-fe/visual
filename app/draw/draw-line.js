@@ -1,15 +1,9 @@
-import config from '../config/config';
-
 function DrawLine(Visual, obj) {
     // console.log(obj);
     const ctx = Visual.ctx;
     // draw basic line
     ctx.beginPath();
     ctx.save();
-    const basicOptions = config.ctxStyleConfig;
-    Object.keys(basicOptions).forEach(key => {
-        ctx[key] = obj.options[key] || basicOptions[key];
-    });
 
     Object.keys(obj.options).forEach(key => {
         ctx[key] = obj.options[key];
@@ -24,16 +18,6 @@ function DrawLine(Visual, obj) {
     });
     ctx.stroke();
     ctx.restore();
-
-    // const userSet = obj.object.userSet;
-    // if (userSet && userSet.active) {
-    //     if (!(obj && obj.isActive)) {
-    //         // userSet.active = false;
-    //         console.log('active:')
-    //         console.log(obj)
-    //         obj['isActive'] = { data: obj };
-    //     }
-    // }
 
     if (obj && obj.isActive) {
         ctx.canvas.style.cursor = 'pointer';
@@ -75,16 +59,24 @@ function DrawLine(Visual, obj) {
         });
         ctx.stroke();
 
-        //
         if (obj.isActive.type === 'point' && obj.isActive.length < 10) {
-            // console.log('line active');
-            const index = obj.isActive.index;
-            const point = usePath[index];
-            ctx.beginPath();
-            ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
-            ctx.fillStyle = '#fff';
-            ctx.rect(point[0] - 6, point[1] - 6, 12, 12, Math.PI * 2);
-            ctx.stroke();
+            if (obj.isActive.indexs) {
+                obj.isActive.indexs.map(index => {
+                    const point = usePath[index];
+                    ctx.beginPath();
+                    ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+                    ctx.fillStyle = '#fff';
+                    ctx.rect(point[0] - 6, point[1] - 6, 12, 12, Math.PI * 2);
+                    ctx.stroke();
+                });
+            } else {
+                const point = usePath[obj.isActive.index];
+                ctx.beginPath();
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+                ctx.fillStyle = '#fff';
+                ctx.rect(point[0] - 6, point[1] - 6, 12, 12, Math.PI * 2);
+                ctx.stroke();
+            }
         }
 
         ctx.restore();

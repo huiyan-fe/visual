@@ -1,7 +1,9 @@
 /* globals requestAnimationFrame  */
+import config from '../config/config';
 
 import DrawLine from './draw-line';
 import DrawText from './draw-text';
+import DrawTextGroup from './draw-textgroup';
 import DrawCircle from './draw-circle';
 import DrawPolygon from './draw-polygon';
 
@@ -14,12 +16,23 @@ function Draw() {
 }
 
 function drawFns(obj) {
+    const ctx = self.ctx;
+    ctx.save();
+    // copy from basicoptions
+    const basicOptions = config.ctxStyleConfig;
+    Object.keys(basicOptions).forEach(key => {
+        ctx[key] = obj.options[key] || basicOptions[key];
+    });
+    //
     switch (obj.type) {
         case self.sys.objectTypes.line:
             DrawLine(self, obj);
             break;
         case self.sys.objectTypes.text:
             DrawText(self, obj);
+            break;
+        case self.sys.objectTypes.textGroup:
+            DrawTextGroup(self, obj);
             break;
         case self.sys.objectTypes.circle:
             DrawCircle(self, obj);
@@ -30,6 +43,7 @@ function drawFns(obj) {
         default:
             // console.log('unkone type', obj.type);
     }
+    ctx.restore();
 }
 
 (function DrawDispatch() {

@@ -1,6 +1,4 @@
 const matchCircle = (P, datas, eventType, res) => {
-    const useData = datas;
-    useData.isActive = null;
     const userSet = datas.object.userSet;
     const bufferSize = userSet.bufferSize;
 

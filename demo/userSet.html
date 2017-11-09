@@ -26,7 +26,7 @@
         const userSet1 = {
             dragable: true,
             clickable: true,
-            bufferSize: 2,
+            bufferSize: 20,
             mouseOverEventEnable: false,
             active: true
         };
@@ -41,6 +41,13 @@
             },
             userSet1
         );
+        l.on('finish', (data) => {
+            console.log('p finish');
+            console.log(l.Visual.sys.pickupedObjs);
+            console.log(data);
+        })
+
+        // l.active();
 
         window.t = v.text('Hello Mofei', [200, 400], {
             fontSize: 24,

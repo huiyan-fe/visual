@@ -1,12 +1,5 @@
-import config from '../config/config';
-
 function DrawLine(Visual, obj) {
     const ctx = Visual.ctx;
-
-    const basicOptions = config.ctxStyleConfig;
-    Object.keys(basicOptions).forEach(key => {
-        ctx[key] = obj.options[key] || basicOptions[key];
-    });
 
     ctx.beginPath();
     ctx.save();
@@ -16,14 +9,6 @@ function DrawLine(Visual, obj) {
         ctx.stroke();
     }
     ctx.restore();
-
-    // const userSet = obj.object.userSet;
-    // if (userSet && userSet.active) {
-    //     if (!(obj && obj.isActive)) {
-    //         // userSet.active = false;
-    //         obj['isActive'] = { data: obj };
-    //     }
-    // }
 
     // active
     if (obj.isActive) {

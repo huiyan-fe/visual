@@ -16,8 +16,6 @@ class VisualObject {
                 this.userSet[configKey] = config[configKey];
             }
         });
-
-        // console.log(this.userSet.pointEditable);
     }
 
     remove() {
@@ -38,11 +36,10 @@ class VisualObject {
     }
 
     active() {
-        
-        // console.log(this);
         const currentSysObj = this.object.Visual.sys.objects.filter(obj => {
             return obj.id === this.id;
         });
+        console.warn(currentSysObj)
         currentSysObj[0]['isActive'] = { data: currentSysObj[0] };
     }
 

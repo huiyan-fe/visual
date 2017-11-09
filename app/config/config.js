@@ -2,6 +2,7 @@ const config = {
     objectTypes: {
         line: Symbol('line'),
         text: Symbol('text'),
+        textGroup: Symbol('textGroup'),
         circle: Symbol('circle'),
         polygon: Symbol('polygon'),
     },

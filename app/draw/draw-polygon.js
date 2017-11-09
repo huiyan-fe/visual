@@ -1,15 +1,9 @@
-import config from '../config/config';
-
 function DrawLine(Visual, obj) {
     // console.log(obj);
     const ctx = Visual.ctx;
     // draw basic line
     ctx.beginPath();
     ctx.save();
-    const basicOptions = config.ctxStyleConfig;
-    Object.keys(basicOptions).forEach(key => {
-        ctx[key] = obj.options[key] || basicOptions[key];
-    });
 
     const usePath = obj.path;
     let firstPoint = [];
@@ -31,13 +25,6 @@ function DrawLine(Visual, obj) {
     }
     ctx.restore();
 
-    // const userSet = obj.object.userSet;
-    // if (userSet && userSet.active) {
-    //     if (!(obj && obj.isActive)) {
-    //         // userSet.active = false;
-    //         obj['isActive'] = { data: obj };
-    //     }
-    // }
 
     if (obj && obj.isActive) {
         ctx.canvas.style.cursor = 'pointer';

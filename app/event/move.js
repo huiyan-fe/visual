@@ -5,13 +5,17 @@
 import Config from '../config/config';
 import steplizePoint from '../tools/steplize';
 
-const move = (moveObject, snapShootPath, movedPos, step) => {
+const move = (moveObject, snapShootPath, movedPos, step, moveIndexs = []) => {
     switch (moveObject.data.type) {
         case Config.objectTypes.polygon:
         case Config.objectTypes.line:
+        case Config.objectTypes.textGroup:
             let newPath = [];
-            const isMoveSingle = (moveObject.type === 'point') && (moveObject.length < 10);
-            if (isMoveSingle) {
+            const moveType = (moveObject.type === 'point') && (moveObject.length < 10)
+                ? ((moveIndexs.length > 0) ? 'multiPoint' : 'point')
+                : 'group';
+
+            if (moveType === 'point') {
                 const singleIndex = moveObject.index;
                 const path = moveObject.data.path;
                 path[singleIndex][0] = snapShootPath[singleIndex][0] + movedPos[0];
@@ -24,6 +28,20 @@ const move = (moveObject, snapShootPath, movedPos, step) => {
                     changeData: JSON.parse(JSON.stringify(path[singleIndex])),
                     object: moveObject.data,
                 });
+            } else if (moveType === 'multiPoint') {
+                // moveIndexs
+                // const singleIndex = moveObject.index;
+                // const path = moveObject.data.path;
+                // path[singleIndex][0] = snapShootPath[singleIndex][0] + movedPos[0];
+                // path[singleIndex][1] = snapShootPath[singleIndex][1] + movedPos[1];
+                // path[singleIndex] = steplizePoint(path[singleIndex], step);
+                // // emit
+                // moveObject.data.object.emit('change', {
+                //     type: 'point',
+                //     index: singleIndex,
+                //     changeData: JSON.parse(JSON.stringify(path[singleIndex])),
+                //     object: moveObject.data,
+                // });
             } else {
                 newPath = snapShootPath.map(item => {
                     let x = item[0];

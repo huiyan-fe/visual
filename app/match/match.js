@@ -6,13 +6,20 @@ import matchPolygon from './match-polygon';
 
 const MathTool = {
     // eventType : mousedown/mousemove/keydown
-    match(P, datasGroup, eventType) {
+    match(P, datasGroup, eventType, multichose = false) {
         const res = [];
 
         datasGroup.forEach(datas => {
+            // remove all the objects' active;
+            if (!multichose) {
+                datas.isActive = null;
+            } else {
+                // console.log('multichose match');
+            }
+
             switch (datas.type) {
                 case Config.objectTypes.line:
-                    // for line
+                case Config.objectTypes.textGroup:
                     matchLine(P, datas, eventType, res);
                     break;
                 case Config.objectTypes.text:
@@ -32,9 +39,11 @@ const MathTool = {
         res.sort((a, b) => a.length - b.length);
 
         if (res && res.length > 0) {
-            res.forEach(re => {
-                re.data.isActive = re;
-            });
+            // res.forEach(re => {
+            //     re.data.isActive = re;
+            // });
+            res.length = 1;
+            res[0].data.isActive = res[0];
         }
         return res;
     },
