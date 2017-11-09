@@ -6,30 +6,30 @@ import matchPolygon from './match-polygon';
 
 const MathTool = {
     // eventType : mousedown/mousemove/keydown
-    match(P, datasGroup, eventType, multichose = false) {
+    match(P, objects, eventType, multichose = false) {
         const res = [];
 
-        datasGroup.forEach(datas => {
+        objects.forEach(object => {
             // remove all the objects' active;
             if (!multichose) {
-                datas.isActive = null;
+                objects.isActive = null;
             } else {
                 // console.log('multichose match');
             }
 
-            switch (datas.type) {
+            switch (object.type) {
                 case Config.objectTypes.line:
                 case Config.objectTypes.textGroup:
-                    matchLine(P, datas, eventType, res);
+                    matchLine(P, object, eventType, res);
                     break;
                 case Config.objectTypes.text:
-                    matchText(P, datas, eventType, res);
+                    matchText(P, object, eventType, res);
                     break;
                 case Config.objectTypes.circle:
-                    matchCircle(P, datas, eventType, res);
+                    matchCircle(P, object, eventType, res);
                     break;
                 case Config.objectTypes.polygon:
-                    matchPolygon(P, datas, eventType, res);
+                    matchPolygon(P, object, eventType, res);
                     break;
                 default:
                     break;
@@ -38,12 +38,13 @@ const MathTool = {
 
         res.sort((a, b) => a.length - b.length);
 
-        if (res && res.length > 0) {
-            // res.forEach(re => {
-            //     re.data.isActive = re;
-            // });
-            res.length = 1;
-            res[0].data.isActive = res[0];
+        if (res[0]) {
+            Object.keys(res[0]).forEach(key => {
+                if (key !== 'object') {
+                    res[0].object.isActive = res[0].object.isActive || {};
+                    res[0].object.isActive[key] = res[0][key];
+                }
+            });
         }
         return res;
     },

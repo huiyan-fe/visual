@@ -18,7 +18,7 @@ if (debug) {
     };
 }
 
-const matchText = (P, datas, eventType, res) => {
+const matchText = (P, object, eventType, res) => {
     textCtx.beginPath();
     if (debug) {
         textCtx.clearRect(0, 0, textCanvas.width, textCanvas.height);
@@ -28,7 +28,7 @@ const matchText = (P, datas, eventType, res) => {
     const padding = [10, 10];
 
     Object.keys(config.ctxStyleConfig).forEach(key => {
-        textCtx[key] = datas.options[key] || config.ctxStyleConfig[key];
+        textCtx[key] = object.options[key] || config.ctxStyleConfig[key];
     });
 
     let heightOffset = 0;
@@ -38,13 +38,13 @@ const matchText = (P, datas, eventType, res) => {
             widthOffset = -padding[0] / 2;
             break;
         case 'center':
-            widthOffset = -(datas.sys.measure.width / 2) - (padding[0] / 2);
+            widthOffset = -(object.sys.measure.width / 2) - (padding[0] / 2);
             break;
         case 'right':
-            widthOffset = -datas.sys.measure.width - (padding[0] / 2);
+            widthOffset = -object.sys.measure.width - (padding[0] / 2);
             break;
         default:
-            widthOffset = -(datas.sys.measure.width / 2) - (padding[0] / 2);
+            widthOffset = -(object.sys.measure.width / 2) - (padding[0] / 2);
     }
 
     switch (textCtx.textBaseline) {
@@ -52,25 +52,25 @@ const matchText = (P, datas, eventType, res) => {
             heightOffset = -(padding[1] / 2);
             break;
         case 'alphabetic':
-            heightOffset = -datas.sys.measure.height + (datas.sys.measure.height - textCtx.fontSize) / 2;
+            heightOffset = -object.sys.measure.height + (object.sys.measure.height - textCtx.fontSize) / 2;
             break;
         case 'bottom':
-            heightOffset = -datas.sys.measure.height - (padding[1] / 2);
+            heightOffset = -object.sys.measure.height - (padding[1] / 2);
             break;
         default:
-            heightOffset = -(datas.sys.measure.height / 2) - (padding[1] / 2);
+            heightOffset = -(object.sys.measure.height / 2) - (padding[1] / 2);
     }
 
 
     textCtx.save();
-    textCtx.translate(datas.center[0], datas.center[1]);
-    if (datas.options.rotate) {
-        textCtx.rotate(datas.options.rotate);
+    textCtx.translate(object.center[0], object.center[1]);
+    if (object.options.rotate) {
+        textCtx.rotate(object.options.rotate);
     }
     textCtx.rect(
         widthOffset, heightOffset,
-        datas.sys.measure.width + padding[0],
-        datas.sys.measure.height + padding[1],
+        object.sys.measure.width + padding[0],
+        object.sys.measure.height + padding[1],
     );
 
     if (debug) {
@@ -78,7 +78,7 @@ const matchText = (P, datas, eventType, res) => {
     }
     const isFit = textCtx.isPointInPath(P[0], P[1]);
     if (isFit) {
-        const userSet = datas.object.userSet;
+        const userSet = object.userSet;
         // const bufferSize = userSet.bufferSize;
         // mouseOverEventEnable: false,
         // clickable: true,
@@ -87,9 +87,9 @@ const matchText = (P, datas, eventType, res) => {
             // res.length = 0;
         } else {
             res.push({
-                data: datas,
+                object,
                 projection: P,
-                length: Math.sqrt((P[0] - datas.center[0]) ** 2, (P[1] - datas.center[1]) ** 2),
+                length: Math.sqrt((P[0] - object.center[0]) ** 2, (P[1] - object.center[1]) ** 2),
             });
         }
     }

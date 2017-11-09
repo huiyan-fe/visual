@@ -99,7 +99,8 @@ var config = {
     objectUserSets: {
         dragable: true, // true: user can drag the objet by using mouse
         bufferSize: 15, // the maximum offset of the point or object that can choose is
-        pointEditable: true // true: user can eidt the point of one object
+        pointEditable: true, // true: user can eidt the point of one object
+        boundaryCheck: false
     },
     ctxStyleConfig: {
         fontSize: 12,
@@ -2164,18 +2165,26 @@ var Line = function (_VisualObject) {
             outBox.yMax = Math.max(outBox.yMax, point[1]);
         });
 
-        _this.Visual.sys.objects.push({
-            id: _this.id,
-            type: Visual.sys.objectTypes.line,
-            path: path.map(function (point) {
-                return (0, _steplize2.default)(point, _this.Visual.options.grid.step);
-            }),
-            options: JSON.parse((0, _stringify2.default)(options)),
-            object: _this,
-            sys: {
-                outBox: outBox
-            }
+        _this.type = Visual.sys.objectTypes.line;
+        _this.path = path.map(function (point) {
+            return (0, _steplize2.default)(point, _this.Visual.options.grid.step);
         });
+        _this.options = JSON.parse((0, _stringify2.default)(options));
+        _this.sys = {
+            outBox: outBox
+        };
+
+        _this.Visual.sys.objects.push(_this);
+        // this.Visual.sys.objects.push({
+        //     id: this.id,
+        //     type: Visual.sys.objectTypes.line,
+        //     path: path.map(point => steplizePoint(point, this.Visual.options.grid.step)),
+        //     options: JSON.parse(JSON.stringify(options)),
+        //     object: this,
+        //     sys: {
+        //         outBox,
+        //     },
+        // });
         _this.Visual.draw();
         return _this;
     }
@@ -2533,22 +2542,36 @@ var Text = function (_VisualObject) {
         });
         //
 
-        _this.Visual.sys.objects.push({
-            id: _this.id,
-            type: Visual.sys.objectTypes.text,
-            text: text,
-            center: (0, _steplize2.default)(center, _this.Visual.options.grid.step),
-            options: options,
-            object: _this,
-            sys: {
-                measure: {
-                    height: height,
-                    width: width
-                },
-                spaces: spaces,
-                outbox: []
-            }
-        });
+        _this.type = Visual.sys.objectTypes.text;
+        _this.text = text;
+        _this.center = (0, _steplize2.default)(center, _this.Visual.options.grid.step);
+        _this.options = options;
+        _this.sys = {
+            measure: {
+                height: height,
+                width: width
+            },
+            spaces: spaces,
+            outbox: []
+        };
+
+        _this.Visual.sys.objects.push(_this);
+        // this.Visual.sys.objects.push({
+        //     id: this.id,
+        //     type: Visual.sys.objectTypes.text,
+        //     text,
+        //     center: steplizePoint(center, this.Visual.options.grid.step),
+        //     options,
+        //     object: this,
+        //     sys: {
+        //         measure: {
+        //             height,
+        //             width,
+        //         },
+        //         spaces,
+        //         outbox: [],
+        //     },
+        // });
         _this.Visual.draw();
         return _this;
     }
@@ -2664,22 +2687,36 @@ var TextGroup = function (_VisualObject) {
         });
         //
 
-        _this.Visual.sys.objects.push({
-            id: _this.id,
-            type: Visual.sys.objectTypes.textGroup,
-            text: text,
-            options: options,
-            object: _this,
-            path: path,
-            sys: {
-                measure: {
-                    height: height,
-                    width: width
-                },
-                spaces: spaces,
-                outbox: []
-            }
-        });
+        _this.type = Visual.sys.objectTypes.textGroup;
+        _this.text = text;
+        _this.options = options;
+        _this.path = path;
+        _this.sys = {
+            measure: {
+                height: height,
+                width: width
+            },
+            spaces: spaces,
+            outbox: []
+        };
+
+        _this.Visual.sys.objects.push(_this);
+        // this.Visual.sys.objects.push({
+        //     id: this.id,
+        //     type: Visual.sys.objectTypes.textGroup,
+        //     text,
+        //     options,
+        //     object: this,
+        //     path,
+        //     sys: {
+        //         measure: {
+        //             height,
+        //             width,
+        //         },
+        //         spaces,
+        //         outbox: [],
+        //     },
+        // });
         _this.Visual.draw();
         return _this;
     }
@@ -2754,14 +2791,20 @@ var Circle = function (_VisualObject) {
         (0, _assign2.default)(_this.userSet, userSet);
         var center = JSON.parse((0, _stringify2.default)(centerParam));
 
-        _this.Visual.sys.objects.push({
-            id: _this.id,
-            type: Visual.sys.objectTypes.circle,
-            redius: redius,
-            center: (0, _steplize2.default)(center, _this.Visual.options.grid.step),
-            options: options,
-            object: _this
-        });
+        _this.type = Visual.sys.objectTypes.circle;
+        _this.redius = redius;
+        _this.center = (0, _steplize2.default)(center, _this.Visual.options.grid.step);
+        _this.options = options;
+
+        _this.Visual.sys.objects.push(_this);
+        // this.Visual.sys.objects.push({
+        //     id: this.id,
+        //     type: Visual.sys.objectTypes.circle,
+        //     redius,
+        //     center: steplizePoint(center, this.Visual.options.grid.step),
+        //     options,
+        //     object: this,
+        // });
         _this.Visual.draw();
         return _this;
     }
@@ -2850,18 +2893,26 @@ var Polygon = function (_VisualObject) {
             outBox.yMax = Math.max(outBox.yMax, point[1]);
         });
 
-        _this.Visual.sys.objects.push({
-            id: _this.id,
-            type: Visual.sys.objectTypes.polygon,
-            path: path.map(function (point) {
-                return (0, _steplize2.default)(point, _this.Visual.options.grid.step);
-            }),
-            options: JSON.parse((0, _stringify2.default)(options)),
-            object: _this,
-            sys: {
-                outBox: outBox
-            }
+        _this.type = Visual.sys.objectTypes.polygon;
+        _this.path = path.map(function (point) {
+            return (0, _steplize2.default)(point, _this.Visual.options.grid.step);
         });
+        _this.options = JSON.parse((0, _stringify2.default)(options));
+        _this.sys = {
+            outBox: outBox
+        };
+
+        _this.Visual.sys.objects.push(_this);
+        // this.Visual.sys.objects.push({
+        //     id: this.id,
+        //     type: Visual.sys.objectTypes.polygon,
+        //     path: path.map(point => steplizePoint(point, this.Visual.options.grid.step)),
+        //     options: JSON.parse(JSON.stringify(options)),
+        //     object: this,
+        //     sys: {
+        //         outBox,
+        //     },
+        // });
         _this.Visual.draw();
         return _this;
     }
@@ -3409,15 +3460,15 @@ var Event = function Event(self) {
 
         if (hoveredObj.length >= 1) {
             var pathSnapshoot = void 0;
-            switch (hoveredObj[0].data.type) {
+            switch (hoveredObj[0].object.type) {
                 case _config2.default.objectTypes.line:
                 case _config2.default.objectTypes.polygon:
                 case _config2.default.objectTypes.textGroup:
-                    pathSnapshoot = hoveredObj[0].data.path;
+                    pathSnapshoot = hoveredObj[0].object.path;
                     break;
                 case _config2.default.objectTypes.text:
                 case _config2.default.objectTypes.circle:
-                    pathSnapshoot = hoveredObj[0].data.center;
+                    pathSnapshoot = hoveredObj[0].object.center;
                     break;
                 default:
                     break;
@@ -3430,18 +3481,21 @@ var Event = function Event(self) {
             });
 
             var oneObj = true;
-            var indexs = self.sys.pickupedObjs.map(function (obj) {
-                if (obj.origin.data.id !== self.sys.pickupedObjs[0].origin.data.id) {
-                    oneObj = false;
-                } else {
-                    return obj.origin.index;
-                }
-            });
-            indexs = uniqueArr(indexs);
-            if (oneObj) {
-                self.sys.pickupedObjs.map(function (obj) {
-                    obj.origin.data.isActive['indexs'] = indexs;
+            if (self.sys.pickupedObjs.length > 1) {
+                var indexs = self.sys.pickupedObjs.map(function (obj) {
+                    if (obj.origin.object.id !== self.sys.pickupedObjs[0].origin.object.id) {
+                        oneObj = false;
+                    } else {
+                        return obj.origin.index;
+                    }
                 });
+                indexs = uniqueArr(indexs);
+                if (oneObj) {
+                    self.sys.pickupedObjs.map(function (obj) {
+                        console.log('isActive indexs');
+                        obj.origin.object.isActive['indexs'] = indexs;
+                    });
+                }
             }
 
             mousedownPos = (0, _scalelize.scaleReverse)([[e.pageX, e.pageY]], self.options.grid.scale)[0];
@@ -3484,7 +3538,7 @@ var Event = function Event(self) {
                 self.sys.pickupedObjs.map(function (pos, index) {
                     var snapShootPath = pos.pathSnapshoot;
                     var moveObject = pos.origin;
-                    if (moveObject.data.object.userSet.dragable) {
+                    if (moveObject.object.userSet.dragable) {
                         (0, _move2.default)(moveObject, snapShootPath, movedPos, step);
                     }
                 });
@@ -3501,7 +3555,7 @@ var Event = function Event(self) {
                 var a = self.sys.pickupedObjs[0];
                 var oneObj = true;
                 var indexs = self.sys.pickupedObjs.map(function (obj) {
-                    if (a.origin.data.id !== obj.origin.data.id) {
+                    if (a.origin.object.id !== obj.origin.object.id) {
                         oneObj = false;
                     }
                     return obj.origin.index;
@@ -3509,8 +3563,8 @@ var Event = function Event(self) {
 
                 var uniIndexs = uniqueArr(indexs);
                 if (oneObj) {
-                    a.origin.data.object.emit('finish', {
-                        object: a.origin.data,
+                    a.origin.object.emit('finish', {
+                        object: a.origin.object,
                         indexs: uniIndexs,
                         type: 'multichose'
                     });
@@ -3519,20 +3573,21 @@ var Event = function Event(self) {
         } else {
             if (self.sys.pickupedObjs.length === 1) {
                 self.sys.pickupedObjs.forEach(function (vObj) {
-                    vObj.origin.data.object.emit('finish', {
-                        object: vObj.origin.data,
+                    vObj.origin.object.emit('finish', {
+                        object: vObj.origin.object,
                         type: 'move'
                     });
                     // update
                     var pathSnapshoot = void 0;
-                    switch (vObj.origin.data.type) {
+                    switch (vObj.origin.object.type) {
                         case _config2.default.objectTypes.line:
                         case _config2.default.objectTypes.polygon:
-                            pathSnapshoot = vObj.origin.data.path;
+                        case _config2.default.objectTypes.textGroup:
+                            pathSnapshoot = vObj.origin.object.path;
                             break;
                         case _config2.default.objectTypes.text:
                         case _config2.default.objectTypes.circle:
-                            pathSnapshoot = vObj.origin.data.center;
+                            pathSnapshoot = vObj.origin.object.center;
                             break;
                         default:
                     }
@@ -3585,11 +3640,11 @@ var Event = function Event(self) {
                     } else {
                         index += 1;
                     }
-                    if (index > self.sys.pickupedObjs[0].origin.data.path.length - 1) {
+                    if (index > self.sys.pickupedObjs[0].origin.object.path.length - 1) {
                         index = 0;
                     }
                     if (index < 0) {
-                        index = self.sys.pickupedObjs[0].origin.data.path.length - 1;
+                        index = self.sys.pickupedObjs[0].origin.object.path.length - 1;
                     }
                     self.sys.pickupedObjs[0].origin.index = index;
                     self.sys.pickupedObjs[0].origin.type = 'point';
@@ -3640,15 +3695,15 @@ var Event = function Event(self) {
                 if (self.sys.pickupedObjs.length > 0) {
                     self.sys.pickupedObjs.map(function (obj) {
                         var pathSnapshoot = void 0;
-                        switch (obj.origin.data.type) {
+                        switch (obj.origin.object.type) {
                             case _config2.default.objectTypes.line:
                             case _config2.default.objectTypes.polygon:
                             case _config2.default.objectTypes.textGroup:
-                                pathSnapshoot = obj.origin.data.path;
+                                pathSnapshoot = obj.origin.object.path;
                                 break;
                             case _config2.default.objectTypes.text:
                             case _config2.default.objectTyfpes.circle:
-                                pathSnapshoot = obj.origin.data.center;
+                                pathSnapshoot = obj.origin.object.center;
                                 break;
                             default:
                         }
@@ -3670,7 +3725,7 @@ var Event = function Event(self) {
                             var snapShootPath = obj.pathSnapshoot;
                             var moveObject = obj.origin;
                             (0, _move2.default)(moveObject, snapShootPath, [x * step, y * step], step);
-                            if (a.origin.data.id !== obj.origin.data.id) {
+                            if (a.origin.object.id !== obj.origin.object.id) {
                                 oneObj = false;
                             }
                             return obj.origin.index;
@@ -3678,8 +3733,8 @@ var Event = function Event(self) {
 
                         var uniIndexs = uniqueArr(indexs);
                         if (oneObj) {
-                            a.origin.data.object.emit('finish', {
-                                object: a.origin.data,
+                            a.origin.object.emit('finish', {
+                                object: a.origin.object,
                                 indexs: uniIndexs,
                                 type: 'multichose'
                             });
@@ -3689,8 +3744,8 @@ var Event = function Event(self) {
                     var snapShootPath = self.sys.pickupedObjs[0].pathSnapshoot;
                     var moveObject = self.sys.pickupedObjs[0].origin;
                     (0, _move2.default)(moveObject, snapShootPath, [x * step, y * step], step);
-                    self.sys.pickupedObjs[0].origin.data.object.emit('finish', {
-                        object: self.sys.pickupedObjs[0].origin.data,
+                    self.sys.pickupedObjs[0].origin.object.object.emit('finish', {
+                        object: self.sys.pickupedObjs[0].origin.object,
                         type: 'move'
                     });
                 }
@@ -3844,6 +3899,10 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _keys = __webpack_require__(5);
+
+var _keys2 = _interopRequireDefault(_keys);
+
 var _config = __webpack_require__(1);
 
 var _config2 = _interopRequireDefault(_config);
@@ -3868,32 +3927,32 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var MathTool = {
     // eventType : mousedown/mousemove/keydown
-    match: function match(P, datasGroup, eventType) {
+    match: function match(P, objects, eventType) {
         var multichose = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
 
         var res = [];
 
-        datasGroup.forEach(function (datas) {
+        objects.forEach(function (object) {
             // remove all the objects' active;
             if (!multichose) {
-                datas.isActive = null;
+                objects.isActive = null;
             } else {
                 // console.log('multichose match');
             }
 
-            switch (datas.type) {
+            switch (object.type) {
                 case _config2.default.objectTypes.line:
                 case _config2.default.objectTypes.textGroup:
-                    (0, _matchLine2.default)(P, datas, eventType, res);
+                    (0, _matchLine2.default)(P, object, eventType, res);
                     break;
                 case _config2.default.objectTypes.text:
-                    (0, _matchText2.default)(P, datas, eventType, res);
+                    (0, _matchText2.default)(P, object, eventType, res);
                     break;
                 case _config2.default.objectTypes.circle:
-                    (0, _matchCircle2.default)(P, datas, eventType, res);
+                    (0, _matchCircle2.default)(P, object, eventType, res);
                     break;
                 case _config2.default.objectTypes.polygon:
-                    (0, _matchPolygon2.default)(P, datas, eventType, res);
+                    (0, _matchPolygon2.default)(P, object, eventType, res);
                     break;
                 default:
                     break;
@@ -3904,12 +3963,13 @@ var MathTool = {
             return a.length - b.length;
         });
 
-        if (res && res.length > 0) {
-            // res.forEach(re => {
-            //     re.data.isActive = re;
-            // });
-            res.length = 1;
-            res[0].data.isActive = res[0];
+        if (res[0]) {
+            (0, _keys2.default)(res[0]).forEach(function (key) {
+                if (key !== 'object') {
+                    res[0].object.isActive = res[0].object.isActive || {};
+                    res[0].object.isActive[key] = res[0][key];
+                }
+            });
         }
         return res;
     }
@@ -3927,11 +3987,11 @@ exports.default = MathTool;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-var matchLine = function matchLine(P, datas, eventType, res) {
-    datas.path.forEach(function (data, index) {
+var matchLine = function matchLine(P, object, eventType, res) {
+    object.path.forEach(function (data, index) {
         if (index !== 0) {
-            var A = datas.path[index - 1];
-            var B = datas.path[index];
+            var A = object.path[index - 1];
+            var B = object.path[index];
             var vAP = [P[0] - A[0], P[1] - A[1]];
             var lAP = Math.sqrt(Math.pow(vAP[0], 2) + Math.pow(vAP[1], 2));
             var vAB = [B[0] - A[0], B[1] - A[1]];
@@ -3947,18 +4007,18 @@ var matchLine = function matchLine(P, datas, eventType, res) {
             var lABPB = lAB * Math.sqrt(Math.pow(vPB[0], 2) + Math.pow(vPB[1], 2));
             var rPBA = Math.acos(cABPB / lABPB);
 
-            var userSet = datas.object.userSet;
+            var userSet = object.userSet;
             var bufferSize = userSet.bufferSize;
             // mouseOverEventEnable: false,
             // clickable: true,
             if (eventType === 'mousemove' && !userSet.mouseOverEventEnable || eventType === 'mousedown' && !userSet.clickable) {
                 // res.length = 0;
             } else {
-                if ((lPB < bufferSize || lAP < bufferSize) && datas.object.userSet.pointEditable) {
+                if ((lPB < bufferSize || lAP < bufferSize) && object.userSet.pointEditable) {
                     // pointEditable: when pointEditable is true, we push the active point to res
                     res.push({
                         type: 'point',
-                        data: datas,
+                        object: object,
                         projection: lPB < lAP ? B : A,
                         length: lPB < lAP ? lPB : lAP,
                         index: lPB < lAP ? index : index - 1
@@ -3971,7 +4031,7 @@ var matchLine = function matchLine(P, datas, eventType, res) {
                     if (lPO < bufferSize) {
                         res.push({
                             type: 'object',
-                            data: datas,
+                            object: object,
                             projection: O,
                             length: lPO
                         });
@@ -4022,7 +4082,7 @@ if (debug) {
     };
 }
 
-var matchText = function matchText(P, datas, eventType, res) {
+var matchText = function matchText(P, object, eventType, res) {
     textCtx.beginPath();
     if (debug) {
         textCtx.clearRect(0, 0, textCanvas.width, textCanvas.height);
@@ -4032,7 +4092,7 @@ var matchText = function matchText(P, datas, eventType, res) {
     var padding = [10, 10];
 
     (0, _keys2.default)(_config2.default.ctxStyleConfig).forEach(function (key) {
-        textCtx[key] = datas.options[key] || _config2.default.ctxStyleConfig[key];
+        textCtx[key] = object.options[key] || _config2.default.ctxStyleConfig[key];
     });
 
     var heightOffset = 0;
@@ -4042,13 +4102,13 @@ var matchText = function matchText(P, datas, eventType, res) {
             widthOffset = -padding[0] / 2;
             break;
         case 'center':
-            widthOffset = -(datas.sys.measure.width / 2) - padding[0] / 2;
+            widthOffset = -(object.sys.measure.width / 2) - padding[0] / 2;
             break;
         case 'right':
-            widthOffset = -datas.sys.measure.width - padding[0] / 2;
+            widthOffset = -object.sys.measure.width - padding[0] / 2;
             break;
         default:
-            widthOffset = -(datas.sys.measure.width / 2) - padding[0] / 2;
+            widthOffset = -(object.sys.measure.width / 2) - padding[0] / 2;
     }
 
     switch (textCtx.textBaseline) {
@@ -4056,28 +4116,28 @@ var matchText = function matchText(P, datas, eventType, res) {
             heightOffset = -(padding[1] / 2);
             break;
         case 'alphabetic':
-            heightOffset = -datas.sys.measure.height + (datas.sys.measure.height - textCtx.fontSize) / 2;
+            heightOffset = -object.sys.measure.height + (object.sys.measure.height - textCtx.fontSize) / 2;
             break;
         case 'bottom':
-            heightOffset = -datas.sys.measure.height - padding[1] / 2;
+            heightOffset = -object.sys.measure.height - padding[1] / 2;
             break;
         default:
-            heightOffset = -(datas.sys.measure.height / 2) - padding[1] / 2;
+            heightOffset = -(object.sys.measure.height / 2) - padding[1] / 2;
     }
 
     textCtx.save();
-    textCtx.translate(datas.center[0], datas.center[1]);
-    if (datas.options.rotate) {
-        textCtx.rotate(datas.options.rotate);
+    textCtx.translate(object.center[0], object.center[1]);
+    if (object.options.rotate) {
+        textCtx.rotate(object.options.rotate);
     }
-    textCtx.rect(widthOffset, heightOffset, datas.sys.measure.width + padding[0], datas.sys.measure.height + padding[1]);
+    textCtx.rect(widthOffset, heightOffset, object.sys.measure.width + padding[0], object.sys.measure.height + padding[1]);
 
     if (debug) {
         textCtx.fill();
     }
     var isFit = textCtx.isPointInPath(P[0], P[1]);
     if (isFit) {
-        var userSet = datas.object.userSet;
+        var userSet = object.userSet;
         // const bufferSize = userSet.bufferSize;
         // mouseOverEventEnable: false,
         // clickable: true,
@@ -4085,9 +4145,9 @@ var matchText = function matchText(P, datas, eventType, res) {
             // res.length = 0;
         } else {
             res.push({
-                data: datas,
+                object: object,
                 projection: P,
-                length: Math.sqrt(Math.pow(P[0] - datas.center[0], 2), Math.pow(P[1] - datas.center[1], 2))
+                length: Math.sqrt(Math.pow(P[0] - object.center[0], 2), Math.pow(P[1] - object.center[1], 2))
             });
         }
     }
@@ -4106,17 +4166,17 @@ exports.default = matchText;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-var matchCircle = function matchCircle(P, datas, eventType, res) {
-    var userSet = datas.object.userSet;
+var matchCircle = function matchCircle(P, object, eventType, res) {
+    var userSet = object.userSet;
     var bufferSize = userSet.bufferSize;
 
-    var lPC = Math.sqrt(Math.pow(P[0] - datas.center[0], 2) + Math.pow(P[1] - datas.center[1], 2));
-    if (lPC <= datas.redius + bufferSize) {
+    var lPC = Math.sqrt(Math.pow(P[0] - object.center[0], 2) + Math.pow(P[1] - object.center[1], 2));
+    if (lPC <= object.redius + bufferSize) {
         if (eventType === 'mousemove' && !userSet.mouseOverEventEnable || eventType === 'mousedown' && !userSet.clickable) {
             // res.length = 0;
         } else {
             res.push({
-                data: datas,
+                object: object,
                 length: lPC
             });
         }
@@ -4144,13 +4204,13 @@ textCanvas.style.width = '1px';
 textCanvas.style.height = '1px';
 var ctx = textCanvas.getContext('2d');
 
-var matchPolygon = function matchPolygon(P, datas, eventType, res) {
-    var userSet = datas.object.userSet;
+var matchPolygon = function matchPolygon(P, object, eventType, res) {
+    var userSet = object.userSet;
     var bufferSize = userSet.bufferSize;
 
     ctx.beginPath();
     // object
-    var outBox = datas.sys.outBox;
+    var outBox = object.sys.outBox;
 
     if (P[0] < outBox.xMin - bufferSize || P[0] > outBox.xMax + bufferSize) {
         return false;
@@ -4161,7 +4221,7 @@ var matchPolygon = function matchPolygon(P, datas, eventType, res) {
     if (eventType === 'mousemove' && !userSet.mouseOverEventEnable || eventType === 'mousedown' && !userSet.clickable) {
         // res.length = 0;
     } else {
-        datas.path.forEach(function (item, index) {
+        object.path.forEach(function (item, index) {
             if (index === 0) {
                 ctx.moveTo(item[0], item[1]);
             } else {
@@ -4169,12 +4229,12 @@ var matchPolygon = function matchPolygon(P, datas, eventType, res) {
             }
             // get the length of P and O
             var lPO = Math.sqrt(Math.pow(P[0] - item[0], 2) + Math.pow(P[1] - item[1], 2));
-            if (lPO < bufferSize && datas.object.userSet.pointEditable) {
+            if (lPO < bufferSize && object.userSet.pointEditable) {
                 // pointEditable: when pointEditable is true, we push the active point to res
                 res.push({
                     type: 'point',
                     index: index,
-                    data: datas,
+                    object: object,
                     length: lPO
                 });
             }
@@ -4186,7 +4246,7 @@ var matchPolygon = function matchPolygon(P, datas, eventType, res) {
         if (isFit) {
             res.push({
                 type: 'object',
-                data: datas,
+                object: object,
                 length: length
             });
         }
@@ -4245,10 +4305,6 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _stringify = __webpack_require__(12);
-
-var _stringify2 = _interopRequireDefault(_stringify);
-
 var _config = __webpack_require__(1);
 
 var _config2 = _interopRequireDefault(_config);
@@ -4264,84 +4320,52 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 
 var move = function move(moveObject, snapShootPath, movedPos, step) {
-    var moveIndexs = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : [];
+    var moveType = moveObject.type;
+    var object = moveObject.object;
+    var moveIndex = null;
 
-    switch (moveObject.data.type) {
+    switch (object.type) {
         case _config2.default.objectTypes.polygon:
         case _config2.default.objectTypes.line:
         case _config2.default.objectTypes.textGroup:
-            var newPath = [];
-            var moveType = moveObject.type === 'point' && moveObject.length < 10 ? moveIndexs.length > 0 ? 'multiPoint' : 'point' : 'group';
-
             if (moveType === 'point') {
-                var singleIndex = moveObject.index;
-                var path = moveObject.data.path;
-                path[singleIndex][0] = snapShootPath[singleIndex][0] + movedPos[0];
-                path[singleIndex][1] = snapShootPath[singleIndex][1] + movedPos[1];
-                path[singleIndex] = (0, _steplize2.default)(path[singleIndex], step);
-                // emit
-                moveObject.data.object.emit('change', {
-                    type: 'point',
-                    index: singleIndex,
-                    changeData: JSON.parse((0, _stringify2.default)(path[singleIndex])),
-                    object: moveObject.data
-                });
-            } else if (moveType === 'multiPoint') {
-                // moveIndexs
-                // const singleIndex = moveObject.index;
-                // const path = moveObject.data.path;
-                // path[singleIndex][0] = snapShootPath[singleIndex][0] + movedPos[0];
-                // path[singleIndex][1] = snapShootPath[singleIndex][1] + movedPos[1];
-                // path[singleIndex] = steplizePoint(path[singleIndex], step);
-                // // emit
-                // moveObject.data.object.emit('change', {
-                //     type: 'point',
-                //     index: singleIndex,
-                //     changeData: JSON.parse(JSON.stringify(path[singleIndex])),
-                //     object: moveObject.data,
-                // });
+                moveIndex = moveObject.index;
+                object.path[moveIndex][0] = snapShootPath[moveIndex][0] + movedPos[0];
+                object.path[moveIndex][1] = snapShootPath[moveIndex][1] + movedPos[1];
+                object.path[moveIndex] = (0, _steplize2.default)(object.path[moveIndex], step);
             } else {
-                newPath = snapShootPath.map(function (item) {
-                    var x = item[0];
-                    var y = item[1];
-                    x += movedPos[0];
-                    y += movedPos[1];
-                    return (0, _steplize2.default)([x, y], step);
-                });
-                moveObject.data.path = newPath;
-                // emit
-                moveObject.data.object.emit('change', {
-                    type: 'line',
-                    changeData: newPath,
-                    object: moveObject.data
+                object.path = snapShootPath.map(function (item) {
+                    return (0, _steplize2.default)([item[0] + movedPos[0], item[1] + movedPos[1]], step);
                 });
             }
             // update outBox
-            var sys = moveObject.data.sys;
-            var outBox = {
+            object.sys.outBox = {
                 xMin: Infinity,
                 xMax: -Infinity,
                 yMin: Infinity,
                 yMax: -Infinity
             };
-            newPath = moveObject.data.path;
-            newPath.forEach(function (point) {
-                outBox.xMin = Math.min(outBox.xMin, point[0]);
-                outBox.xMax = Math.max(outBox.xMax, point[0]);
-                outBox.yMin = Math.min(outBox.yMin, point[1]);
-                outBox.yMax = Math.max(outBox.yMax, point[1]);
+            object.path.forEach(function (point) {
+                object.sys.outBox.xMin = Math.min(object.sys.outBox.xMin, point[0]);
+                object.sys.outBox.xMax = Math.max(object.sys.outBox.xMax, point[0]);
+                object.sys.outBox.yMin = Math.min(object.sys.outBox.yMin, point[1]);
+                object.sys.outBox.yMax = Math.max(object.sys.outBox.yMax, point[1]);
             });
-            sys.outBox = outBox;
             break;
         case _config2.default.objectTypes.text:
         case _config2.default.objectTypes.circle:
-            moveObject.data.center = [snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]];
-            moveObject.data.object.emit('change', {
-                object: moveObject.data
-            });
+            object.center = [snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]];
             break;
         default:
     }
+
+    // emit
+    var emitObj = {
+        type: moveType || 'object',
+        object: moveObject.object,
+        index: moveIndex
+    };
+    object.emit('change', emitObj);
 };
 
 exports.default = move;
@@ -4364,22 +4388,27 @@ var _config2 = _interopRequireDefault(_config);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var deleteObject = function deleteObject(object) {
+    // console.log(object.origin.isActive)
     // let candelete = object.origin
-    var deleteObj = object.origin.data.object;
+    // console.log(object)
+    var deleteObj = object.origin.object;
     var candelete = true;
+
+    // console.log('@@@@@@@@@@@', object.origin, object.origin.index)
     if (deleteObj.listens.willDeletePoint) {
         candelete = deleteObj.listens.willDeletePoint({
-            object: object.origin.data,
+            object: object.origin.object,
             index: object.origin.index
         }) !== false;
     }
 
-    var minPoint = object.origin.data.type === _config2.default.objectTypes.polygon ? 3 : 2;
+    var minPoint = object.origin.object.type === _config2.default.objectTypes.polygon ? 3 : 2;
     if (candelete) {
-        if (object.origin.type === 'point' && object.origin.data.path.length > minPoint) {
-            object.origin.data.path.splice(object.origin.index, 1);
-            if (object.origin.index > object.origin.data.path.length - 1) {
+        if (object.origin.type === 'point' && object.origin.object.path.length > minPoint) {
+            object.origin.object.path.splice(object.origin.index, 1);
+            if (object.origin.index > object.origin.object.path.length - 1) {
                 object.origin.index -= 1;
+                object.origin.object.isActive.index -= 1;
             }
         } else {
             object.origin.type = 'object';

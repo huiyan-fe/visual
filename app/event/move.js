@@ -5,88 +5,56 @@
 import Config from '../config/config';
 import steplizePoint from '../tools/steplize';
 
-const move = (moveObject, snapShootPath, movedPos, step, moveIndexs = []) => {
-    switch (moveObject.data.type) {
+const move = (moveObject, snapShootPath, movedPos, step) => {
+    const moveType = moveObject.type;
+    const object = moveObject.object;
+    let moveIndex = null;
+
+    switch (object.type) {
         case Config.objectTypes.polygon:
         case Config.objectTypes.line:
         case Config.objectTypes.textGroup:
-            let newPath = [];
-            const moveType = (moveObject.type === 'point') && (moveObject.length < 10)
-                ? ((moveIndexs.length > 0) ? 'multiPoint' : 'point')
-                : 'group';
-
             if (moveType === 'point') {
-                const singleIndex = moveObject.index;
-                const path = moveObject.data.path;
-                path[singleIndex][0] = snapShootPath[singleIndex][0] + movedPos[0];
-                path[singleIndex][1] = snapShootPath[singleIndex][1] + movedPos[1];
-                path[singleIndex] = steplizePoint(path[singleIndex], step);
-                // emit
-                moveObject.data.object.emit('change', {
-                    type: 'point',
-                    index: singleIndex,
-                    changeData: JSON.parse(JSON.stringify(path[singleIndex])),
-                    object: moveObject.data,
-                });
-            } else if (moveType === 'multiPoint') {
-                // moveIndexs
-                // const singleIndex = moveObject.index;
-                // const path = moveObject.data.path;
-                // path[singleIndex][0] = snapShootPath[singleIndex][0] + movedPos[0];
-                // path[singleIndex][1] = snapShootPath[singleIndex][1] + movedPos[1];
-                // path[singleIndex] = steplizePoint(path[singleIndex], step);
-                // // emit
-                // moveObject.data.object.emit('change', {
-                //     type: 'point',
-                //     index: singleIndex,
-                //     changeData: JSON.parse(JSON.stringify(path[singleIndex])),
-                //     object: moveObject.data,
-                // });
+                moveIndex = moveObject.index;
+                object.path[moveIndex][0] = snapShootPath[moveIndex][0] + movedPos[0];
+                object.path[moveIndex][1] = snapShootPath[moveIndex][1] + movedPos[1];
+                object.path[moveIndex] = steplizePoint(object.path[moveIndex], step);
             } else {
-                newPath = snapShootPath.map(item => {
-                    let x = item[0];
-                    let y = item[1];
-                    x += movedPos[0];
-                    y += movedPos[1];
-                    return steplizePoint([x, y], step);
-                });
-                moveObject.data.path = newPath;
-                // emit
-                moveObject.data.object.emit('change', {
-                    type: 'line',
-                    changeData: newPath,
-                    object: moveObject.data,
-                });
+                object.path = snapShootPath.map(
+                    item => steplizePoint([item[0] + movedPos[0], item[1] + movedPos[1]], step),
+                );
             }
             // update outBox
-            const sys = moveObject.data.sys;
-            const outBox = {
+            object.sys.outBox = {
                 xMin: Infinity,
                 xMax: -Infinity,
                 yMin: Infinity,
                 yMax: -Infinity,
             };
-            newPath = moveObject.data.path;
-            newPath.forEach(point => {
-                outBox.xMin = Math.min(outBox.xMin, point[0]);
-                outBox.xMax = Math.max(outBox.xMax, point[0]);
-                outBox.yMin = Math.min(outBox.yMin, point[1]);
-                outBox.yMax = Math.max(outBox.yMax, point[1]);
+            object.path.forEach(point => {
+                object.sys.outBox.xMin = Math.min(object.sys.outBox.xMin, point[0]);
+                object.sys.outBox.xMax = Math.max(object.sys.outBox.xMax, point[0]);
+                object.sys.outBox.yMin = Math.min(object.sys.outBox.yMin, point[1]);
+                object.sys.outBox.yMax = Math.max(object.sys.outBox.yMax, point[1]);
             });
-            sys.outBox = outBox;
             break;
         case Config.objectTypes.text:
         case Config.objectTypes.circle:
-            moveObject.data.center = [
+            object.center = [
                 snapShootPath[0] + movedPos[0],
                 snapShootPath[1] + movedPos[1],
             ];
-            moveObject.data.object.emit('change', {
-                object: moveObject.data,
-            });
             break;
         default:
     }
+
+    // emit
+    const emitObj = {
+        type: moveType || 'object',
+        object: moveObject.object,
+        index: moveIndex,
+    };
+    object.emit('change', emitObj);
 };
 
 export default move;

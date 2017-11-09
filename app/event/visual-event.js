@@ -52,15 +52,15 @@ const Event = self => {
 
         if (hoveredObj.length >= 1) {
             let pathSnapshoot;
-            switch (hoveredObj[0].data.type) {
+            switch (hoveredObj[0].object.type) {
                 case Config.objectTypes.line:
                 case Config.objectTypes.polygon:
                 case Config.objectTypes.textGroup:
-                    pathSnapshoot = hoveredObj[0].data.path;
+                    pathSnapshoot = hoveredObj[0].object.path;
                     break;
                 case Config.objectTypes.text:
                 case Config.objectTypes.circle:
-                    pathSnapshoot = hoveredObj[0].data.center;
+                    pathSnapshoot = hoveredObj[0].object.center;
                     break;
                 default: break;
             }
@@ -72,18 +72,21 @@ const Event = self => {
             });
 
             let oneObj = true;
-            let indexs = self.sys.pickupedObjs.map(obj => {
-                if (obj.origin.data.id !== self.sys.pickupedObjs[0].origin.data.id) {
-                    oneObj = false;
-                } else {
-                    return obj.origin.index;
-                }
-            });
-            indexs = uniqueArr(indexs);
-            if (oneObj) {
-                self.sys.pickupedObjs.map(obj => {
-                    obj.origin.data.isActive['indexs'] = indexs;
+            if (self.sys.pickupedObjs.length > 1) {
+                let indexs = self.sys.pickupedObjs.map(obj => {
+                    if (obj.origin.object.id !== self.sys.pickupedObjs[0].origin.object.id) {
+                        oneObj = false;
+                    } else {
+                        return obj.origin.index;
+                    }
                 });
+                indexs = uniqueArr(indexs);
+                if (oneObj) {
+                    self.sys.pickupedObjs.map(obj => {
+                        console.log('isActive indexs')
+                        obj.origin.object.isActive['indexs'] = indexs;
+                    });
+                }
             }
 
             mousedownPos = scaleReverse([
@@ -122,7 +125,7 @@ const Event = self => {
                 self.sys.pickupedObjs.map((pos, index) => {
                     const snapShootPath = pos.pathSnapshoot;
                     const moveObject = pos.origin;
-                    if (moveObject.data.object.userSet.dragable) {
+                    if (moveObject.object.userSet.dragable) {
                         move(moveObject, snapShootPath, movedPos, step);
                     }
                 });
@@ -139,7 +142,7 @@ const Event = self => {
                 const a = self.sys.pickupedObjs[0];
                 let oneObj = true;
                 const indexs = self.sys.pickupedObjs.map((obj) => {
-                    if (a.origin.data.id !== obj.origin.data.id) {
+                    if (a.origin.object.id !== obj.origin.object.id) {
                         oneObj = false;
                     }
                     return obj.origin.index;
@@ -147,8 +150,8 @@ const Event = self => {
 
                 const uniIndexs = uniqueArr(indexs);
                 if (oneObj) {
-                    a.origin.data.object.emit('finish', {
-                        object: a.origin.data,
+                    a.origin.object.emit('finish', {
+                        object: a.origin.object,
                         indexs: uniIndexs,
                         type: 'multichose',
                     });
@@ -157,20 +160,21 @@ const Event = self => {
         } else {
             if (self.sys.pickupedObjs.length === 1) {
                 self.sys.pickupedObjs.forEach(vObj => {
-                    vObj.origin.data.object.emit('finish', {
-                        object: vObj.origin.data,
+                    vObj.origin.object.emit('finish', {
+                        object: vObj.origin.object,
                         type: 'move',
                     });
                     // update
                     let pathSnapshoot;
-                    switch (vObj.origin.data.type) {
+                    switch (vObj.origin.object.type) {
                         case Config.objectTypes.line:
                         case Config.objectTypes.polygon:
-                            pathSnapshoot = vObj.origin.data.path;
+                        case Config.objectTypes.textGroup:
+                            pathSnapshoot = vObj.origin.object.path;
                             break;
                         case Config.objectTypes.text:
                         case Config.objectTypes.circle:
-                            pathSnapshoot = vObj.origin.data.center;
+                            pathSnapshoot = vObj.origin.object.center;
                             break;
                         default:
                     }
@@ -222,11 +226,11 @@ const Event = self => {
                     } else {
                         index += 1;
                     }
-                    if (index > self.sys.pickupedObjs[0].origin.data.path.length - 1) {
+                    if (index > self.sys.pickupedObjs[0].origin.object.path.length - 1) {
                         index = 0;
                     }
                     if (index < 0) {
-                        index = self.sys.pickupedObjs[0].origin.data.path.length - 1;
+                        index = self.sys.pickupedObjs[0].origin.object.path.length - 1;
                     }
                     self.sys.pickupedObjs[0].origin.index = index;
                     self.sys.pickupedObjs[0].origin.type = 'point';
@@ -277,15 +281,15 @@ const Event = self => {
                 if (self.sys.pickupedObjs.length > 0) {
                     self.sys.pickupedObjs.map(obj => {
                         let pathSnapshoot;
-                        switch (obj.origin.data.type) {
+                        switch (obj.origin.object.type) {
                             case Config.objectTypes.line:
                             case Config.objectTypes.polygon:
                             case Config.objectTypes.textGroup:
-                                pathSnapshoot = obj.origin.data.path;
+                                pathSnapshoot = obj.origin.object.path;
                                 break;
                             case Config.objectTypes.text:
                             case Config.objectTyfpes.circle:
-                                pathSnapshoot = obj.origin.data.center;
+                                pathSnapshoot = obj.origin.object.center;
                                 break;
                             default:
                         }
@@ -307,7 +311,7 @@ const Event = self => {
                             const snapShootPath = obj.pathSnapshoot;
                             const moveObject = obj.origin;
                             move(moveObject, snapShootPath, [x * step, y * step], step);
-                            if (a.origin.data.id !== obj.origin.data.id) {
+                            if (a.origin.object.id !== obj.origin.object.id) {
                                 oneObj = false;
                             }
                             return obj.origin.index;
@@ -315,8 +319,8 @@ const Event = self => {
 
                         const uniIndexs = uniqueArr(indexs);
                         if (oneObj) {
-                            a.origin.data.object.emit('finish', {
-                                object: a.origin.data,
+                            a.origin.object.emit('finish', {
+                                object: a.origin.object,
                                 indexs: uniIndexs,
                                 type: 'multichose',
                             });
@@ -326,8 +330,8 @@ const Event = self => {
                     const snapShootPath = self.sys.pickupedObjs[0].pathSnapshoot;
                     const moveObject = self.sys.pickupedObjs[0].origin;
                     move(moveObject, snapShootPath, [x * step, y * step], step);
-                    self.sys.pickupedObjs[0].origin.data.object.emit('finish', {
-                        object: self.sys.pickupedObjs[0].origin.data,
+                    self.sys.pickupedObjs[0].origin.object.object.emit('finish', {
+                        object: self.sys.pickupedObjs[0].origin.object,
                         type: 'move',
                     });
                 }

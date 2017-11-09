@@ -23,21 +23,21 @@
             }
         });
 
-        v.line([
-            [0, 0],
-            [0, 100],
-        ], {
-            strokeStyle: '#4df693',
-            lineWidth: 8
-        });
+        // v.line([
+        //     [0, 0],
+        //     [0, 100],
+        // ], {
+        //     strokeStyle: '#4df693',
+        //     lineWidth: 8
+        // });
 
-        v.line([
-            [0, 100],
-            [0, 200],
-        ], {
-            strokeStyle: '#4df693',
-            lineWidth: 9
-        });
+        // v.line([
+        //     [0, 100],
+        //     [0, 200],
+        // ], {
+        //     strokeStyle: '#4df693',
+        //     lineWidth: 9
+        // });
 
 
         let line = v.line([
@@ -156,13 +156,13 @@
         });
 
         // Edit disable line
-        v.line([
-            [650, 100],
-            [600, 150],
-            [700, 150]
-        ], {
-            pointEditable: false
-        });
+        // v.line([
+        //     [650, 100],
+        //     [600, 150],
+        //     [700, 150]
+        // ], {
+        //     pointEditable: false
+        // });
         v.text('Edit disable line', [650, 180], {
             textAlign: 'center'
         });
@@ -181,6 +181,19 @@
             [640, 250]
         ], {
             textRotate: Math.PI * .1
+        });
+
+        v.polygon([
+            [660, 280],
+            [710, 330],
+            [540, 330]
+        ], {
+            boundaryCheck: true
+        })
+
+        // Edit disable line
+        v.text('polygn with boundaryCheck', [660, 350], {
+            textAlign: 'center'
         });
     </script>
 

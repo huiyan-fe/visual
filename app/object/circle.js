@@ -13,14 +13,20 @@ class Circle extends VisualObject {
         Object.assign(this.userSet, userSet);
         const center = JSON.parse(JSON.stringify(centerParam));
 
-        this.Visual.sys.objects.push({
-            id: this.id,
-            type: Visual.sys.objectTypes.circle,
-            redius,
-            center: steplizePoint(center, this.Visual.options.grid.step),
-            options,
-            object: this,
-        });
+        this.type = Visual.sys.objectTypes.circle;
+        this.redius = redius;
+        this.center = steplizePoint(center, this.Visual.options.grid.step);
+        this.options = options;
+
+        this.Visual.sys.objects.push(this);
+        // this.Visual.sys.objects.push({
+        //     id: this.id,
+        //     type: Visual.sys.objectTypes.circle,
+        //     redius,
+        //     center: steplizePoint(center, this.Visual.options.grid.step),
+        //     options,
+        //     object: this,
+        // });
         this.Visual.draw();
     }
 }

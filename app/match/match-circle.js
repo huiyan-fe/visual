@@ -1,15 +1,15 @@
-const matchCircle = (P, datas, eventType, res) => {
-    const userSet = datas.object.userSet;
+const matchCircle = (P, object, eventType, res) => {
+    const userSet = object.userSet;
     const bufferSize = userSet.bufferSize;
 
-    const lPC = Math.sqrt((P[0] - datas.center[0]) ** 2 + (P[1] - datas.center[1]) ** 2);
-    if (lPC <= datas.redius + bufferSize) {
-        if ((eventType === 'mousemove' && !userSet.mouseOverEventEnable)
-            || (eventType === 'mousedown' && !userSet.clickable)) {
+    const lPC = Math.sqrt((P[0] - object.center[0]) ** 2 + (P[1] - object.center[1]) ** 2);
+    if (lPC <= object.redius + bufferSize) {
+        if ((eventType === 'mousemove' && !userSet.mouseOverEventEnable) ||
+            (eventType === 'mousedown' && !userSet.clickable)) {
             // res.length = 0;
         } else {
             res.push({
-                data: datas,
+                object,
                 length: lPC,
             });
         }

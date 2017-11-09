@@ -49,22 +49,36 @@ class TextGroup extends VisualObject {
         });
         //
 
-        this.Visual.sys.objects.push({
-            id: this.id,
-            type: Visual.sys.objectTypes.textGroup,
-            text,
-            options,
-            object: this,
-            path,
-            sys: {
-                measure: {
-                    height,
-                    width,
-                },
-                spaces,
-                outbox: [],
+        this.type = Visual.sys.objectTypes.textGroup;
+        this.text = text;
+        this.options = options;
+        this.path = path;
+        this.sys = {
+            measure: {
+                height,
+                width,
             },
-        });
+            spaces,
+            outbox: [],
+        };
+
+        this.Visual.sys.objects.push(this);
+        // this.Visual.sys.objects.push({
+        //     id: this.id,
+        //     type: Visual.sys.objectTypes.textGroup,
+        //     text,
+        //     options,
+        //     object: this,
+        //     path,
+        //     sys: {
+        //         measure: {
+        //             height,
+        //             width,
+        //         },
+        //         spaces,
+        //         outbox: [],
+        //     },
+        // });
         this.Visual.draw();
     }
 }

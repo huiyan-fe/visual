@@ -1,8 +1,8 @@
-const matchLine = (P, datas, eventType, res) => {
-    datas.path.forEach((data, index) => {
+const matchLine = (P, object, eventType, res) => {
+    object.path.forEach((data, index) => {
         if (index !== 0) {
-            const A = datas.path[index - 1];
-            const B = datas.path[index];
+            const A = object.path[index - 1];
+            const B = object.path[index];
             const vAP = [P[0] - A[0], P[1] - A[1]];
             const lAP = Math.sqrt((vAP[0] ** 2) + (vAP[1] ** 2));
             const vAB = [B[0] - A[0], B[1] - A[1]];
@@ -18,7 +18,7 @@ const matchLine = (P, datas, eventType, res) => {
             const lABPB = lAB * Math.sqrt((vPB[0] ** 2) + (vPB[1] ** 2));
             const rPBA = Math.acos(cABPB / lABPB);
 
-            const userSet = datas.object.userSet;
+            const userSet = object.userSet;
             const bufferSize = userSet.bufferSize;
             // mouseOverEventEnable: false,
             // clickable: true,
@@ -26,11 +26,11 @@ const matchLine = (P, datas, eventType, res) => {
                 (eventType === 'mousedown' && !userSet.clickable)) {
                 // res.length = 0;
             } else {
-                if ((lPB < bufferSize || lAP < bufferSize) && datas.object.userSet.pointEditable) {
+                if ((lPB < bufferSize || lAP < bufferSize) && object.userSet.pointEditable) {
                     // pointEditable: when pointEditable is true, we push the active point to res
                     res.push({
                         type: 'point',
-                        data: datas,
+                        object,
                         projection: lPB < lAP ? B : A,
                         length: lPB < lAP ? lPB : lAP,
                         index: lPB < lAP ? index : (index - 1),
@@ -43,7 +43,7 @@ const matchLine = (P, datas, eventType, res) => {
                     if (lPO < bufferSize) {
                         res.push({
                             type: 'object',
-                            data: datas,
+                            object,
                             projection: O,
                             length: lPO,
                         });

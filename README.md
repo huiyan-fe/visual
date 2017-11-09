@@ -17,7 +17,7 @@
 	* [line](#21-linepath-config)
 	* [text](#22-texttext-point-config)
 	* [circle](#23-circleredis-center-config)
-	* [Visual 对象 config](#24-config)
+	* [Visual 对象 config](#25-config)
 	* [Visual 对象 userSet](#25-userSet)
 3. [Visual Event](#3-visual-event)
 	* [change](#31-change)
@@ -60,7 +60,7 @@ let visual = new Visual(dom);
 |参数|类型|说明|
 |:---|:---|:---|
 | **path** | `Array` | 线段的关键点
-| **config** | `Object` | 相关配置，通用配置请查阅配置说明 [config](#24-config)
+| **config** | `Object` | 相关配置，通用配置请查阅配置说明 [config](#25-config)
 
 line方法用来创建一条可以编辑的直线或者折线。
 
@@ -84,7 +84,7 @@ visual.line([
 |:---|:---|:---|
 | **text** | `String` | 绘制的文本
 | **point** | `Array` | 绘制的文字的起始点
-| **config** | `Object` | 相关配置，通用配置请查阅配置说明 [config](#24-config)
+| **config** | `Object` | 相关配置，通用配置请查阅配置说明 [config](#25-config)
 | **config.rotate** | `Number` | 文本的旋转角度
 | **config.splitText** | `Boole` | 文字是否单独绘制，如果为true的情况下，系统自动绘制每一个单独的文字，此时，每个文字的初始旋转角度0°为正上方
 | **config.textRotate** | `Number` | 单个文字的旋转角度
@@ -124,7 +124,7 @@ visua.textGroup('TextGroup with path points', [
 });
 ```
 
-[在线Demo](https://jsfiddle.net/zhuwenlong/1kbp4z95/1/)
+[在线Demo](https://jsfiddle.net/zhuwenlong/kfotkcj4/1/)
 
 #### 2.4 circle(redis, center, config)
 
@@ -132,7 +132,7 @@ visua.textGroup('TextGroup with path points', [
 |:---|:---|:---|
 | **redis** | `Number` | 圆的半径
 | **center** | `Array` | 圆的中心点
-| **config** | `Object` | 相关配置，通用配置请查阅配置说明 [config](#24-config)
+| **config** | `Object` | 相关配置，通用配置请查阅配置说明 [config](#25-config)
 | **config.border** | `Boole` | 是否绘制圆的边框
 
 简单示例如下：
