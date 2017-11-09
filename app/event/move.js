@@ -4,25 +4,48 @@
 
 import Config from '../config/config';
 import steplizePoint from '../tools/steplize';
+import boundaryLize from '../tools/boundary-check';
 
 const move = (moveObject, snapShootPath, movedPos, step) => {
     const moveType = moveObject.type;
     const object = moveObject.object;
+
     let moveIndex = null;
 
+    const needBoundaryCheck = object.userSet.boundaryCheck;
+    // boundaryCheck
+    // console.log(object.userSet.boundaryCheck);
     switch (object.type) {
         case Config.objectTypes.polygon:
         case Config.objectTypes.line:
         case Config.objectTypes.textGroup:
             if (moveType === 'point') {
                 moveIndex = moveObject.index;
-                object.path[moveIndex][0] = snapShootPath[moveIndex][0] + movedPos[0];
-                object.path[moveIndex][1] = snapShootPath[moveIndex][1] + movedPos[1];
+                if (needBoundaryCheck) {
+                    const maxBound = [moveObject.object.Visual.canvas.width, moveObject.object.Visual.canvas.height];
+                    object.path[moveIndex] = boundaryLize([
+                        [
+                            snapShootPath[moveIndex][0] + movedPos[0],
+                            snapShootPath[moveIndex][1] + movedPos[1],
+                        ],
+                    ], maxBound)[0];
+                } else {
+                    object.path[moveIndex][0] = snapShootPath[moveIndex][0] + movedPos[0];
+                    object.path[moveIndex][1] = snapShootPath[moveIndex][1] + movedPos[1];
+                }
                 object.path[moveIndex] = steplizePoint(object.path[moveIndex], step);
             } else {
-                object.path = snapShootPath.map(
-                    item => steplizePoint([item[0] + movedPos[0], item[1] + movedPos[1]], step),
-                );
+                if (needBoundaryCheck) {
+                    console.log('xxx')
+                    const maxBound = [moveObject.object.Visual.canvas.width, moveObject.object.Visual.canvas.height];
+                    object.path = boundaryLize(snapShootPath.map(
+                        item => steplizePoint([item[0] + movedPos[0], item[1] + movedPos[1]], step),
+                    ), maxBound);
+                } else {
+                    object.path = snapShootPath.map(
+                        item => steplizePoint([item[0] + movedPos[0], item[1] + movedPos[1]], step),
+                    );
+                }
             }
             // update outBox
             object.sys.outBox = {
@@ -56,5 +79,6 @@ const move = (moveObject, snapShootPath, movedPos, step) => {
     };
     object.emit('change', emitObj);
 };
+
 
 export default move;
