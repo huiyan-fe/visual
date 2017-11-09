@@ -54,7 +54,6 @@ const Event = self => {
             pickupedObj = [];
         }
         self.draw();
-
     });
 
     window.addEventListener('mousemove', e => {

@@ -10,6 +10,10 @@ const MathTool = {
         const res = [];
 
         datasGroup.forEach(datas => {
+            // remove all the objects' active;
+            datas.isActive = null;
+            //
+
             switch (datas.type) {
                 case Config.objectTypes.line:
                 case Config.objectTypes.textGroup:

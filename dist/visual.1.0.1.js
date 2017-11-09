@@ -3702,6 +3702,10 @@ var MathTool = {
         var res = [];
 
         datasGroup.forEach(function (datas) {
+            // remove all the objects' active;
+            datas.isActive = null;
+            //
+
             switch (datas.type) {
                 case _config2.default.objectTypes.line:
                 case _config2.default.objectTypes.textGroup:
@@ -3745,8 +3749,6 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 var matchLine = function matchLine(P, datas, eventType, res) {
-    var useData = datas;
-    useData.isActive = null;
     datas.path.forEach(function (data, index) {
         if (index !== 0) {
             var A = datas.path[index - 1];
@@ -3842,8 +3844,6 @@ if (debug) {
 }
 
 var matchText = function matchText(P, datas, eventType, res) {
-    var useData = datas;
-    useData.isActive = null;
     textCtx.beginPath();
     if (debug) {
         textCtx.clearRect(0, 0, textCanvas.width, textCanvas.height);
@@ -3928,8 +3928,6 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 var matchCircle = function matchCircle(P, datas, eventType, res) {
-    var useData = datas;
-    useData.isActive = null;
     var userSet = datas.object.userSet;
     var bufferSize = userSet.bufferSize;
 
@@ -3968,10 +3966,6 @@ textCanvas.style.height = '1px';
 var ctx = textCanvas.getContext('2d');
 
 var matchPolygon = function matchPolygon(P, datas, eventType, res) {
-    // console.log()
-    var useData = datas;
-    useData.isActive = null;
-
     var userSet = datas.object.userSet;
     var bufferSize = userSet.bufferSize;
 
@@ -3985,12 +3979,9 @@ var matchPolygon = function matchPolygon(P, datas, eventType, res) {
     if (P[1] < outBox.yMin - bufferSize || P[1] > outBox.yMax + bufferSize) {
         return false;
     }
-    // mouseOverEventEnable: false,
-    // clickable: true,
     if (eventType === 'mousemove' && !userSet.mouseOverEventEnable || eventType === 'mousedown' && !userSet.clickable) {
         // res.length = 0;
     } else {
-
         datas.path.forEach(function (item, index) {
             if (index === 0) {
                 ctx.moveTo(item[0], item[1]);
@@ -3999,7 +3990,6 @@ var matchPolygon = function matchPolygon(P, datas, eventType, res) {
             }
             // get the length of P and O
             var lPO = Math.sqrt(Math.pow(P[0] - item[0], 2) + Math.pow(P[1] - item[1], 2));
-            // console.log(lPO);
             if (lPO < bufferSize && datas.object.userSet.pointEditable) {
                 // pointEditable: when pointEditable is true, we push the active point to res
                 res.push({
@@ -4010,7 +4000,7 @@ var matchPolygon = function matchPolygon(P, datas, eventType, res) {
                 });
             }
         });
-        // ctx.fill();
+
         var isFit = ctx.isPointInPath(P[0], P[1]);
         var center = [(outBox.xMax + outBox.xMin) / 2, (outBox.yMax + outBox.yMin) / 2];
         var length = Math.sqrt(Math.pow(P[0] - center[0], 2) + Math.pow(P[1] - center[1], 2));

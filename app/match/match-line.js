@@ -1,6 +1,4 @@
 const matchLine = (P, datas, eventType, res) => {
-    const useData = datas;
-    useData.isActive = null;
     datas.path.forEach((data, index) => {
         if (index !== 0) {
             const A = datas.path[index - 1];

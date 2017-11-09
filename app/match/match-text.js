@@ -19,8 +19,6 @@ if (debug) {
 }
 
 const matchText = (P, datas, eventType, res) => {
-    const useData = datas;
-    useData.isActive = null;
     textCtx.beginPath();
     if (debug) {
         textCtx.clearRect(0, 0, textCanvas.width, textCanvas.height);

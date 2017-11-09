@@ -8,10 +8,6 @@ textCanvas.style.height = '1px';
 const ctx = textCanvas.getContext('2d');
 
 const matchPolygon = (P, datas, eventType, res) => {
-    // console.log()
-    const useData = datas;
-    useData.isActive = null;
-
     const userSet = datas.object.userSet;
     const bufferSize = userSet.bufferSize;
 
@@ -25,13 +21,10 @@ const matchPolygon = (P, datas, eventType, res) => {
     if (P[1] < (outBox.yMin - bufferSize) || P[1] > (outBox.yMax + bufferSize)) {
         return false;
     }
-    // mouseOverEventEnable: false,
-    // clickable: true,
     if ((eventType === 'mousemove' && !userSet.mouseOverEventEnable) ||
         (eventType === 'mousedown' && !userSet.clickable)) {
         // res.length = 0;
     } else {
-
         datas.path.forEach((item, index) => {
             if (index === 0) {
                 ctx.moveTo(item[0], item[1]);
@@ -40,7 +33,6 @@ const matchPolygon = (P, datas, eventType, res) => {
             }
             // get the length of P and O
             const lPO = Math.sqrt(((P[0] - item[0]) ** 2) + ((P[1] - item[1]) ** 2));
-            // console.log(lPO);
             if (lPO < bufferSize && datas.object.userSet.pointEditable) {
                 // pointEditable: when pointEditable is true, we push the active point to res
                 res.push({
@@ -51,7 +43,7 @@ const matchPolygon = (P, datas, eventType, res) => {
                 });
             }
         });
-        // ctx.fill();
+
         const isFit = ctx.isPointInPath(P[0], P[1]);
         const center = [((outBox.xMax + outBox.xMin) / 2), ((outBox.yMax + outBox.yMin) / 2)];
         const length = Math.sqrt(((P[0] - center[0]) ** 2) + ((P[1] - center[1]) ** 2));
