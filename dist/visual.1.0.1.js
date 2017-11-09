@@ -4092,30 +4092,47 @@ var _steplize = __webpack_require__(12);
 
 var _steplize2 = _interopRequireDefault(_steplize);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _boundaryCheck = __webpack_require__(129);
 
-/**
- * @file this file is countrol the move the object
- */
+var _boundaryCheck2 = _interopRequireDefault(_boundaryCheck);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var move = function move(moveObject, snapShootPath, movedPos, step) {
     var moveType = moveObject.type;
     var object = moveObject.object;
+
     var moveIndex = null;
 
+    var needBoundaryCheck = object.userSet.boundaryCheck;
+    // boundaryCheck
+    // console.log(object.userSet.boundaryCheck);
     switch (object.type) {
         case _config2.default.objectTypes.polygon:
         case _config2.default.objectTypes.line:
         case _config2.default.objectTypes.textGroup:
             if (moveType === 'point') {
                 moveIndex = moveObject.index;
-                object.path[moveIndex][0] = snapShootPath[moveIndex][0] + movedPos[0];
-                object.path[moveIndex][1] = snapShootPath[moveIndex][1] + movedPos[1];
+                if (needBoundaryCheck) {
+                    var maxBound = [moveObject.object.Visual.canvas.width, moveObject.object.Visual.canvas.height];
+                    object.path[moveIndex] = (0, _boundaryCheck2.default)([[snapShootPath[moveIndex][0] + movedPos[0], snapShootPath[moveIndex][1] + movedPos[1]]], maxBound)[0];
+                } else {
+                    object.path[moveIndex][0] = snapShootPath[moveIndex][0] + movedPos[0];
+                    object.path[moveIndex][1] = snapShootPath[moveIndex][1] + movedPos[1];
+                }
                 object.path[moveIndex] = (0, _steplize2.default)(object.path[moveIndex], step);
             } else {
-                object.path = snapShootPath.map(function (item) {
-                    return (0, _steplize2.default)([item[0] + movedPos[0], item[1] + movedPos[1]], step);
-                });
+                if (needBoundaryCheck) {
+                    console.log('xxx');
+                    var _maxBound = [moveObject.object.Visual.canvas.width, moveObject.object.Visual.canvas.height];
+                    object.path = (0, _boundaryCheck2.default)(snapShootPath.map(function (item) {
+                        return (0, _steplize2.default)([item[0] + movedPos[0], item[1] + movedPos[1]], step);
+                    }), _maxBound);
+                } else {
+                    object.path = snapShootPath.map(function (item) {
+                        return (0, _steplize2.default)([item[0] + movedPos[0], item[1] + movedPos[1]], step);
+                    });
+                }
             }
             // update outBox
             object.sys.outBox = {
@@ -4145,7 +4162,9 @@ var move = function move(moveObject, snapShootPath, movedPos, step) {
         index: moveIndex
     };
     object.emit('change', emitObj);
-};
+}; /**
+    * @file this file is countrol the move the object
+    */
 
 exports.default = move;
 
@@ -4196,6 +4215,42 @@ var deleteObject = function deleteObject(object) {
 };
 
 exports.default = deleteObject;
+
+/***/ }),
+/* 129 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+function boundaryLize(points, boundary) {
+    var deficitXmin = 0;
+    var deficitYmin = 0;
+
+    var deficitXmax = 0;
+    var deficitYmax = 0;
+
+    points.forEach(function (point) {
+        deficitXmin = Math.min(deficitXmin, boundary[0] - point[0]);
+        deficitYmin = Math.min(deficitYmin, boundary[1] - point[1]);
+        deficitXmax = Math.min(point[0], deficitXmax);
+        deficitYmax = Math.min(point[1], deficitYmax);
+    });
+
+    // console.log(deficitYmax, deficitYmin)
+
+    var deficitX = deficitXmax < deficitXmin ? -deficitXmax : deficitXmin;
+    var deficitY = deficitYmax < deficitYmin ? -deficitYmax : deficitYmin;
+
+    return points.map(function (point) {
+        return [point[0] + deficitX, point[1] + deficitY];
+    });
+}
+
+exports.default = boundaryLize;
 
 /***/ })
 /******/ ]);
