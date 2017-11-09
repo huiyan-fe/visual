@@ -19,14 +19,6 @@ function DrawLine(Visual, obj) {
     ctx.stroke();
     ctx.restore();
 
-    const userSet = obj.userSet;
-    if (userSet && userSet.active) {
-        if (!(obj && obj.isActive)) {
-            // userSet.active = false;
-            obj['isActive'] = { data: obj };
-        }
-    }
-
     if (obj && obj.isActive) {
         ctx.canvas.style.cursor = 'pointer';
         ctx.save();
@@ -67,17 +59,24 @@ function DrawLine(Visual, obj) {
         });
         ctx.stroke();
 
-        //
-        // console.log(obj.isActive);
         if (obj.isActive.type === 'point' && obj.isActive.length < 10) {
-            const index = obj.isActive.index;
-            const point = usePath[index];
-            // console.log(point)
-            ctx.beginPath();
-            ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
-            ctx.fillStyle = '#fff';
-            ctx.rect(point[0] - 6, point[1] - 6, 12, 12, Math.PI * 2);
-            ctx.stroke();
+            if (obj.isActive.indexs) {
+                obj.isActive.indexs.map(index => {
+                    const point = usePath[index];
+                    ctx.beginPath();
+                    ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+                    ctx.fillStyle = '#fff';
+                    ctx.rect(point[0] - 6, point[1] - 6, 12, 12, Math.PI * 2);
+                    ctx.stroke();
+                });
+            } else {
+                const point = usePath[obj.isActive.index];
+                ctx.beginPath();
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+                ctx.fillStyle = '#fff';
+                ctx.rect(point[0] - 6, point[1] - 6, 12, 12, Math.PI * 2);
+                ctx.stroke();
+            }
         }
 
         ctx.restore();

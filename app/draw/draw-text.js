@@ -35,13 +35,6 @@ function DrawText(Visual, obj) {
     }
     ctx.restore();
 
-    const userSet = obj.userSet;
-    if (userSet && userSet.active) {
-        if (!(obj && obj.isActive)) {
-            // userSet.active = false;
-            obj['isActive'] = { data: obj };
-        }
-    }
     if (obj.isActive) {
         ctx.canvas.style.cursor = 'pointer';
         // active

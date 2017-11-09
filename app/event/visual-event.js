@@ -10,10 +10,28 @@ const Event = self => {
     const canvas = self.canvas;
     let mousedownPos = [];
     let hoveredObj = [];
-    let pickupedObj = [];
+    let mousedown = false;
     const step = self.options.grid.step;
+    let events = {
+        ctrl: false,
+        shift: false,
+    };
+
+
+    let uniqueArr = (arr) => {
+        let result = [], hash = {};
+        for (let i = 0, elem; (elem = arr[i]) != null; i++) {
+            if (!hash[elem]) {
+                result.push(elem);
+                hash[elem] = true;
+            }
+        }
+        return result;
+    };
+
 
     window.addEventListener('mousedown', e => {
+        mousedown = true;
         let x = e.offsetX;
         let y = e.offsetY;
         [x, y] = scaleReverse([
@@ -25,7 +43,12 @@ const Event = self => {
             y = -9999;
         }
         const eventType = 'mousedown';
-        hoveredObj = MatchTool.match([x, y], self.sys.objects, eventType);
+        const multichose = events.shift;
+        hoveredObj = MatchTool.match([x, y], self.sys.objects, eventType, multichose);
+
+        if (!events.shift) {
+            self.sys.pickupedObjs = [];
+        }
 
         if (hoveredObj.length >= 1) {
             let pathSnapshoot;
@@ -39,19 +62,36 @@ const Event = self => {
                 case Config.objectTypes.circle:
                     pathSnapshoot = hoveredObj[0].object.center;
                     break;
-                default:
+                default: break;
             }
             pathSnapshoot = JSON.parse(JSON.stringify(pathSnapshoot));
 
-            pickupedObj = [{
+            self.sys.pickupedObjs.push({
                 pathSnapshoot,
                 origin: hoveredObj[0],
-            }];
+            });
+
+            let oneObj = true;
+            if (self.sys.pickupedObjs.length > 1) {
+                let indexs = self.sys.pickupedObjs.map(obj => {
+                    if (obj.origin.object.id !== self.sys.pickupedObjs[0].origin.object.id) {
+                        oneObj = false;
+                    } else {
+                        return obj.origin.index;
+                    }
+                });
+                indexs = uniqueArr(indexs);
+                if (oneObj) {
+                    self.sys.pickupedObjs.map(obj => {
+                        console.log('isActive indexs')
+                        obj.origin.object.isActive['indexs'] = indexs;
+                    });
+                }
+            }
+
             mousedownPos = scaleReverse([
                 [e.pageX, e.pageY],
             ], self.options.grid.scale)[0];
-        } else {
-            pickupedObj = [];
         }
         self.draw();
     });
@@ -59,7 +99,8 @@ const Event = self => {
     window.addEventListener('mousemove', e => {
         let x = 0;
         let y = 0;
-        if (pickupedObj.length === 0) {
+
+        if (self.sys.pickupedObjs.length === 0) {
             x = e.offsetX;
             y = e.offsetY;
             [x, y] = scaleReverse([
@@ -69,10 +110,11 @@ const Event = self => {
                 x = -999;
                 y = -999;
             }
-            const eventType = 'mousemove';
-            hoveredObj = MatchTool.match([x, y], self.sys.objects, eventType);
+            const eventType = 'mousedown';
+            const multichose = events.shift;
+            hoveredObj = MatchTool.match([x, y], self.sys.objects, eventType, multichose);
         } else {
-            if (mousedownPos.length > 0) {
+            if (mousedownPos.length > 0 && mousedown) {
                 x = e.pageX;
                 y = e.pageY;
                 [x, y] = scaleReverse([
@@ -80,48 +122,93 @@ const Event = self => {
                 ], self.options.grid.scale)[0];
                 let movedPos = [x - mousedownPos[0], y - mousedownPos[1]];
                 movedPos = steplizePoint(movedPos, step);
-                const snapShootPath = pickupedObj[0].pathSnapshoot;
-                const moveObject = pickupedObj[0].origin;
-                if (moveObject.object.userSet.dragable) {
-                    move(moveObject, snapShootPath, movedPos, step);
-                }
+                self.sys.pickupedObjs.map((pos, index) => {
+                    const snapShootPath = pos.pathSnapshoot;
+                    const moveObject = pos.origin;
+                    if (moveObject.object.userSet.dragable) {
+                        move(moveObject, snapShootPath, movedPos, step);
+                    }
+                });
             }
             e.preventDefault();
         }
         self.draw();
     });
 
-
     window.addEventListener('mouseup', () => {
-        if (pickupedObj.length > 0) {
-            pickupedObj[0].origin.object.emit('finish', {
-                object: pickupedObj[0].origin.object,
-                type: 'move',
-            });
-            // update
-            let pathSnapshoot;
-            switch (pickupedObj[0].origin.object.type) {
-                case Config.objectTypes.line:
-                case Config.objectTypes.polygon:
-                case Config.objectTypes.textGroup:
-                    pathSnapshoot = pickupedObj[0].origin.object.path;
-                    break;
-                case Config.objectTypes.text:
-                case Config.objectTypes.circle:
-                    pathSnapshoot = pickupedObj[0].origin.object.center;
-                    break;
-                default:
+        mousedown = false;
+        if (events.shift) {
+            if (self.sys.pickupedObjs.length > 1) {
+                const a = self.sys.pickupedObjs[0];
+                let oneObj = true;
+                const indexs = self.sys.pickupedObjs.map((obj) => {
+                    if (a.origin.object.id !== obj.origin.object.id) {
+                        oneObj = false;
+                    }
+                    return obj.origin.index;
+                });
+
+                const uniIndexs = uniqueArr(indexs);
+                if (oneObj) {
+                    a.origin.object.emit('finish', {
+                        object: a.origin.object,
+                        indexs: uniIndexs,
+                        type: 'multichose',
+                    });
+                }
             }
-            pathSnapshoot = JSON.parse(JSON.stringify(pathSnapshoot));
-            pickupedObj[0].pathSnapshoot = pathSnapshoot;
+        } else {
+            if (self.sys.pickupedObjs.length === 1) {
+                self.sys.pickupedObjs.forEach(vObj => {
+                    vObj.origin.object.emit('finish', {
+                        object: vObj.origin.object,
+                        type: 'move',
+                    });
+                    // update
+                    let pathSnapshoot;
+                    switch (vObj.origin.object.type) {
+                        case Config.objectTypes.line:
+                        case Config.objectTypes.polygon:
+                        case Config.objectTypes.textGroup:
+                            pathSnapshoot = vObj.origin.object.path;
+                            break;
+                        case Config.objectTypes.text:
+                        case Config.objectTypes.circle:
+                            pathSnapshoot = vObj.origin.object.center;
+                            break;
+                        default:
+                    }
+                    pathSnapshoot = JSON.parse(JSON.stringify(pathSnapshoot));
+                    vObj.pathSnapshoot = pathSnapshoot;
+                });
+            }
+
+            // self.sys.pickupedObjs = [];
+            hoveredObj.length = 0;
+            mousedownPos.length = 0;
         }
-        // pickupedObj = [];
-        hoveredObj = [];
-        mousedownPos = [];
+    });
+
+    window.addEventListener('keyup', e => {
+        switch (e.keyCode) {
+            case 16:
+                // shift
+                events.shift = false;
+                break;
+            case 17:
+                // ctrl
+                events.ctrl = false;
+                break;
+            default: break;
+        }
     });
 
     window.addEventListener('keydown', e => {
-        if (pickupedObj.length > 0) {
+        if (e.keyCode == 16) {
+            // shift
+            events.shift = true;
+        }
+        if (self.sys.pickupedObjs.length > 0) {
             let order = 'update';
             let x = 0;
             let y = 0;
@@ -130,7 +217,7 @@ const Event = self => {
             switch (e.keyCode) {
                 case 9:
                     order = 'cancel';
-                    let index = pickupedObj[0].origin.index;
+                    let index = self.sys.pickupedObjs[0].origin.index;
                     if (index === undefined) {
                         index = -1;
                     }
@@ -139,26 +226,33 @@ const Event = self => {
                     } else {
                         index += 1;
                     }
-                    if (index > pickupedObj[0].origin.object.path.length - 1) {
+                    if (index > self.sys.pickupedObjs[0].origin.object.path.length - 1) {
                         index = 0;
                     }
                     if (index < 0) {
-                        index = pickupedObj[0].origin.object.path.length - 1;
+                        index = self.sys.pickupedObjs[0].origin.object.path.length - 1;
                     }
-                    pickupedObj[0].origin.index = index;
-                    pickupedObj[0].origin.type = 'point';
+                    self.sys.pickupedObjs[0].origin.index = index;
+                    self.sys.pickupedObjs[0].origin.type = 'point';
                     e.preventDefault();
                     break;
                 case 8:
-                    // delete
-                    deleteObj(pickupedObj[0]);
-                    // console.log('**********', pickupedObj[0])
+                    // BackSpace
+                    deleteObj(self.sys.pickupedObjs[0]);
                     order = 'cancel';
                     // update active index  & reget the active
                     break;
+                case 16:
+                    // shift
+                    events.shift = true;
+                    break;
+                case 17:
+                    // ctrl
+                    events.ctrl = true;
+                    break;
                 case 27:
                     // esc
-                    pickupedObj = [];
+                    self.sys.pickupedObjs = [];
                     hoveredObj = MatchTool.match([-99999, -99999], self.sys.objects, eventType);
                     order = 'cancel';
                     break;
@@ -183,33 +277,64 @@ const Event = self => {
             }
 
             // update snapshoot
-            if (pickupedObj.length > 0) {
-                let pathSnapshoot;
-                switch (pickupedObj[0].origin.object.type) {
-                    case Config.objectTypes.line:
-                    case Config.objectTypes.polygon:
-                    case Config.objectTypes.textGroup:
-                        pathSnapshoot = pickupedObj[0].origin.object.path;
-                        break;
-                    case Config.objectTypes.text:
-                    case Config.objectTypes.circle:
-                        pathSnapshoot = pickupedObj[0].origin.object.center;
-                        break;
-                    default:
+            let updateSnapshoot = () => {
+                if (self.sys.pickupedObjs.length > 0) {
+                    self.sys.pickupedObjs.map(obj => {
+                        let pathSnapshoot;
+                        switch (obj.origin.object.type) {
+                            case Config.objectTypes.line:
+                            case Config.objectTypes.polygon:
+                            case Config.objectTypes.textGroup:
+                                pathSnapshoot = obj.origin.object.path;
+                                break;
+                            case Config.objectTypes.text:
+                            case Config.objectTyfpes.circle:
+                                pathSnapshoot = obj.origin.object.center;
+                                break;
+                            default:
+                        }
+                        pathSnapshoot = JSON.parse(JSON.stringify(pathSnapshoot));
+                        obj.pathSnapshoot = pathSnapshoot;
+                    });
+                    // pathSnapshoot = [{},{},{}]
                 }
-                pathSnapshoot = JSON.parse(JSON.stringify(pathSnapshoot));
-                pickupedObj[0].pathSnapshoot = pathSnapshoot;
-            }
-
+            };
+            updateSnapshoot();
             if (order === 'update') {
-                const snapShootPath = pickupedObj[0].pathSnapshoot;
-                const moveObject = pickupedObj[0].origin;
-                move(moveObject, snapShootPath, [x * step, y * step], step);
+                if (events.shift) {
+                    // console.warn(self.sys.pickupedObjs.length);
+                    if (self.sys.pickupedObjs.length > 1) {
+                        const a = self.sys.pickupedObjs[0];
+                        let oneObj = true;
+                        const indexs = self.sys.pickupedObjs.map(obj => {
+                            updateSnapshoot();
+                            const snapShootPath = obj.pathSnapshoot;
+                            const moveObject = obj.origin;
+                            move(moveObject, snapShootPath, [x * step, y * step], step);
+                            if (a.origin.object.id !== obj.origin.object.id) {
+                                oneObj = false;
+                            }
+                            return obj.origin.index;
+                        });
 
-                pickupedObj[0].origin.object.emit('finish', {
-                    object: pickupedObj[0].origin.object,
-                    type: 'move',
-                });
+                        const uniIndexs = uniqueArr(indexs);
+                        if (oneObj) {
+                            a.origin.object.emit('finish', {
+                                object: a.origin.object,
+                                indexs: uniIndexs,
+                                type: 'multichose',
+                            });
+                        }
+                    }
+                } else {
+                    const snapShootPath = self.sys.pickupedObjs[0].pathSnapshoot;
+                    const moveObject = self.sys.pickupedObjs[0].origin;
+                    move(moveObject, snapShootPath, [x * step, y * step], step);
+                    self.sys.pickupedObjs[0].origin.object.object.emit('finish', {
+                        object: self.sys.pickupedObjs[0].origin.object,
+                        type: 'move',
+                    });
+                }
                 e.preventDefault();
             }
             self.draw();

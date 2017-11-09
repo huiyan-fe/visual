@@ -526,6 +526,17 @@ var VisualObject = function () {
             this.userSet[type] = value;
         }
     }, {
+        key: 'active',
+        value: function active() {
+            var _this3 = this;
+
+            var currentSysObj = this.object.Visual.sys.objects.filter(function (obj) {
+                return obj.id === _this3.id;
+            });
+            console.warn(currentSysObj);
+            currentSysObj[0]['isActive'] = { data: currentSysObj[0] };
+        }
+    }, {
         key: 'unbind',
         value: function unbind(type, fn) {
             this.listens = this.listens || {};
@@ -1120,14 +1131,6 @@ function DrawLine(Visual, obj) {
     ctx.stroke();
     ctx.restore();
 
-    var userSet = obj.userSet;
-    if (userSet && userSet.active) {
-        if (!(obj && obj.isActive)) {
-            // userSet.active = false;
-            obj['isActive'] = { data: obj };
-        }
-    }
-
     if (obj && obj.isActive) {
         ctx.canvas.style.cursor = 'pointer';
         ctx.save();
@@ -1168,17 +1171,24 @@ function DrawLine(Visual, obj) {
         });
         ctx.stroke();
 
-        //
-        // console.log(obj.isActive);
         if (obj.isActive.type === 'point' && obj.isActive.length < 10) {
-            var index = obj.isActive.index;
-            var point = usePath[index];
-            // console.log(point)
-            ctx.beginPath();
-            ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
-            ctx.fillStyle = '#fff';
-            ctx.rect(point[0] - 6, point[1] - 6, 12, 12, Math.PI * 2);
-            ctx.stroke();
+            if (obj.isActive.indexs) {
+                obj.isActive.indexs.map(function (index) {
+                    var point = usePath[index];
+                    ctx.beginPath();
+                    ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+                    ctx.fillStyle = '#fff';
+                    ctx.rect(point[0] - 6, point[1] - 6, 12, 12, Math.PI * 2);
+                    ctx.stroke();
+                });
+            } else {
+                var point = usePath[obj.isActive.index];
+                ctx.beginPath();
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+                ctx.fillStyle = '#fff';
+                ctx.rect(point[0] - 6, point[1] - 6, 12, 12, Math.PI * 2);
+                ctx.stroke();
+            }
         }
 
         ctx.restore();
@@ -1292,7 +1302,8 @@ var Visual = function () {
 
         this.sys = {
             objects: [],
-            objectTypes: _config2.default.objectTypes
+            objectTypes: _config2.default.objectTypes,
+            pickupedObjs: []
         };
 
         // config
@@ -2981,13 +2992,6 @@ function DrawText(Visual, obj) {
     }
     ctx.restore();
 
-    var userSet = obj.userSet;
-    if (userSet && userSet.active) {
-        if (!(obj && obj.isActive)) {
-            // userSet.active = false;
-            obj['isActive'] = { data: obj };
-        }
-    }
     if (obj.isActive) {
         ctx.canvas.style.cursor = 'pointer';
         // active
@@ -3140,14 +3144,6 @@ function DrawLine(Visual, obj) {
     }
     ctx.restore();
 
-    var userSet = obj.userSet;
-    if (userSet && userSet.active) {
-        if (!(obj && obj.isActive)) {
-            // userSet.active = false;
-            obj['isActive'] = { data: obj };
-        }
-    }
-
     // active
     if (obj.isActive) {
         ctx.lineWidth = 1;
@@ -3202,13 +3198,7 @@ function DrawLine(Visual, obj) {
         ctx.stroke();
     }
     ctx.restore();
-    var userSet = obj.userSet;
-    if (userSet && userSet.active) {
-        if (!(obj && obj.isActive)) {
-            // userSet.active = false;
-            obj['isActive'] = { data: obj };
-        }
-    }
+
     if (obj && obj.isActive) {
         ctx.canvas.style.cursor = 'pointer';
         ctx.save();
@@ -3269,7 +3259,7 @@ function DrawLine(Visual, obj) {
         });
         ctx.stroke();
 
-        //
+        // 
         if (obj.isActive.type === 'point' && obj.isActive.length < 10) {
             var index = obj.isActive.index;
             var point = usePath[index];
@@ -3334,10 +3324,27 @@ var Event = function Event(self) {
     var canvas = self.canvas;
     var mousedownPos = [];
     var hoveredObj = [];
-    var pickupedObj = [];
+    var mousedown = false;
     var step = self.options.grid.step;
+    var events = {
+        ctrl: false,
+        shift: false
+    };
+
+    var uniqueArr = function uniqueArr(arr) {
+        var result = [],
+            hash = {};
+        for (var i = 0, elem; (elem = arr[i]) != null; i++) {
+            if (!hash[elem]) {
+                result.push(elem);
+                hash[elem] = true;
+            }
+        }
+        return result;
+    };
 
     window.addEventListener('mousedown', function (e) {
+        mousedown = true;
         var x = e.offsetX;
         var y = e.offsetY;
 
@@ -3352,7 +3359,12 @@ var Event = function Event(self) {
             y = -9999;
         }
         var eventType = 'mousedown';
-        hoveredObj = _match2.default.match([x, y], self.sys.objects, eventType);
+        var multichose = events.shift;
+        hoveredObj = _match2.default.match([x, y], self.sys.objects, eventType, multichose);
+
+        if (!events.shift) {
+            self.sys.pickupedObjs = [];
+        }
 
         if (hoveredObj.length >= 1) {
             var pathSnapshoot = void 0;
@@ -3367,16 +3379,34 @@ var Event = function Event(self) {
                     pathSnapshoot = hoveredObj[0].object.center;
                     break;
                 default:
+                    break;
             }
             pathSnapshoot = JSON.parse((0, _stringify2.default)(pathSnapshoot));
 
-            pickupedObj = [{
+            self.sys.pickupedObjs.push({
                 pathSnapshoot: pathSnapshoot,
                 origin: hoveredObj[0]
-            }];
+            });
+
+            var oneObj = true;
+            if (self.sys.pickupedObjs.length > 1) {
+                var indexs = self.sys.pickupedObjs.map(function (obj) {
+                    if (obj.origin.object.id !== self.sys.pickupedObjs[0].origin.object.id) {
+                        oneObj = false;
+                    } else {
+                        return obj.origin.index;
+                    }
+                });
+                indexs = uniqueArr(indexs);
+                if (oneObj) {
+                    self.sys.pickupedObjs.map(function (obj) {
+                        console.log('isActive indexs');
+                        obj.origin.object.isActive['indexs'] = indexs;
+                    });
+                }
+            }
+
             mousedownPos = (0, _scalelize.scaleReverse)([[e.pageX, e.pageY]], self.options.grid.scale)[0];
-        } else {
-            pickupedObj = [];
         }
         self.draw();
     });
@@ -3384,7 +3414,8 @@ var Event = function Event(self) {
     window.addEventListener('mousemove', function (e) {
         var x = 0;
         var y = 0;
-        if (pickupedObj.length === 0) {
+
+        if (self.sys.pickupedObjs.length === 0) {
             x = e.offsetX;
             y = e.offsetY;
 
@@ -3397,10 +3428,11 @@ var Event = function Event(self) {
                 x = -999;
                 y = -999;
             }
-            var eventType = 'mousemove';
-            hoveredObj = _match2.default.match([x, y], self.sys.objects, eventType);
+            var eventType = 'mousedown';
+            var multichose = events.shift;
+            hoveredObj = _match2.default.match([x, y], self.sys.objects, eventType, multichose);
         } else {
-            if (mousedownPos.length > 0) {
+            if (mousedownPos.length > 0 && mousedown) {
                 x = e.pageX;
                 y = e.pageY;
 
@@ -3411,11 +3443,13 @@ var Event = function Event(self) {
 
                 var movedPos = [x - mousedownPos[0], y - mousedownPos[1]];
                 movedPos = (0, _steplize2.default)(movedPos, step);
-                var snapShootPath = pickupedObj[0].pathSnapshoot;
-                var moveObject = pickupedObj[0].origin;
-                if (moveObject.object.userSet.dragable) {
-                    (0, _move2.default)(moveObject, snapShootPath, movedPos, step);
-                }
+                self.sys.pickupedObjs.map(function (pos, index) {
+                    var snapShootPath = pos.pathSnapshoot;
+                    var moveObject = pos.origin;
+                    if (moveObject.object.userSet.dragable) {
+                        (0, _move2.default)(moveObject, snapShootPath, movedPos, step);
+                    }
+                });
             }
             e.preventDefault();
         }
@@ -3423,35 +3457,80 @@ var Event = function Event(self) {
     });
 
     window.addEventListener('mouseup', function () {
-        if (pickupedObj.length > 0) {
-            pickupedObj[0].origin.object.emit('finish', {
-                object: pickupedObj[0].origin.object,
-                type: 'move'
-            });
-            // update
-            var pathSnapshoot = void 0;
-            switch (pickupedObj[0].origin.object.type) {
-                case _config2.default.objectTypes.line:
-                case _config2.default.objectTypes.polygon:
-                case _config2.default.objectTypes.textGroup:
-                    pathSnapshoot = pickupedObj[0].origin.object.path;
-                    break;
-                case _config2.default.objectTypes.text:
-                case _config2.default.objectTypes.circle:
-                    pathSnapshoot = pickupedObj[0].origin.object.center;
-                    break;
-                default:
+        mousedown = false;
+        if (events.shift) {
+            if (self.sys.pickupedObjs.length > 1) {
+                var a = self.sys.pickupedObjs[0];
+                var oneObj = true;
+                var indexs = self.sys.pickupedObjs.map(function (obj) {
+                    if (a.origin.object.id !== obj.origin.object.id) {
+                        oneObj = false;
+                    }
+                    return obj.origin.index;
+                });
+
+                var uniIndexs = uniqueArr(indexs);
+                if (oneObj) {
+                    a.origin.object.emit('finish', {
+                        object: a.origin.object,
+                        indexs: uniIndexs,
+                        type: 'multichose'
+                    });
+                }
             }
-            pathSnapshoot = JSON.parse((0, _stringify2.default)(pathSnapshoot));
-            pickupedObj[0].pathSnapshoot = pathSnapshoot;
+        } else {
+            if (self.sys.pickupedObjs.length === 1) {
+                self.sys.pickupedObjs.forEach(function (vObj) {
+                    vObj.origin.object.emit('finish', {
+                        object: vObj.origin.object,
+                        type: 'move'
+                    });
+                    // update
+                    var pathSnapshoot = void 0;
+                    switch (vObj.origin.object.type) {
+                        case _config2.default.objectTypes.line:
+                        case _config2.default.objectTypes.polygon:
+                        case _config2.default.objectTypes.textGroup:
+                            pathSnapshoot = vObj.origin.object.path;
+                            break;
+                        case _config2.default.objectTypes.text:
+                        case _config2.default.objectTypes.circle:
+                            pathSnapshoot = vObj.origin.object.center;
+                            break;
+                        default:
+                    }
+                    pathSnapshoot = JSON.parse((0, _stringify2.default)(pathSnapshoot));
+                    vObj.pathSnapshoot = pathSnapshoot;
+                });
+            }
+
+            // self.sys.pickupedObjs = [];
+            hoveredObj.length = 0;
+            mousedownPos.length = 0;
         }
-        // pickupedObj = [];
-        hoveredObj = [];
-        mousedownPos = [];
+    });
+
+    window.addEventListener('keyup', function (e) {
+        switch (e.keyCode) {
+            case 16:
+                // shift
+                events.shift = false;
+                break;
+            case 17:
+                // ctrl
+                events.ctrl = false;
+                break;
+            default:
+                break;
+        }
     });
 
     window.addEventListener('keydown', function (e) {
-        if (pickupedObj.length > 0) {
+        if (e.keyCode == 16) {
+            // shift
+            events.shift = true;
+        }
+        if (self.sys.pickupedObjs.length > 0) {
             var order = 'update';
             var x = 0;
             var y = 0;
@@ -3460,7 +3539,7 @@ var Event = function Event(self) {
             switch (e.keyCode) {
                 case 9:
                     order = 'cancel';
-                    var index = pickupedObj[0].origin.index;
+                    var index = self.sys.pickupedObjs[0].origin.index;
                     if (index === undefined) {
                         index = -1;
                     }
@@ -3469,26 +3548,33 @@ var Event = function Event(self) {
                     } else {
                         index += 1;
                     }
-                    if (index > pickupedObj[0].origin.object.path.length - 1) {
+                    if (index > self.sys.pickupedObjs[0].origin.object.path.length - 1) {
                         index = 0;
                     }
                     if (index < 0) {
-                        index = pickupedObj[0].origin.object.path.length - 1;
+                        index = self.sys.pickupedObjs[0].origin.object.path.length - 1;
                     }
-                    pickupedObj[0].origin.index = index;
-                    pickupedObj[0].origin.type = 'point';
+                    self.sys.pickupedObjs[0].origin.index = index;
+                    self.sys.pickupedObjs[0].origin.type = 'point';
                     e.preventDefault();
                     break;
                 case 8:
-                    // delete
-                    (0, _delete2.default)(pickupedObj[0]);
-                    // console.log('**********', pickupedObj[0])
+                    // BackSpace
+                    (0, _delete2.default)(self.sys.pickupedObjs[0]);
                     order = 'cancel';
                     // update active index  & reget the active
                     break;
+                case 16:
+                    // shift
+                    events.shift = true;
+                    break;
+                case 17:
+                    // ctrl
+                    events.ctrl = true;
+                    break;
                 case 27:
                     // esc
-                    pickupedObj = [];
+                    self.sys.pickupedObjs = [];
                     hoveredObj = _match2.default.match([-99999, -99999], self.sys.objects, eventType);
                     order = 'cancel';
                     break;
@@ -3513,33 +3599,64 @@ var Event = function Event(self) {
             }
 
             // update snapshoot
-            if (pickupedObj.length > 0) {
-                var pathSnapshoot = void 0;
-                switch (pickupedObj[0].origin.object.type) {
-                    case _config2.default.objectTypes.line:
-                    case _config2.default.objectTypes.polygon:
-                    case _config2.default.objectTypes.textGroup:
-                        pathSnapshoot = pickupedObj[0].origin.object.path;
-                        break;
-                    case _config2.default.objectTypes.text:
-                    case _config2.default.objectTypes.circle:
-                        pathSnapshoot = pickupedObj[0].origin.object.center;
-                        break;
-                    default:
+            var updateSnapshoot = function updateSnapshoot() {
+                if (self.sys.pickupedObjs.length > 0) {
+                    self.sys.pickupedObjs.map(function (obj) {
+                        var pathSnapshoot = void 0;
+                        switch (obj.origin.object.type) {
+                            case _config2.default.objectTypes.line:
+                            case _config2.default.objectTypes.polygon:
+                            case _config2.default.objectTypes.textGroup:
+                                pathSnapshoot = obj.origin.object.path;
+                                break;
+                            case _config2.default.objectTypes.text:
+                            case _config2.default.objectTyfpes.circle:
+                                pathSnapshoot = obj.origin.object.center;
+                                break;
+                            default:
+                        }
+                        pathSnapshoot = JSON.parse((0, _stringify2.default)(pathSnapshoot));
+                        obj.pathSnapshoot = pathSnapshoot;
+                    });
+                    // pathSnapshoot = [{},{},{}]
                 }
-                pathSnapshoot = JSON.parse((0, _stringify2.default)(pathSnapshoot));
-                pickupedObj[0].pathSnapshoot = pathSnapshoot;
-            }
-
+            };
+            updateSnapshoot();
             if (order === 'update') {
-                var snapShootPath = pickupedObj[0].pathSnapshoot;
-                var moveObject = pickupedObj[0].origin;
-                (0, _move2.default)(moveObject, snapShootPath, [x * step, y * step], step);
+                if (events.shift) {
+                    // console.warn(self.sys.pickupedObjs.length);
+                    if (self.sys.pickupedObjs.length > 1) {
+                        var a = self.sys.pickupedObjs[0];
+                        var oneObj = true;
+                        var indexs = self.sys.pickupedObjs.map(function (obj) {
+                            updateSnapshoot();
+                            var snapShootPath = obj.pathSnapshoot;
+                            var moveObject = obj.origin;
+                            (0, _move2.default)(moveObject, snapShootPath, [x * step, y * step], step);
+                            if (a.origin.object.id !== obj.origin.object.id) {
+                                oneObj = false;
+                            }
+                            return obj.origin.index;
+                        });
 
-                pickupedObj[0].origin.object.emit('finish', {
-                    object: pickupedObj[0].origin.object,
-                    type: 'move'
-                });
+                        var uniIndexs = uniqueArr(indexs);
+                        if (oneObj) {
+                            a.origin.object.emit('finish', {
+                                object: a.origin.object,
+                                indexs: uniIndexs,
+                                type: 'multichose'
+                            });
+                        }
+                    }
+                } else {
+                    var snapShootPath = self.sys.pickupedObjs[0].pathSnapshoot;
+                    var moveObject = self.sys.pickupedObjs[0].origin;
+                    (0, _move2.default)(moveObject, snapShootPath, [x * step, y * step], step);
+                    self.sys.pickupedObjs[0].origin.object.object.emit('finish', {
+                        object: self.sys.pickupedObjs[0].origin.object,
+                        type: 'move'
+                    });
+                }
                 e.preventDefault();
             }
             self.draw();
@@ -3713,11 +3830,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var MathTool = {
     // eventType : mousedown/mousemove/keydown
     match: function match(P, objects, eventType) {
+        var multichose = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
         var res = [];
 
         objects.forEach(function (object) {
             // remove all the objects' active;
-            object.isActive = null;
+            // console.log(multichose)
+            if (!multichose) {
+                object.isActive = null;
+            } else {
+                // console.log('multichose match');
+            }
 
             switch (object.type) {
                 case _config2.default.objectTypes.line:

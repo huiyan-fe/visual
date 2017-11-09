@@ -35,6 +35,14 @@ class VisualObject {
         this.userSet[type] = value;
     }
 
+    active() {
+        const currentSysObj = this.object.Visual.sys.objects.filter(obj => {
+            return obj.id === this.id;
+        });
+        console.warn(currentSysObj)
+        currentSysObj[0]['isActive'] = { data: currentSysObj[0] };
+    }
+
     unbind(type, fn) {
         this.listens = this.listens || {};
         this.listens[type] = this.listens[type] || [];

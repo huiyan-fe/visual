@@ -10,14 +10,6 @@ function DrawLine(Visual, obj) {
     }
     ctx.restore();
 
-    const userSet = obj.userSet;
-    if (userSet && userSet.active) {
-        if (!(obj && obj.isActive)) {
-            // userSet.active = false;
-            obj['isActive'] = { data: obj };
-        }
-    }
-
     // active
     if (obj.isActive) {
         ctx.lineWidth = 1;

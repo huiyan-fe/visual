@@ -6,12 +6,17 @@ import matchPolygon from './match-polygon';
 
 const MathTool = {
     // eventType : mousedown/mousemove/keydown
-    match(P, objects, eventType) {
+    match(P, objects, eventType, multichose = false) {
         const res = [];
 
         objects.forEach(object => {
             // remove all the objects' active;
-            object.isActive = null;
+            // console.log(multichose)
+            if (!multichose) {
+                object.isActive = null;
+            } else {
+                // console.log('multichose match');
+            }
 
             switch (object.type) {
                 case Config.objectTypes.line:
