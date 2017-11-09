@@ -9,7 +9,6 @@ function DrawLine(Visual, obj) {
         ctx[key] = obj.options[key];
     });
     const usePath = obj.path;
-    console.warn(obj)
     usePath.forEach((item, index) => {
         if (index === 0) {
             ctx.moveTo(item[0], item[1]);
@@ -73,7 +72,7 @@ function DrawLine(Visual, obj) {
         if (obj.isActive.type === 'point' && obj.isActive.length < 10) {
             const index = obj.isActive.index;
             const point = usePath[index];
-            console.log(point)
+            // console.log(point)
             ctx.beginPath();
             ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
             ctx.fillStyle = '#fff';

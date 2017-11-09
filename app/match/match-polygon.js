@@ -7,13 +7,13 @@ textCanvas.style.width = '1px';
 textCanvas.style.height = '1px';
 const ctx = textCanvas.getContext('2d');
 
-const matchPolygon = (P, datas, eventType, res) => {
-    const userSet = datas.userSet;
+const matchPolygon = (P, object, eventType, res) => {
+    const userSet = object.userSet;
     const bufferSize = userSet.bufferSize;
 
     ctx.beginPath();
     // object
-    const outBox = datas.sys.outBox;
+    const outBox = object.sys.outBox;
 
     if (P[0] < (outBox.xMin - bufferSize) || P[0] > (outBox.xMax + bufferSize)) {
         return false;
@@ -25,7 +25,7 @@ const matchPolygon = (P, datas, eventType, res) => {
         (eventType === 'mousedown' && !userSet.clickable)) {
         // res.length = 0;
     } else {
-        datas.path.forEach((item, index) => {
+        object.path.forEach((item, index) => {
             if (index === 0) {
                 ctx.moveTo(item[0], item[1]);
             } else {
@@ -33,12 +33,12 @@ const matchPolygon = (P, datas, eventType, res) => {
             }
             // get the length of P and O
             const lPO = Math.sqrt(((P[0] - item[0]) ** 2) + ((P[1] - item[1]) ** 2));
-            if (lPO < bufferSize && datas.userSet.pointEditable) {
+            if (lPO < bufferSize && object.userSet.pointEditable) {
                 // pointEditable: when pointEditable is true, we push the active point to res
                 res.push({
                     type: 'point',
                     index,
-                    innerObject: datas,
+                    object,
                     length: lPO,
                 });
             }
@@ -50,7 +50,7 @@ const matchPolygon = (P, datas, eventType, res) => {
         if (isFit) {
             res.push({
                 type: 'object',
-                innerObject: datas,
+                object,
                 length,
             });
         }

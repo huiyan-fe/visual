@@ -1110,7 +1110,6 @@ function DrawLine(Visual, obj) {
         ctx[key] = obj.options[key];
     });
     var usePath = obj.path;
-    console.warn(obj);
     usePath.forEach(function (item, index) {
         if (index === 0) {
             ctx.moveTo(item[0], item[1]);
@@ -1174,7 +1173,7 @@ function DrawLine(Visual, obj) {
         if (obj.isActive.type === 'point' && obj.isActive.length < 10) {
             var index = obj.isActive.index;
             var point = usePath[index];
-            console.log(point);
+            // console.log(point)
             ctx.beginPath();
             ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
             ctx.fillStyle = '#fff';
@@ -3357,15 +3356,15 @@ var Event = function Event(self) {
 
         if (hoveredObj.length >= 1) {
             var pathSnapshoot = void 0;
-            switch (hoveredObj[0].innerObject.type) {
+            switch (hoveredObj[0].object.type) {
                 case _config2.default.objectTypes.line:
                 case _config2.default.objectTypes.polygon:
                 case _config2.default.objectTypes.textGroup:
-                    pathSnapshoot = hoveredObj[0].innerObject.path;
+                    pathSnapshoot = hoveredObj[0].object.path;
                     break;
                 case _config2.default.objectTypes.text:
                 case _config2.default.objectTypes.circle:
-                    pathSnapshoot = hoveredObj[0].innerObject.center;
+                    pathSnapshoot = hoveredObj[0].object.center;
                     break;
                 default:
             }
@@ -3414,7 +3413,7 @@ var Event = function Event(self) {
                 movedPos = (0, _steplize2.default)(movedPos, step);
                 var snapShootPath = pickupedObj[0].pathSnapshoot;
                 var moveObject = pickupedObj[0].origin;
-                if (moveObject.innerObject.userSet.dragable) {
+                if (moveObject.object.userSet.dragable) {
                     (0, _move2.default)(moveObject, snapShootPath, movedPos, step);
                 }
             }
@@ -3425,21 +3424,21 @@ var Event = function Event(self) {
 
     window.addEventListener('mouseup', function () {
         if (pickupedObj.length > 0) {
-            pickupedObj[0].origin.innerObject.emit('finish', {
-                object: pickupedObj[0].origin.innerObject,
+            pickupedObj[0].origin.object.emit('finish', {
+                object: pickupedObj[0].origin.object,
                 type: 'move'
             });
             // update
             var pathSnapshoot = void 0;
-            switch (pickupedObj[0].origin.innerObject.type) {
+            switch (pickupedObj[0].origin.object.type) {
                 case _config2.default.objectTypes.line:
                 case _config2.default.objectTypes.polygon:
                 case _config2.default.objectTypes.textGroup:
-                    pathSnapshoot = pickupedObj[0].origin.innerObject.path;
+                    pathSnapshoot = pickupedObj[0].origin.object.path;
                     break;
                 case _config2.default.objectTypes.text:
                 case _config2.default.objectTypes.circle:
-                    pathSnapshoot = pickupedObj[0].origin.innerObject.center;
+                    pathSnapshoot = pickupedObj[0].origin.object.center;
                     break;
                 default:
             }
@@ -3470,11 +3469,11 @@ var Event = function Event(self) {
                     } else {
                         index += 1;
                     }
-                    if (index > pickupedObj[0].origin.innerObject.path.length - 1) {
+                    if (index > pickupedObj[0].origin.object.path.length - 1) {
                         index = 0;
                     }
                     if (index < 0) {
-                        index = pickupedObj[0].origin.innerObject.path.length - 1;
+                        index = pickupedObj[0].origin.object.path.length - 1;
                     }
                     pickupedObj[0].origin.index = index;
                     pickupedObj[0].origin.type = 'point';
@@ -3516,15 +3515,15 @@ var Event = function Event(self) {
             // update snapshoot
             if (pickupedObj.length > 0) {
                 var pathSnapshoot = void 0;
-                switch (pickupedObj[0].origin.innerObject.type) {
+                switch (pickupedObj[0].origin.object.type) {
                     case _config2.default.objectTypes.line:
                     case _config2.default.objectTypes.polygon:
                     case _config2.default.objectTypes.textGroup:
-                        pathSnapshoot = pickupedObj[0].origin.innerObject.path;
+                        pathSnapshoot = pickupedObj[0].origin.object.path;
                         break;
                     case _config2.default.objectTypes.text:
                     case _config2.default.objectTypes.circle:
-                        pathSnapshoot = pickupedObj[0].origin.innerObject.center;
+                        pathSnapshoot = pickupedObj[0].origin.object.center;
                         break;
                     default:
                 }
@@ -3537,8 +3536,8 @@ var Event = function Event(self) {
                 var moveObject = pickupedObj[0].origin;
                 (0, _move2.default)(moveObject, snapShootPath, [x * step, y * step], step);
 
-                pickupedObj[0].origin.innerObject.emit('finish', {
-                    object: pickupedObj[0].origin.innerObject,
+                pickupedObj[0].origin.object.emit('finish', {
+                    object: pickupedObj[0].origin.object,
                     type: 'move'
                 });
                 e.preventDefault();
@@ -3713,27 +3712,26 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var MathTool = {
     // eventType : mousedown/mousemove/keydown
-    match: function match(P, datasGroup, eventType) {
+    match: function match(P, objects, eventType) {
         var res = [];
 
-        datasGroup.forEach(function (datas) {
+        objects.forEach(function (object) {
             // remove all the objects' active;
-            datas.isActive = null;
-            //
+            object.isActive = null;
 
-            switch (datas.type) {
+            switch (object.type) {
                 case _config2.default.objectTypes.line:
                 case _config2.default.objectTypes.textGroup:
-                    (0, _matchLine2.default)(P, datas, eventType, res);
+                    (0, _matchLine2.default)(P, object, eventType, res);
                     break;
                 case _config2.default.objectTypes.text:
-                    (0, _matchText2.default)(P, datas, eventType, res);
+                    (0, _matchText2.default)(P, object, eventType, res);
                     break;
                 case _config2.default.objectTypes.circle:
-                    (0, _matchCircle2.default)(P, datas, eventType, res);
+                    (0, _matchCircle2.default)(P, object, eventType, res);
                     break;
                 case _config2.default.objectTypes.polygon:
-                    (0, _matchPolygon2.default)(P, datas, eventType, res);
+                    (0, _matchPolygon2.default)(P, object, eventType, res);
                     break;
                 default:
                     break;
@@ -3746,9 +3744,9 @@ var MathTool = {
 
         if (res[0]) {
             (0, _keys2.default)(res[0]).forEach(function (key) {
-                if (key !== 'innerObject') {
-                    res[0].innerObject.isActive = res[0].innerObject.isActive || {};
-                    res[0].innerObject.isActive[key] = res[0][key];
+                if (key !== 'object') {
+                    res[0].object.isActive = res[0].object.isActive || {};
+                    res[0].object.isActive[key] = res[0][key];
                 }
             });
         }
@@ -3768,11 +3766,11 @@ exports.default = MathTool;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-var matchLine = function matchLine(P, datas, eventType, res) {
-    datas.path.forEach(function (data, index) {
+var matchLine = function matchLine(P, object, eventType, res) {
+    object.path.forEach(function (data, index) {
         if (index !== 0) {
-            var A = datas.path[index - 1];
-            var B = datas.path[index];
+            var A = object.path[index - 1];
+            var B = object.path[index];
             var vAP = [P[0] - A[0], P[1] - A[1]];
             var lAP = Math.sqrt(Math.pow(vAP[0], 2) + Math.pow(vAP[1], 2));
             var vAB = [B[0] - A[0], B[1] - A[1]];
@@ -3788,18 +3786,18 @@ var matchLine = function matchLine(P, datas, eventType, res) {
             var lABPB = lAB * Math.sqrt(Math.pow(vPB[0], 2) + Math.pow(vPB[1], 2));
             var rPBA = Math.acos(cABPB / lABPB);
 
-            var userSet = datas.userSet;
+            var userSet = object.userSet;
             var bufferSize = userSet.bufferSize;
             // mouseOverEventEnable: false,
             // clickable: true,
             if (eventType === 'mousemove' && !userSet.mouseOverEventEnable || eventType === 'mousedown' && !userSet.clickable) {
                 // res.length = 0;
             } else {
-                if ((lPB < bufferSize || lAP < bufferSize) && datas.userSet.pointEditable) {
+                if ((lPB < bufferSize || lAP < bufferSize) && object.userSet.pointEditable) {
                     // pointEditable: when pointEditable is true, we push the active point to res
                     res.push({
                         type: 'point',
-                        innerObject: datas,
+                        object: object,
                         projection: lPB < lAP ? B : A,
                         length: lPB < lAP ? lPB : lAP,
                         index: lPB < lAP ? index : index - 1
@@ -3812,7 +3810,7 @@ var matchLine = function matchLine(P, datas, eventType, res) {
                     if (lPO < bufferSize) {
                         res.push({
                             type: 'object',
-                            innerObject: datas,
+                            object: object,
                             projection: O,
                             length: lPO
                         });
@@ -3863,7 +3861,7 @@ if (debug) {
     };
 }
 
-var matchText = function matchText(P, datas, eventType, res) {
+var matchText = function matchText(P, object, eventType, res) {
     textCtx.beginPath();
     if (debug) {
         textCtx.clearRect(0, 0, textCanvas.width, textCanvas.height);
@@ -3873,7 +3871,7 @@ var matchText = function matchText(P, datas, eventType, res) {
     var padding = [10, 10];
 
     (0, _keys2.default)(_config2.default.ctxStyleConfig).forEach(function (key) {
-        textCtx[key] = datas.options[key] || _config2.default.ctxStyleConfig[key];
+        textCtx[key] = object.options[key] || _config2.default.ctxStyleConfig[key];
     });
 
     var heightOffset = 0;
@@ -3883,13 +3881,13 @@ var matchText = function matchText(P, datas, eventType, res) {
             widthOffset = -padding[0] / 2;
             break;
         case 'center':
-            widthOffset = -(datas.sys.measure.width / 2) - padding[0] / 2;
+            widthOffset = -(object.sys.measure.width / 2) - padding[0] / 2;
             break;
         case 'right':
-            widthOffset = -datas.sys.measure.width - padding[0] / 2;
+            widthOffset = -object.sys.measure.width - padding[0] / 2;
             break;
         default:
-            widthOffset = -(datas.sys.measure.width / 2) - padding[0] / 2;
+            widthOffset = -(object.sys.measure.width / 2) - padding[0] / 2;
     }
 
     switch (textCtx.textBaseline) {
@@ -3897,28 +3895,28 @@ var matchText = function matchText(P, datas, eventType, res) {
             heightOffset = -(padding[1] / 2);
             break;
         case 'alphabetic':
-            heightOffset = -datas.sys.measure.height + (datas.sys.measure.height - textCtx.fontSize) / 2;
+            heightOffset = -object.sys.measure.height + (object.sys.measure.height - textCtx.fontSize) / 2;
             break;
         case 'bottom':
-            heightOffset = -datas.sys.measure.height - padding[1] / 2;
+            heightOffset = -object.sys.measure.height - padding[1] / 2;
             break;
         default:
-            heightOffset = -(datas.sys.measure.height / 2) - padding[1] / 2;
+            heightOffset = -(object.sys.measure.height / 2) - padding[1] / 2;
     }
 
     textCtx.save();
-    textCtx.translate(datas.center[0], datas.center[1]);
-    if (datas.options.rotate) {
-        textCtx.rotate(datas.options.rotate);
+    textCtx.translate(object.center[0], object.center[1]);
+    if (object.options.rotate) {
+        textCtx.rotate(object.options.rotate);
     }
-    textCtx.rect(widthOffset, heightOffset, datas.sys.measure.width + padding[0], datas.sys.measure.height + padding[1]);
+    textCtx.rect(widthOffset, heightOffset, object.sys.measure.width + padding[0], object.sys.measure.height + padding[1]);
 
     if (debug) {
         textCtx.fill();
     }
     var isFit = textCtx.isPointInPath(P[0], P[1]);
     if (isFit) {
-        var userSet = datas.userSet;
+        var userSet = object.userSet;
         // const bufferSize = userSet.bufferSize;
         // mouseOverEventEnable: false,
         // clickable: true,
@@ -3926,9 +3924,9 @@ var matchText = function matchText(P, datas, eventType, res) {
             // res.length = 0;
         } else {
             res.push({
-                innerObject: datas,
+                object: object,
                 projection: P,
-                length: Math.sqrt(Math.pow(P[0] - datas.center[0], 2), Math.pow(P[1] - datas.center[1], 2))
+                length: Math.sqrt(Math.pow(P[0] - object.center[0], 2), Math.pow(P[1] - object.center[1], 2))
             });
         }
     }
@@ -3947,17 +3945,17 @@ exports.default = matchText;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-var matchCircle = function matchCircle(P, datas, eventType, res) {
-    var userSet = datas.userSet;
+var matchCircle = function matchCircle(P, object, eventType, res) {
+    var userSet = object.userSet;
     var bufferSize = userSet.bufferSize;
 
-    var lPC = Math.sqrt(Math.pow(P[0] - datas.center[0], 2) + Math.pow(P[1] - datas.center[1], 2));
-    if (lPC <= datas.redius + bufferSize) {
+    var lPC = Math.sqrt(Math.pow(P[0] - object.center[0], 2) + Math.pow(P[1] - object.center[1], 2));
+    if (lPC <= object.redius + bufferSize) {
         if (eventType === 'mousemove' && !userSet.mouseOverEventEnable || eventType === 'mousedown' && !userSet.clickable) {
             // res.length = 0;
         } else {
             res.push({
-                innerObject: datas,
+                object: object,
                 length: lPC
             });
         }
@@ -3985,13 +3983,13 @@ textCanvas.style.width = '1px';
 textCanvas.style.height = '1px';
 var ctx = textCanvas.getContext('2d');
 
-var matchPolygon = function matchPolygon(P, datas, eventType, res) {
-    var userSet = datas.userSet;
+var matchPolygon = function matchPolygon(P, object, eventType, res) {
+    var userSet = object.userSet;
     var bufferSize = userSet.bufferSize;
 
     ctx.beginPath();
     // object
-    var outBox = datas.sys.outBox;
+    var outBox = object.sys.outBox;
 
     if (P[0] < outBox.xMin - bufferSize || P[0] > outBox.xMax + bufferSize) {
         return false;
@@ -4002,7 +4000,7 @@ var matchPolygon = function matchPolygon(P, datas, eventType, res) {
     if (eventType === 'mousemove' && !userSet.mouseOverEventEnable || eventType === 'mousedown' && !userSet.clickable) {
         // res.length = 0;
     } else {
-        datas.path.forEach(function (item, index) {
+        object.path.forEach(function (item, index) {
             if (index === 0) {
                 ctx.moveTo(item[0], item[1]);
             } else {
@@ -4010,12 +4008,12 @@ var matchPolygon = function matchPolygon(P, datas, eventType, res) {
             }
             // get the length of P and O
             var lPO = Math.sqrt(Math.pow(P[0] - item[0], 2) + Math.pow(P[1] - item[1], 2));
-            if (lPO < bufferSize && datas.userSet.pointEditable) {
+            if (lPO < bufferSize && object.userSet.pointEditable) {
                 // pointEditable: when pointEditable is true, we push the active point to res
                 res.push({
                     type: 'point',
                     index: index,
-                    innerObject: datas,
+                    object: object,
                     length: lPO
                 });
             }
@@ -4027,7 +4025,7 @@ var matchPolygon = function matchPolygon(P, datas, eventType, res) {
         if (isFit) {
             res.push({
                 type: 'object',
-                innerObject: datas,
+                object: object,
                 length: length
             });
         }
@@ -4102,40 +4100,40 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var move = function move(moveObject, snapShootPath, movedPos, step) {
     var moveType = moveObject.type;
-    var innerObject = moveObject.innerObject;
+    var object = moveObject.object;
     var moveIndex = null;
 
-    switch (innerObject.type) {
+    switch (object.type) {
         case _config2.default.objectTypes.polygon:
         case _config2.default.objectTypes.line:
         case _config2.default.objectTypes.textGroup:
             if (moveType === 'point') {
                 moveIndex = moveObject.index;
-                innerObject.path[moveIndex][0] = snapShootPath[moveIndex][0] + movedPos[0];
-                innerObject.path[moveIndex][1] = snapShootPath[moveIndex][1] + movedPos[1];
-                innerObject.path[moveIndex] = (0, _steplize2.default)(innerObject.path[moveIndex], step);
+                object.path[moveIndex][0] = snapShootPath[moveIndex][0] + movedPos[0];
+                object.path[moveIndex][1] = snapShootPath[moveIndex][1] + movedPos[1];
+                object.path[moveIndex] = (0, _steplize2.default)(object.path[moveIndex], step);
             } else {
-                innerObject.path = snapShootPath.map(function (item) {
+                object.path = snapShootPath.map(function (item) {
                     return (0, _steplize2.default)([item[0] + movedPos[0], item[1] + movedPos[1]], step);
                 });
             }
             // update outBox
-            innerObject.sys.outBox = {
+            object.sys.outBox = {
                 xMin: Infinity,
                 xMax: -Infinity,
                 yMin: Infinity,
                 yMax: -Infinity
             };
-            innerObject.path.forEach(function (point) {
-                innerObject.sys.outBox.xMin = Math.min(innerObject.sys.outBox.xMin, point[0]);
-                innerObject.sys.outBox.xMax = Math.max(innerObject.sys.outBox.xMax, point[0]);
-                innerObject.sys.outBox.yMin = Math.min(innerObject.sys.outBox.yMin, point[1]);
-                innerObject.sys.outBox.yMax = Math.max(innerObject.sys.outBox.yMax, point[1]);
+            object.path.forEach(function (point) {
+                object.sys.outBox.xMin = Math.min(object.sys.outBox.xMin, point[0]);
+                object.sys.outBox.xMax = Math.max(object.sys.outBox.xMax, point[0]);
+                object.sys.outBox.yMin = Math.min(object.sys.outBox.yMin, point[1]);
+                object.sys.outBox.yMax = Math.max(object.sys.outBox.yMax, point[1]);
             });
             break;
         case _config2.default.objectTypes.text:
         case _config2.default.objectTypes.circle:
-            innerObject.center = [snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]];
+            object.center = [snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]];
             break;
         default:
     }
@@ -4143,10 +4141,10 @@ var move = function move(moveObject, snapShootPath, movedPos, step) {
     // emit
     var emitObj = {
         type: moveType || 'object',
-        object: moveObject.innerObject,
+        object: moveObject.object,
         index: moveIndex
     };
-    innerObject.emit('change', emitObj);
+    object.emit('change', emitObj);
 };
 
 exports.default = move;
@@ -4172,24 +4170,24 @@ var deleteObject = function deleteObject(object) {
     // console.log(object.origin.isActive)
     // let candelete = object.origin
     // console.log(object)
-    var deleteObj = object.origin.innerObject;
+    var deleteObj = object.origin.object;
     var candelete = true;
 
     // console.log('@@@@@@@@@@@', object.origin, object.origin.index)
     if (deleteObj.listens.willDeletePoint) {
         candelete = deleteObj.listens.willDeletePoint({
-            object: object.origin.innerObject,
+            object: object.origin.object,
             index: object.origin.index
         }) !== false;
     }
 
-    var minPoint = object.origin.innerObject.type === _config2.default.objectTypes.polygon ? 3 : 2;
+    var minPoint = object.origin.object.type === _config2.default.objectTypes.polygon ? 3 : 2;
     if (candelete) {
-        if (object.origin.type === 'point' && object.origin.innerObject.path.length > minPoint) {
-            object.origin.innerObject.path.splice(object.origin.index, 1);
-            if (object.origin.index > object.origin.innerObject.path.length - 1) {
+        if (object.origin.type === 'point' && object.origin.object.path.length > minPoint) {
+            object.origin.object.path.splice(object.origin.index, 1);
+            if (object.origin.index > object.origin.object.path.length - 1) {
                 object.origin.index -= 1;
-                object.origin.innerObject.isActive.index -= 1;
+                object.origin.object.isActive.index -= 1;
             }
         } else {
             object.origin.type = 'object';

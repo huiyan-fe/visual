@@ -7,40 +7,40 @@ import steplizePoint from '../tools/steplize';
 
 const move = (moveObject, snapShootPath, movedPos, step) => {
     const moveType = moveObject.type;
-    const innerObject = moveObject.innerObject;
+    const object = moveObject.object;
     let moveIndex = null;
 
-    switch (innerObject.type) {
+    switch (object.type) {
         case Config.objectTypes.polygon:
         case Config.objectTypes.line:
         case Config.objectTypes.textGroup:
             if (moveType === 'point') {
                 moveIndex = moveObject.index;
-                innerObject.path[moveIndex][0] = snapShootPath[moveIndex][0] + movedPos[0];
-                innerObject.path[moveIndex][1] = snapShootPath[moveIndex][1] + movedPos[1];
-                innerObject.path[moveIndex] = steplizePoint(innerObject.path[moveIndex], step);
+                object.path[moveIndex][0] = snapShootPath[moveIndex][0] + movedPos[0];
+                object.path[moveIndex][1] = snapShootPath[moveIndex][1] + movedPos[1];
+                object.path[moveIndex] = steplizePoint(object.path[moveIndex], step);
             } else {
-                innerObject.path = snapShootPath.map(
+                object.path = snapShootPath.map(
                     item => steplizePoint([item[0] + movedPos[0], item[1] + movedPos[1]], step),
                 );
             }
             // update outBox
-            innerObject.sys.outBox = {
+            object.sys.outBox = {
                 xMin: Infinity,
                 xMax: -Infinity,
                 yMin: Infinity,
                 yMax: -Infinity,
             };
-            innerObject.path.forEach(point => {
-                innerObject.sys.outBox.xMin = Math.min(innerObject.sys.outBox.xMin, point[0]);
-                innerObject.sys.outBox.xMax = Math.max(innerObject.sys.outBox.xMax, point[0]);
-                innerObject.sys.outBox.yMin = Math.min(innerObject.sys.outBox.yMin, point[1]);
-                innerObject.sys.outBox.yMax = Math.max(innerObject.sys.outBox.yMax, point[1]);
+            object.path.forEach(point => {
+                object.sys.outBox.xMin = Math.min(object.sys.outBox.xMin, point[0]);
+                object.sys.outBox.xMax = Math.max(object.sys.outBox.xMax, point[0]);
+                object.sys.outBox.yMin = Math.min(object.sys.outBox.yMin, point[1]);
+                object.sys.outBox.yMax = Math.max(object.sys.outBox.yMax, point[1]);
             });
             break;
         case Config.objectTypes.text:
         case Config.objectTypes.circle:
-            innerObject.center = [
+            object.center = [
                 snapShootPath[0] + movedPos[0],
                 snapShootPath[1] + movedPos[1],
             ];
@@ -51,10 +51,10 @@ const move = (moveObject, snapShootPath, movedPos, step) => {
     // emit
     const emitObj = {
         type: moveType || 'object',
-        object: moveObject.innerObject,
+        object: moveObject.object,
         index: moveIndex,
     };
-    innerObject.emit('change', emitObj);
+    object.emit('change', emitObj);
 };
 
 export default move;
