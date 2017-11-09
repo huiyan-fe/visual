@@ -2,24 +2,9 @@ import config from '../config/config';
 import drawLine from './draw-line';
 
 function DrawText(Visual, obj) {
-    // console.warn('a', obj.options);
     const ctx = Visual.ctx;
-
-    // const x = obj.center[0];
-    // const y = obj.center[1];
-
     // text
     ctx.beginPath();
-
-
-    // copy from basicoptions
-    ctx.save();
-    const basicOptions = config.ctxStyleConfig;
-
-    Object.keys(basicOptions).forEach(key => {
-        ctx[key] = obj.options[key] || basicOptions[key];
-    });
-
 
     // copy from operate configs
     const operateConfig = config.ctxOperationConfig;
@@ -28,6 +13,8 @@ function DrawText(Visual, obj) {
         operate[key] = obj.options[key] || operateConfig[key];
     });
 
+    //
+    ctx.beginPath();
     ctx.font = `${ctx.fontSize}px ${(obj.options.fontFamily || undefined)}`;
     const texts = obj.text.split('');
     obj.path.forEach((pos, index) => {

@@ -90,15 +90,16 @@ class Visual {
     }
 }
 
+// for every object
 Visual.prototype.line = function linefn(path = [], options = {}, userSet) {
-    return new VLine(this, path, options, userSet);
+    return new VLine(Visual, path, options, userSet);
 };
 
 Visual.prototype.text = function textfn(text, center = [], options = {}, userSet) {
     return new VText(this, text, center, options, userSet);
 };
 
-Visual.prototype.textGroup = function textfn(text, point = [], options = {}, userSet) {
+Visual.prototype.textGroup = function textfn(text, point = [], options = {}) {
     return new VTextGroup(this, text, point, options);
 };
 
@@ -110,6 +111,7 @@ Visual.prototype.polygon = function polygonfn(path = [], options = {}, userSet) 
     return new VPolygon(this, path, options, userSet);
 };
 
+// draw
 Visual.prototype.draw = Draw;
 
 global.Visual = Visual;

@@ -16,7 +16,7 @@ const deleteObject = object => {
         if (object.origin.type === 'point' && object.origin.data.path.length > minPoint) {
             object.origin.data.path.splice(object.origin.index, 1);
             if (object.origin.index > object.origin.data.path.length - 1) {
-                object.origin.index--;
+                object.origin.index -= 1;
             }
         } else {
             object.origin.type = 'object';

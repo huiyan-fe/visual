@@ -9,24 +9,13 @@ function DrawText(Visual, obj) {
 
     // text
     ctx.beginPath();
-
-
-    // copy from basicoptions
     ctx.save();
-    const basicOptions = config.ctxStyleConfig;
-
-    Object.keys(basicOptions).forEach(key => {
-        ctx[key] = obj.options[key] || basicOptions[key];
-    });
-
-
     // copy from operate configs
     const operateConfig = config.ctxOperationConfig;
     const operate = {};
     Object.keys(operateConfig).forEach(key => {
         operate[key] = obj.options[key] || operateConfig[key];
     });
-
 
     ctx.font = `${ctx.fontSize}px ${(obj.options.fontFamily || undefined)}`;
     ctx.translate(x, y);
@@ -61,10 +50,6 @@ function DrawText(Visual, obj) {
         const height = obj.sys.measure.height + padding[1];
 
         ctx.save();
-        Object.keys(basicOptions).forEach(key => {
-            ctx[key] = obj.options[key] || basicOptions[key];
-        });
-
         let heightOffset = (height / 2);
         let widthOffset = (width / 2);
         // console.log(ctx.textAlign);
@@ -77,13 +62,11 @@ function DrawText(Visual, obj) {
                 break;
             case 'right':
                 widthOffset = width - (padding[0] / 2);
-                // console.log(widthOffset)
                 break;
             default:
                 widthOffset = (width / 2);
         }
 
-        // console.log(text.textBaseline)
         switch (ctx.textBaseline) {
             case 'top':
                 heightOffset = padding[1] / 2;
@@ -96,7 +79,6 @@ function DrawText(Visual, obj) {
                 break;
             default:
                 heightOffset = (height / 2);
-            // console.log(ctx.textBaseline);
         }
 
 

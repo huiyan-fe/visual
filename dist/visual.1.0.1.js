@@ -1096,10 +1096,6 @@ var _keys = __webpack_require__(4);
 
 var _keys2 = _interopRequireDefault(_keys);
 
-var _config = __webpack_require__(1);
-
-var _config2 = _interopRequireDefault(_config);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function DrawLine(Visual, obj) {
@@ -1108,10 +1104,6 @@ function DrawLine(Visual, obj) {
     // draw basic line
     ctx.beginPath();
     ctx.save();
-    var basicOptions = _config2.default.ctxStyleConfig;
-    (0, _keys2.default)(basicOptions).forEach(function (key) {
-        ctx[key] = obj.options[key] || basicOptions[key];
-    });
 
     (0, _keys2.default)(obj.options).forEach(function (key) {
         ctx[key] = obj.options[key];
@@ -1369,12 +1361,15 @@ var Visual = function () {
     return Visual;
 }();
 
+// for every object
+
+
 Visual.prototype.line = function linefn() {
     var path = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     var userSet = arguments[2];
 
-    return new _line2.default(this, path, options, userSet);
+    return new _line2.default(Visual, path, options, userSet);
 };
 
 Visual.prototype.text = function textfn(text) {
@@ -1388,7 +1383,6 @@ Visual.prototype.text = function textfn(text) {
 Visual.prototype.textGroup = function textfn(text) {
     var point = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
     var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-    var userSet = arguments[3];
 
     return new _textgroup2.default(this, text, point, options);
 };
@@ -1409,6 +1403,7 @@ Visual.prototype.polygon = function polygonfn() {
     return new _polygon2.default(this, path, options, userSet);
 };
 
+// draw
 Visual.prototype.draw = _draw2.default;
 
 global.Visual = Visual;
@@ -2781,6 +2776,14 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _keys = __webpack_require__(4);
+
+var _keys2 = _interopRequireDefault(_keys);
+
+var _config = __webpack_require__(1);
+
+var _config2 = _interopRequireDefault(_config);
+
 var _drawLine = __webpack_require__(57);
 
 var _drawLine2 = _interopRequireDefault(_drawLine);
@@ -2803,8 +2806,8 @@ var _drawPolygon2 = _interopRequireDefault(_drawPolygon);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var self = null; /* globals requestAnimationFrame  */
-
+/* globals requestAnimationFrame  */
+var self = null;
 var drawFlag = false;
 
 function Draw() {
@@ -2813,6 +2816,14 @@ function Draw() {
 }
 
 function drawFns(obj) {
+    var ctx = self.ctx;
+    ctx.save();
+    // copy from basicoptions
+    var basicOptions = _config2.default.ctxStyleConfig;
+    (0, _keys2.default)(basicOptions).forEach(function (key) {
+        ctx[key] = obj.options[key] || basicOptions[key];
+    });
+    //
     switch (obj.type) {
         case self.sys.objectTypes.line:
             (0, _drawLine2.default)(self, obj);
@@ -2832,6 +2843,7 @@ function drawFns(obj) {
         default:
         // console.log('unkone type', obj.type);
     }
+    ctx.restore();
 }
 
 (function DrawDispatch() {
@@ -2889,15 +2901,7 @@ function DrawText(Visual, obj) {
 
     // text
     ctx.beginPath();
-
-    // copy from basicoptions
     ctx.save();
-    var basicOptions = _config2.default.ctxStyleConfig;
-
-    (0, _keys2.default)(basicOptions).forEach(function (key) {
-        ctx[key] = obj.options[key] || basicOptions[key];
-    });
-
     // copy from operate configs
     var operateConfig = _config2.default.ctxOperationConfig;
     var operate = {};
@@ -2938,10 +2942,6 @@ function DrawText(Visual, obj) {
         var height = obj.sys.measure.height + padding[1];
 
         ctx.save();
-        (0, _keys2.default)(basicOptions).forEach(function (key) {
-            ctx[key] = obj.options[key] || basicOptions[key];
-        });
-
         var heightOffset = height / 2;
         var widthOffset = width / 2;
         // console.log(ctx.textAlign);
@@ -2954,13 +2954,11 @@ function DrawText(Visual, obj) {
                 break;
             case 'right':
                 widthOffset = width - padding[0] / 2;
-                // console.log(widthOffset)
                 break;
             default:
                 widthOffset = width / 2;
         }
 
-        // console.log(text.textBaseline)
         switch (ctx.textBaseline) {
             case 'top':
                 heightOffset = padding[1] / 2;
@@ -2973,7 +2971,6 @@ function DrawText(Visual, obj) {
                 break;
             default:
                 heightOffset = height / 2;
-            // console.log(ctx.textBaseline);
         }
 
         ctx.restore();
@@ -3034,22 +3031,9 @@ var _drawLine2 = _interopRequireDefault(_drawLine);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function DrawText(Visual, obj) {
-    // console.warn('a', obj.options);
     var ctx = Visual.ctx;
-
-    // const x = obj.center[0];
-    // const y = obj.center[1];
-
     // text
     ctx.beginPath();
-
-    // copy from basicoptions
-    ctx.save();
-    var basicOptions = _config2.default.ctxStyleConfig;
-
-    (0, _keys2.default)(basicOptions).forEach(function (key) {
-        ctx[key] = obj.options[key] || basicOptions[key];
-    });
 
     // copy from operate configs
     var operateConfig = _config2.default.ctxOperationConfig;
@@ -3058,6 +3042,8 @@ function DrawText(Visual, obj) {
         operate[key] = obj.options[key] || operateConfig[key];
     });
 
+    //
+    ctx.beginPath();
     ctx.font = ctx.fontSize + 'px ' + (obj.options.fontFamily || undefined);
     var texts = obj.text.split('');
     obj.path.forEach(function (pos, index) {
@@ -3088,24 +3074,8 @@ exports.default = DrawText;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-
-var _keys = __webpack_require__(4);
-
-var _keys2 = _interopRequireDefault(_keys);
-
-var _config = __webpack_require__(1);
-
-var _config2 = _interopRequireDefault(_config);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 function DrawLine(Visual, obj) {
     var ctx = Visual.ctx;
-
-    var basicOptions = _config2.default.ctxStyleConfig;
-    (0, _keys2.default)(basicOptions).forEach(function (key) {
-        ctx[key] = obj.options[key] || basicOptions[key];
-    });
 
     ctx.beginPath();
     ctx.save();
@@ -3152,27 +3122,12 @@ exports.default = DrawLine;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-
-var _keys = __webpack_require__(4);
-
-var _keys2 = _interopRequireDefault(_keys);
-
-var _config = __webpack_require__(1);
-
-var _config2 = _interopRequireDefault(_config);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 function DrawLine(Visual, obj) {
     // console.log(obj);
     var ctx = Visual.ctx;
     // draw basic line
     ctx.beginPath();
     ctx.save();
-    var basicOptions = _config2.default.ctxStyleConfig;
-    (0, _keys2.default)(basicOptions).forEach(function (key) {
-        ctx[key] = obj.options[key] || basicOptions[key];
-    });
 
     var usePath = obj.path;
     var firstPoint = [];
@@ -4183,7 +4138,7 @@ var deleteObject = function deleteObject(object) {
         if (object.origin.type === 'point' && object.origin.data.path.length > minPoint) {
             object.origin.data.path.splice(object.origin.index, 1);
             if (object.origin.index > object.origin.data.path.length - 1) {
-                object.origin.index--;
+                object.origin.index -= 1;
             }
         } else {
             object.origin.type = 'object';

@@ -1,12 +1,5 @@
-import config from '../config/config';
-
 function DrawLine(Visual, obj) {
     const ctx = Visual.ctx;
-
-    const basicOptions = config.ctxStyleConfig;
-    Object.keys(basicOptions).forEach(key => {
-        ctx[key] = obj.options[key] || basicOptions[key];
-    });
 
     ctx.beginPath();
     ctx.save();
