@@ -3313,7 +3313,7 @@ var _move = __webpack_require__(127);
 
 var _move2 = _interopRequireDefault(_move);
 
-var _delete = __webpack_require__(128);
+var _delete = __webpack_require__(129);
 
 var _delete2 = _interopRequireDefault(_delete);
 
@@ -4216,7 +4216,7 @@ var _steplize = __webpack_require__(12);
 
 var _steplize2 = _interopRequireDefault(_steplize);
 
-var _boundaryCheck = __webpack_require__(129);
+var _boundaryCheck = __webpack_require__(128);
 
 var _boundaryCheck2 = _interopRequireDefault(_boundaryCheck);
 
@@ -4311,6 +4311,42 @@ exports.default = move;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+function boundaryLize(points, boundary) {
+    var deficitXmin = 0;
+    var deficitYmin = 0;
+
+    var deficitXmax = 0;
+    var deficitYmax = 0;
+
+    points.forEach(function (point) {
+        deficitXmin = Math.min(deficitXmin, boundary[0] - point[0]);
+        deficitYmin = Math.min(deficitYmin, boundary[1] - point[1]);
+        deficitXmax = Math.min(point[0], deficitXmax);
+        deficitYmax = Math.min(point[1], deficitYmax);
+    });
+
+    // console.log(deficitYmax, deficitYmin)
+
+    var deficitX = deficitXmax < deficitXmin ? -deficitXmax : deficitXmin;
+    var deficitY = deficitYmax < deficitYmin ? -deficitYmax : deficitYmin;
+
+    return points.map(function (point) {
+        return [point[0] + deficitX, point[1] + deficitY];
+    });
+}
+
+exports.default = boundaryLize;
+
+/***/ }),
+/* 129 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
 var _config = __webpack_require__(1);
 
@@ -4348,42 +4384,6 @@ var deleteObject = function deleteObject(object) {
 };
 
 exports.default = deleteObject;
-
-/***/ }),
-/* 129 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-function boundaryLize(points, boundary) {
-    var deficitXmin = 0;
-    var deficitYmin = 0;
-
-    var deficitXmax = 0;
-    var deficitYmax = 0;
-
-    points.forEach(function (point) {
-        deficitXmin = Math.min(deficitXmin, boundary[0] - point[0]);
-        deficitYmin = Math.min(deficitYmin, boundary[1] - point[1]);
-        deficitXmax = Math.min(point[0], deficitXmax);
-        deficitYmax = Math.min(point[1], deficitYmax);
-    });
-
-    // console.log(deficitYmax, deficitYmin)
-
-    var deficitX = deficitXmax < deficitXmin ? -deficitXmax : deficitXmin;
-    var deficitY = deficitYmax < deficitYmin ? -deficitYmax : deficitYmin;
-
-    return points.map(function (point) {
-        return [point[0] + deficitX, point[1] + deficitY];
-    });
-}
-
-exports.default = boundaryLize;
 
 /***/ })
 /******/ ]);
