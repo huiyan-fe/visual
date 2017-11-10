@@ -3210,6 +3210,7 @@ function DrawLine(Visual, obj) {
 
     // active
     if (obj.isActive) {
+        ctx.canvas.style.cursor = 'pointer';
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.strokeStyle = '#d6d6d6';
