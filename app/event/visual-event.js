@@ -330,7 +330,7 @@ const Event = self => {
                     const snapShootPath = self.sys.pickupedObjs[0].pathSnapshoot;
                     const moveObject = self.sys.pickupedObjs[0].origin;
                     move(moveObject, snapShootPath, [x * step, y * step], step);
-                    self.sys.pickupedObjs[0].origin.object.object.emit('finish', {
+                    self.sys.pickupedObjs[0].origin.object.emit('finish', {
                         object: self.sys.pickupedObjs[0].origin.object,
                         type: 'move',
                     });

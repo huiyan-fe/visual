@@ -10,7 +10,7 @@ class Text extends VisualObject {
         super(options);
         this.Visual = Visual;
         this.id = Symbol('text');
-        Object.assign(this.userSet, userSet);
+        // Object.assign(this.userSet, userSet);
         const center = JSON.parse(JSON.stringify(centerParam));
 
         const basicOptions = {};

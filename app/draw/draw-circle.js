@@ -3,7 +3,7 @@ function DrawLine(Visual, obj) {
 
     ctx.beginPath();
     ctx.save();
-    ctx.arc(obj.center[0], obj.center[1], obj.redius, 0, Math.PI * 2);
+    ctx.arc(obj.center[0], obj.center[1], obj.radius, 0, Math.PI * 2);
     ctx.fill();
     if (obj.options.border) {
         ctx.stroke();

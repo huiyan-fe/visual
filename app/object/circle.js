@@ -9,8 +9,8 @@ class Circle extends VisualObject {
         super(options);
         this.Visual = Visual;
         this.id = Symbol('circle');
-        this.userSet.bufferSize = 5;
-        Object.assign(this.userSet, userSet);
+        // this.userSet.bufferSize = 5;
+        // Object.assign(this.userSet, userSet);
         const center = JSON.parse(JSON.stringify(centerParam));
 
         this.type = Visual.sys.objectTypes.circle;

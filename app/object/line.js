@@ -6,7 +6,7 @@ class Line extends VisualObject {
         super(options);
         this.Visual = Visual;
         this.id = Symbol('line');
-        Object.assign(this.userSet, userSet);
+        // Object.assign(this.userSet, userSet);
 
         const path = JSON.parse(JSON.stringify(pathParams));
 

@@ -103,8 +103,8 @@ Visual.prototype.textGroup = function textfn(text, point = [], options = {}) {
     return new VTextGroup(this, text, point, options);
 };
 
-Visual.prototype.circle = function circlefn(redius, center = [], options = {}, userSet) {
-    return new VCircle(this, redius, center, options, userSet);
+Visual.prototype.circle = function circlefn(radius, center = [], options = {}, userSet) {
+    return new VCircle(this, radius, center, options, userSet);
 };
 
 Visual.prototype.polygon = function polygonfn(path = [], options = {}, userSet) {

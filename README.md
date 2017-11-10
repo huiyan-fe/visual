@@ -18,7 +18,6 @@
 	* [text](#22-texttext-point-config)
 	* [circle](#23-circleredis-center-config)
 	* [Visual 对象 config](#25-config)
-	* [Visual 对象 userSet](#25-userSet)
 3. [Visual Event](#3-visual-event)
 	* [change](#31-change)
 	* [finish](#32-finish)
@@ -157,16 +156,11 @@ visua.textGroup('TextGroup with path points', [
 | **config.strokeStyle** | `String` | 图形描边样式
 | **config.lineWidth** | `Number` | 线宽
 | **config.pointEditable** | `Boolean` | 多边形的或者有节点的线等物体的每个点是否可编辑 默认`true`，false情况下只能整体移动物体
-
-#### 2.6 userSet
-
-|参数|类型|说明|
-|:---|:---|:---|
-| **userSet.dragable** | `Boolean` | 对象是否支持拖拽，默认 `true`
-| **userSet.clickable** | `Boolean` | 是否支持点击事件，默认`true`
-| **userSet.bufferSize** | `Number` | 选中 visual 对象的缓冲距离 ,Circle 默认为`5`，其他默认`15`
-| **userSet.mouseOverEventEnable** | `Boolean` | 是否支持鼠标划过事件，默认`true`
-| **userSet.active** | `Boolean` | visual 对象是否为选中状态，默认`false`
+| **config.dragable** | `Boolean` | 对象是否支持拖拽，默认 `true`
+| **config.clickable** | `Boolean` | 是否支持点击事件，默认`true`
+| **config.bufferSize** | `Number` | 选中 visual 对象的缓冲距离 ,Circle 默认为`5`，其他默认`15`
+| **config.mouseOverEventEnable** | `Boolean` | 是否支持鼠标划过事件，默认`true`
+| **config.active** | `Boolean` | visual 对象是否为选中状态，默认`false`
 
 
 ### 3. Visual Event
@@ -219,7 +213,7 @@ line类型的change事件返回以下参数:
 |参数|类型|值|说明|
 |:---|:---|:---|:---|
 |object|Visual Object| - |当前移动的对象
-|type|String| 'move'\|'deletePoint' | finish的类型
+|type|String| 'move'\|'deletePoint' | 'multichose'\| finish的类型(multichose:同时按住 shift 键可以选中多个点或者物体，然后触发finish 事件)
 
 
 #### 3.3 willDeletePoint

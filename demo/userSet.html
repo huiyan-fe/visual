@@ -37,9 +37,13 @@
         ],
             {
                 strokeStyle: '#4df693',
-                lineWidth: 8
-            },
-            userSet1
+                lineWidth: 8,
+                dragable: true,
+                clickable: true,
+                bufferSize: 20,
+                mouseOverEventEnable: false,
+                active: true
+            }
         );
         l.on('finish', (data) => {
             console.log('p finish');
@@ -67,7 +71,7 @@
 
         window.c = v.circle(10, [200, 100], {
             fillStyle: 'yellow',
-            strokeStyle: 'skyblue',
+            // strokeStyle: 'skyblue',
             lineWidth: 5,
             border: true
         }, {
@@ -87,13 +91,12 @@
                 border: true,
                 fill: false,
                 lineJoin: 'round',
-                lineCap: 'round'
-            }, {
+                lineCap: 'round',
                 dragable: true,
-                clickable: true,
+                // clickable: false,
                 mouseOverEventEnable: true,
-                // bufferSize:,
-                // active: true
+                bufferSize:5,
+                active: true
             })
         window.p.on('finish', (data) => {
             console.log('p finish');

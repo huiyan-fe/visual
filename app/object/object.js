@@ -3,9 +3,9 @@ import Config from '../config/config';
 class VisualObject {
     constructor(config = {}) {
         this.userSet = {
-            mouseOverEventEnable: true,
-            clickable: true,
-            active: false,
+            // mouseOverEventEnable: true,
+            // clickable: true,
+            // active: false,
         };
 
         // set the default config from config
