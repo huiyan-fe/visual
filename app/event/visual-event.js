@@ -288,7 +288,7 @@ const Event = self => {
                                 pathSnapshoot = obj.origin.object.path;
                                 break;
                             case Config.objectTypes.text:
-                            case Config.objectTyfpes.circle:
+                            case Config.objectTypes.circle:
                                 pathSnapshoot = obj.origin.object.center;
                                 break;
                             default:
