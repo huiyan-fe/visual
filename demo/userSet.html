@@ -105,6 +105,20 @@
 
         })
 
+        window.tg = v.textGroup('我是一个中国人', [400, 260], {
+            textRotate: Math.PI * .5,
+            // rotate: Math.PI * .5,
+            fontSize: 18,
+            boundaryCheck: true
+        });
+        window.tg.on('finish', (data) => {
+            console.log('textGroup finish');
+            console.log(window.tg.Visual.sys.pickupedObjs);
+            console.log(data);
+
+        })
+
+
     </script>
 
 

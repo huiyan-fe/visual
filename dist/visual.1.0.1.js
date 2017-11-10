@@ -3302,6 +3302,7 @@ function DrawLine(Visual, obj) {
 
     // active
     if (obj.isActive) {
+        ctx.canvas.style.cursor = 'pointer';
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.strokeStyle = '#d6d6d6';
@@ -3766,7 +3767,7 @@ var Event = function Event(self) {
                                 pathSnapshoot = obj.origin.object.path;
                                 break;
                             case _config2.default.objectTypes.text:
-                            case _config2.default.objectTyfpes.circle:
+                            case _config2.default.objectTypes.circle:
                                 pathSnapshoot = obj.origin.object.center;
                                 break;
                             default:
@@ -4234,9 +4235,9 @@ Object.defineProperty(exports, "__esModule", {
 var matchCircle = function matchCircle(P, object, eventType, res) {
     var userSet = object.userSet;
     var bufferSize = userSet.bufferSize;
-
+    // console.log(object)
     var lPC = Math.sqrt(Math.pow(P[0] - object.center[0], 2) + Math.pow(P[1] - object.center[1], 2));
-    if (lPC <= object.rdius + bufferSize) {
+    if (lPC <= object.radius + bufferSize) {
         if (eventType === 'mousemove' && !userSet.mouseOverEventEnable || eventType === 'mousedown' && !userSet.clickable) {
             // res.length = 0;
         } else {
@@ -4400,7 +4401,8 @@ var move = function move(moveObject, snapShootPath, movedPos, step) {
             if (moveType === 'point') {
                 moveIndex = moveObject.index;
                 if (needBoundaryCheck) {
-                    var maxBound = [moveObject.object.Visual.canvas.width, moveObject.object.Visual.canvas.height];
+                    var pixelRatio = window.devicePixelRatio || 1;
+                    var maxBound = [moveObject.object.Visual.canvas.width / pixelRatio, moveObject.object.Visual.canvas.height / pixelRatio];
                     object.path[moveIndex] = (0, _boundaryCheck2.default)([[snapShootPath[moveIndex][0] + movedPos[0], snapShootPath[moveIndex][1] + movedPos[1]]], maxBound)[0];
                 } else {
                     object.path[moveIndex][0] = snapShootPath[moveIndex][0] + movedPos[0];
@@ -4409,7 +4411,8 @@ var move = function move(moveObject, snapShootPath, movedPos, step) {
                 object.path[moveIndex] = (0, _steplize2.default)(object.path[moveIndex], step);
             } else {
                 if (needBoundaryCheck) {
-                    var _maxBound = [moveObject.object.Visual.canvas.width, moveObject.object.Visual.canvas.height];
+                    var _pixelRatio = window.devicePixelRatio || 1;
+                    var _maxBound = [moveObject.object.Visual.canvas.width / _pixelRatio, moveObject.object.Visual.canvas.height / _pixelRatio];
                     object.path = (0, _boundaryCheck2.default)(snapShootPath.map(function (item) {
                         return (0, _steplize2.default)([item[0] + movedPos[0], item[1] + movedPos[1]], step);
                     }), _maxBound);
@@ -4436,7 +4439,8 @@ var move = function move(moveObject, snapShootPath, movedPos, step) {
         case _config2.default.objectTypes.text:
         case _config2.default.objectTypes.circle:
             if (needBoundaryCheck) {
-                var _maxBound2 = [moveObject.object.Visual.canvas.width, moveObject.object.Visual.canvas.height];
+                var _pixelRatio2 = window.devicePixelRatio || 1;
+                var _maxBound2 = [moveObject.object.Visual.canvas.width / _pixelRatio2, moveObject.object.Visual.canvas.height / _pixelRatio2];
                 // console.log([
                 //     snapShootPath[0] + movedPos[0],
                 //     snapShootPath[1] + movedPos[1],
@@ -4460,6 +4464,8 @@ var move = function move(moveObject, snapShootPath, movedPos, step) {
 }; /**
     * @file this file is countrol the move the object
     */
+
+/* global window */
 
 exports.default = move;
 
@@ -4522,6 +4528,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 function boundaryLize(points, boundary) {
+    // console.log(boundary)
     var deficitXmin = 0;
     var deficitYmin = 0;
 
@@ -4535,7 +4542,7 @@ function boundaryLize(points, boundary) {
         deficitYmax = Math.min(point[1], deficitYmax);
     });
 
-    // console.log(deficitYmax, deficitYmin)
+    // console.log(deficitXmax)
 
     var deficitX = deficitXmax < deficitXmin ? -deficitXmax : deficitXmin;
     var deficitY = deficitYmax < deficitYmin ? -deficitYmax : deficitYmin;

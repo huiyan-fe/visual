@@ -50,10 +50,10 @@
             [10, 10],
             [400, 10],
         ], {
-                strokeStyle: '#4df693',
-                lineWidth: 10,
-                boundaryCheck: true
-            });
+            strokeStyle: '#4df693',
+            lineWidth: 10,
+            boundaryCheck: true
+        });
 
         line.on('finish', (data) => {
             console.log(JSON.stringify(data.object.path));
@@ -102,21 +102,21 @@
             [250, 150],
             [350, 150]
         ], {
-                border: true,
-                fill: false,
-                lineJoin: 'round',
-                lineCap: 'round'
-            })
+            border: true,
+            fill: false,
+            lineJoin: 'round',
+            lineCap: 'round'
+        })
 
         v.polygon([
             [450, 100],
             [400, 150],
             [500, 150]
         ], {
-                border: true,
-                lineJoin: 'round',
-                lineCap: 'round'
-            })
+            border: true,
+            lineJoin: 'round',
+            lineCap: 'round'
+        })
 
         v.polygon([
             [250, 300],
@@ -124,10 +124,10 @@
             [250, 335],
             [270, 350]
         ], {
-                border: true,
-                lineJoin: 'round',
-                lineCap: 'round'
-            })
+            border: true,
+            lineJoin: 'round',
+            lineCap: 'round'
+        })
 
         for (var i = 0; i < 10; i++) {
             v.polygon([
@@ -136,11 +136,11 @@
                 [350, 235],
                 [370, 250]
             ], {
-                    border: true,
-                    fill: false,
-                    lineJoin: 'round',
-                    lineCap: 'round'
-                })
+                border: true,
+                fill: false,
+                lineJoin: 'round',
+                lineCap: 'round'
+            })
         }
 
         // Edit disable polygon
@@ -149,31 +149,34 @@
             [600, 60],
             [700, 60]
         ], {
-                border: true,
-                lineJoin: 'round',
-                lineCap: 'round',
-                boundaryCheck: true
-            });
+            border: true,
+            lineJoin: 'round',
+            lineCap: 'round',
+            boundaryCheck: true
+        });
         v.text('Edit disable polygon', [650, 80], {
             textAlign: 'center'
         });
 
         // Edit disable line
-        // v.line([
-        //     [650, 100],
-        //     [600, 150],
-        //     [700, 150]
-        // ], {
-        //     pointEditable: false
-        // });
-        v.text('Edit disable line', [650, 180], {
-            textAlign: 'center',
+        v.line([
+            [650, 100],
+            [600, 150],
+            [700, 150]
+        ], {
+            pointEditable: false
+        });
+        v.text('我是', [650, 180], {
+            // textAlign: 'center',
+            // textRotate: Math.PI * (-0.5),
+            rotate: Math.PI * .5,
             boundaryCheck: true
         });
 
         // Edit disable line
         window.tg = v.textGroup('我是一个中国人', [400, 260], {
-            // textRotate: Math.PI * .0
+            // textRotate: Math.PI * .5,
+            // rotate: Math.PI * .5,
             fontSize: 18,
             boundaryCheck: true
         });
@@ -182,7 +185,7 @@
         v.textGroup('你是一个中国人', [
             [400, 220], [412, 220], [424, 220], [436, 220], [448, 220], [460, 220], [472, 220]
         ], {
-                // textRotate: Math.PI * .5,
+                textRotate: Math.PI * .5,
                 fontSize: 18,
                 boundaryCheck: true
             });
@@ -192,8 +195,8 @@
             [710, 330],
             [540, 330]
         ], {
-                boundaryCheck: true
-            })
+            boundaryCheck: true
+        })
 
         // Edit disable line
         v.text('polygn with boundaryCheck', [660, 350], {
