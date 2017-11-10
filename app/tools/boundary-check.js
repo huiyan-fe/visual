@@ -1,4 +1,5 @@
 function boundaryLize(points, boundary) {
+    // console.log(boundary)
     let deficitXmin = 0;
     let deficitYmin = 0;
 
@@ -12,7 +13,7 @@ function boundaryLize(points, boundary) {
         deficitYmax = Math.min(point[1], deficitYmax);
     });
 
-    // console.log(deficitYmax, deficitYmin)
+    // console.log(deficitXmax)
 
     const deficitX = deficitXmax < deficitXmin ? -deficitXmax : deficitXmin;
     const deficitY = deficitYmax < deficitYmin ? -deficitYmax : deficitYmin;
