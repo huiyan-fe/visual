@@ -98,9 +98,12 @@ var config = {
     },
     objectUserSets: {
         dragable: true, // true: user can drag the objet by using mouse
-        bufferSize: 15, // the maximum offset of the point or object that can choose is
+        bufferSize: 10, // the maximum offset of the point or object that can choose is
         pointEditable: true, // true: user can eidt the point of one object
-        boundaryCheck: false
+        boundaryCheck: true,
+        mouseOverEventEnable: true,
+        clickable: true,
+        active: false
     },
     ctxStyleConfig: {
         fontSize: 12,
@@ -502,9 +505,9 @@ var VisualObject = function () {
         (0, _classCallCheck3.default)(this, VisualObject);
 
         this.userSet = {
-            mouseOverEventEnable: true,
-            clickable: true,
-            active: false
+            // mouseOverEventEnable: true,
+            // clickable: true,
+            // active: false,
         };
 
         // set the default config from config
@@ -1454,12 +1457,12 @@ Visual.prototype.textGroup = function textfn(text) {
     return new _textgroup2.default(this, text, point, options);
 };
 
-Visual.prototype.circle = function circlefn(redius) {
+Visual.prototype.circle = function circlefn(radius) {
     var center = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
     var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
     var userSet = arguments[3];
 
-    return new _circle2.default(this, redius, center, options, userSet);
+    return new _circle2.default(this, radius, center, options, userSet);
 };
 
 Visual.prototype.polygon = function polygonfn() {
@@ -2100,10 +2103,6 @@ var _stringify = __webpack_require__(12);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
-var _assign = __webpack_require__(18);
-
-var _assign2 = _interopRequireDefault(_assign);
-
 var _symbol = __webpack_require__(4);
 
 var _symbol2 = _interopRequireDefault(_symbol);
@@ -2151,7 +2150,7 @@ var Line = function (_VisualObject) {
 
         _this.Visual = Visual;
         _this.id = (0, _symbol2.default)('line');
-        (0, _assign2.default)(_this.userSet, userSet);
+        // Object.assign(this.userSet, userSet);
 
         var path = JSON.parse((0, _stringify2.default)(pathParams));
 
@@ -2481,10 +2480,6 @@ var _stringify = __webpack_require__(12);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
-var _assign = __webpack_require__(18);
-
-var _assign2 = _interopRequireDefault(_assign);
-
 var _symbol = __webpack_require__(4);
 
 var _symbol2 = _interopRequireDefault(_symbol);
@@ -2536,7 +2531,7 @@ var Text = function (_VisualObject) {
 
         _this.Visual = Visual;
         _this.id = (0, _symbol2.default)('text');
-        (0, _assign2.default)(_this.userSet, userSet);
+        // Object.assign(this.userSet, userSet);
         var center = JSON.parse((0, _stringify2.default)(centerParam));
 
         var basicOptions = {};
@@ -2789,10 +2784,6 @@ var _stringify = __webpack_require__(12);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
-var _assign = __webpack_require__(18);
-
-var _assign2 = _interopRequireDefault(_assign);
-
 var _symbol = __webpack_require__(4);
 
 var _symbol2 = _interopRequireDefault(_symbol);
@@ -2839,8 +2830,8 @@ var Circle = function (_VisualObject) {
 
         _this.Visual = Visual;
         _this.id = (0, _symbol2.default)('circle');
-        _this.userSet.bufferSize = 5;
-        (0, _assign2.default)(_this.userSet, userSet);
+        // this.userSet.bufferSize = 5;
+        // Object.assign(this.userSet, userSet);
         var center = JSON.parse((0, _stringify2.default)(centerParam));
 
         _this.type = Visual.sys.objectTypes.circle;
@@ -2890,10 +2881,6 @@ var _stringify = __webpack_require__(12);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
-var _assign = __webpack_require__(18);
-
-var _assign2 = _interopRequireDefault(_assign);
-
 var _symbol = __webpack_require__(4);
 
 var _symbol2 = _interopRequireDefault(_symbol);
@@ -2941,7 +2928,7 @@ var Polygon = function (_VisualObject) {
 
         _this.Visual = Visual;
         _this.id = (0, _symbol2.default)('polygon');
-        (0, _assign2.default)(_this.userSet, userSet);
+        // Object.assign(this.userSet, userSet);
         var path = JSON.parse((0, _stringify2.default)(pathParams));
 
         var outBox = {
@@ -3306,7 +3293,7 @@ function DrawLine(Visual, obj) {
 
     ctx.beginPath();
     ctx.save();
-    ctx.arc(obj.center[0], obj.center[1], obj.redius, 0, Math.PI * 2);
+    ctx.arc(obj.center[0], obj.center[1], obj.radius, 0, Math.PI * 2);
     ctx.fill();
     if (obj.options.border) {
         ctx.stroke();
@@ -3821,7 +3808,7 @@ var Event = function Event(self) {
                     var snapShootPath = self.sys.pickupedObjs[0].pathSnapshoot;
                     var moveObject = self.sys.pickupedObjs[0].origin;
                     (0, _move2.default)(moveObject, snapShootPath, [x * step, y * step], step);
-                    self.sys.pickupedObjs[0].origin.object.object.emit('finish', {
+                    self.sys.pickupedObjs[0].origin.object.emit('finish', {
                         object: self.sys.pickupedObjs[0].origin.object,
                         type: 'move'
                     });
@@ -4249,7 +4236,7 @@ var matchCircle = function matchCircle(P, object, eventType, res) {
     var bufferSize = userSet.bufferSize;
 
     var lPC = Math.sqrt(Math.pow(P[0] - object.center[0], 2) + Math.pow(P[1] - object.center[1], 2));
-    if (lPC <= object.redius + bufferSize) {
+    if (lPC <= object.rdius + bufferSize) {
         if (eventType === 'mousemove' && !userSet.mouseOverEventEnable || eventType === 'mousedown' && !userSet.clickable) {
             // res.length = 0;
         } else {
