@@ -81,6 +81,12 @@ class TextGroup extends VisualObject {
         // });
         this.Visual.draw();
     }
+
+    setPath(paths) {
+        const path = JSON.parse(JSON.stringify(paths));
+        this.path = path.map(point => steplizePoint(point, this.Visual.options.grid.step));
+        this.Visual.draw();
+    }
 }
 
 export default TextGroup;

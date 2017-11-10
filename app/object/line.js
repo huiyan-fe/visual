@@ -6,7 +6,7 @@ class Line extends VisualObject {
         super(options);
         this.Visual = Visual;
         this.id = Symbol('line');
-        Object.assign(this.userSet, userSet);
+        // Object.assign(this.userSet, userSet);
 
         const path = JSON.parse(JSON.stringify(pathParams));
 
@@ -42,6 +42,11 @@ class Line extends VisualObject {
         //         outBox,
         //     },
         // });
+        this.Visual.draw();
+    }
+    setPath(paths) {
+        const path = JSON.parse(JSON.stringify(paths));
+        this.path = path.map(point => steplizePoint(point, this.Visual.options.grid.step));
         this.Visual.draw();
     }
 }

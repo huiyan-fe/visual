@@ -8,9 +8,12 @@ const config = {
     },
     objectUserSets: {
         dragable: true, // true: user can drag the objet by using mouse
-        bufferSize: 15, // the maximum offset of the point or object that can choose is
+        bufferSize: 10, // the maximum offset of the point or object that can choose is
         pointEditable: true, // true: user can eidt the point of one object
-        boundaryCheck: false,
+        boundaryCheck: true,
+        mouseOverEventEnable: true,
+        clickable: true,
+        active: false,
     },
     ctxStyleConfig: {
         fontSize: 12,

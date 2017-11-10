@@ -10,7 +10,7 @@ class Text extends VisualObject {
         super(options);
         this.Visual = Visual;
         this.id = Symbol('text');
-        Object.assign(this.userSet, userSet);
+        // Object.assign(this.userSet, userSet);
         const center = JSON.parse(JSON.stringify(centerParam));
 
         const basicOptions = {};
@@ -67,6 +67,13 @@ class Text extends VisualObject {
         // });
         this.Visual.draw();
     }
+
+    setPath(paths) {
+        const path = JSON.parse(JSON.stringify(paths));
+        this.center = path.map(point => steplizePoint(point, this.Visual.options.grid.step));
+        this.Visual.draw();
+    }
+
 }
 
 export default Text;
