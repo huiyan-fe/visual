@@ -13,7 +13,7 @@ const config = {
         boundaryCheck: true,
         mouseOverEventEnable: true,
         clickable: true,
-        active: false,
+        // active: false,
     },
     ctxStyleConfig: {
         fontSize: 12,

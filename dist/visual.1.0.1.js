@@ -102,8 +102,8 @@ var config = {
         pointEditable: true, // true: user can eidt the point of one object
         boundaryCheck: true,
         mouseOverEventEnable: true,
-        clickable: true,
-        active: false
+        clickable: true
+        // active: false,
     },
     ctxStyleConfig: {
         fontSize: 12,
