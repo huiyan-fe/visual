@@ -119,14 +119,11 @@
         })
 
         v.polygon([
-            [250, 300],
-            [230, 350],
-            [250, 335],
+            [150, 300],
+            [130, 350],
             [270, 350]
         ], {
-            border: true,
-            lineJoin: 'round',
-            lineCap: 'round'
+           renderType: "fill", fillStyle: "#00ff00",fillColor:'#ff0000'
         })
 
         for (var i = 0; i < 10; i++) {
@@ -139,7 +136,8 @@
                 border: true,
                 fill: false,
                 lineJoin: 'round',
-                lineCap: 'round'
+                lineCap: 'round',
+                pointEditable: false
             })
         }
 
