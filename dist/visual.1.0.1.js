@@ -543,17 +543,39 @@ var VisualObject = function () {
             // line.set('disableDrag',true)
             this.userSet = this.userSet || {};
             this.userSet[type] = value;
+            this.Visual.draw();
         }
     }, {
         key: 'active',
         value: function active() {
             var _this3 = this;
 
-            var currentSysObj = this.object.Visual.sys.objects.filter(function (obj) {
+            var currentSysObj = this.Visual.sys.objects.filter(function (obj) {
                 return obj.id === _this3.id;
             });
             console.warn(currentSysObj);
+
+            // let pathSnapshoot;
+            // switch (this.type) {
+            //     case Config.objectTypes.line:
+            //     case Config.objectTypes.polygon:
+            //     case Config.objectTypes.textGroup:
+            //         pathSnapshoot = this.path;
+            //         break;
+            //     case Config.objectTypes.text:
+            //     case Config.objectTypes.circle:
+            //         pathSnapshoot = this.center;
+            //         break;
+            //     default: break;
+            // }
+            // pathSnapshoot = JSON.parse(JSON.stringify(pathSnapshoot));
+
+            // this.Visual.sys.pickupedObjs.push({
+            //     pathSnapshoot,
+            //     origin: this,
+            // });
             currentSysObj[0]['isActive'] = { data: currentSysObj[0] };
+            this.Visual.draw();
         }
     }, {
         key: 'unbind',
@@ -1165,7 +1187,7 @@ var _keys2 = _interopRequireDefault(_keys);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function DrawLine(Visual, obj) {
+function DrawLine(Visual, obj, options) {
     // console.log(obj);
     var ctx = Visual.ctx;
     // draw basic line
@@ -1226,22 +1248,26 @@ function DrawLine(Visual, obj) {
         });
         ctx.stroke();
 
+        var strokeRadius = options.strokeRadius || 14;
+        var strokeStyle = options.strokeStyle || 'rgba(255, 0, 0, 1)';
+        var fillStyle = options.fillStyle || '#f00';
+
         if (obj.isActive.type === 'point' && obj.isActive.length < 10) {
             if (obj.isActive.indexs) {
                 obj.isActive.indexs.map(function (index) {
                     var point = usePath[index];
                     ctx.beginPath();
-                    ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
-                    ctx.fillStyle = '#fff';
-                    ctx.rect(point[0] - 6, point[1] - 6, 12, 12, Math.PI * 2);
+                    ctx.strokeStyle = strokeStyle;
+                    ctx.fillStyle = fillStyle;
+                    ctx.rect(point[0] - strokeRadius / 2, point[1] - strokeRadius / 2, strokeRadius, strokeRadius, Math.PI * 2);
                     ctx.stroke();
                 });
             } else {
                 var point = usePath[obj.isActive.index];
                 ctx.beginPath();
-                ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
-                ctx.fillStyle = '#fff';
-                ctx.rect(point[0] - 6, point[1] - 6, 12, 12, Math.PI * 2);
+                ctx.strokeStyle = strokeStyle;
+                ctx.fillStyle = fillStyle;
+                ctx.rect(point[0] - strokeRadius / 2, point[1] - strokeRadius / 2, strokeRadius, strokeRadius, Math.PI * 2);
                 ctx.stroke();
             }
         }
@@ -3045,21 +3071,26 @@ function drawFns(obj) {
         ctx[key] = obj.options[key] || basicOptions[key];
     });
     //
+    var options = {
+        strokeRadius: 14,
+        strokeStyle: 'rgba(255, 0, 0, 1)',
+        fillStyle: '#f00'
+    };
     switch (obj.type) {
         case self.sys.objectTypes.line:
-            (0, _drawLine2.default)(self, obj);
+            (0, _drawLine2.default)(self, obj, options);
             break;
         case self.sys.objectTypes.text:
-            (0, _drawText2.default)(self, obj);
+            (0, _drawText2.default)(self, obj, options);
             break;
         case self.sys.objectTypes.textGroup:
-            (0, _drawTextgroup2.default)(self, obj);
+            (0, _drawTextgroup2.default)(self, obj, options);
             break;
         case self.sys.objectTypes.circle:
-            (0, _drawCircle2.default)(self, obj);
+            (0, _drawCircle2.default)(self, obj, options);
             break;
         case self.sys.objectTypes.polygon:
-            (0, _drawPolygon2.default)(self, obj);
+            (0, _drawPolygon2.default)(self, obj, options);
             break;
         default:
         // console.log('unkone type', obj.type);
@@ -3113,7 +3144,7 @@ var _config2 = _interopRequireDefault(_config);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function DrawText(Visual, obj) {
+function DrawText(Visual, obj, options) {
     // console.warn('a', obj.options);
     var ctx = Visual.ctx;
 
@@ -3288,7 +3319,7 @@ exports.default = DrawText;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-function DrawLine(Visual, obj) {
+function DrawLine(Visual, obj, options) {
     var ctx = Visual.ctx;
 
     ctx.beginPath();
@@ -3300,12 +3331,15 @@ function DrawLine(Visual, obj) {
     }
     ctx.restore();
 
+    var strokeRadius = options.strokeRadius || 14;
+    var strokeStyle = options.strokeStyle || 'rgba(255, 0, 0, 1)';
+    // const fillStyle = options.fillStyle || '#f00';
     // active
     if (obj.isActive) {
         ctx.canvas.style.cursor = 'pointer';
         ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.strokeStyle = '#d6d6d6';
+        ctx.strokeStyle = strokeStyle;
         ctx.moveTo(obj.center[0] - 4, obj.center[1] - 4);
         ctx.rect(obj.center[0] - 4, obj.center[1] - 4, 8, 8);
         ctx.stroke();
@@ -3329,7 +3363,7 @@ exports.default = DrawLine;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-function DrawLine(Visual, obj) {
+function DrawLine(Visual, obj, options) {
     // console.log(obj);
     var ctx = Visual.ctx;
     // draw basic line
@@ -3416,14 +3450,17 @@ function DrawLine(Visual, obj) {
         });
         ctx.stroke();
 
-        // 
+        var strokeRadius = options.strokeRadius || 14;
+        var strokeStyle = options.strokeStyle || 'rgba(255, 0, 0, 1)';
+        var fillStyle = options.fillStyle || '#f00';
+
         if (obj.isActive.type === 'point' && obj.isActive.length < 10) {
             var index = obj.isActive.index;
             var point = usePath[index];
             ctx.beginPath();
-            ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
-            ctx.fillStyle = '#fff';
-            ctx.rect(point[0] - 6, point[1] - 6, 12, 12, Math.PI * 2);
+            ctx.strokeStyle = strokeStyle;
+            ctx.fillStyle = fillStyle;
+            ctx.rect(point[0] - strokeRadius / 2, point[1] - strokeRadius / 2, strokeRadius, strokeRadius, Math.PI * 2);
             ctx.stroke();
         }
 
