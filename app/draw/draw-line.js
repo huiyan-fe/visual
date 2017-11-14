@@ -1,4 +1,4 @@
-function DrawLine(Visual, obj) {
+function DrawLine(Visual, obj, options) {
     // console.log(obj);
     const ctx = Visual.ctx;
     // draw basic line
@@ -59,22 +59,26 @@ function DrawLine(Visual, obj) {
         });
         ctx.stroke();
 
+        const strokeRadius = options.strokeRadius || 14;
+        const strokeStyle = options.strokeStyle || 'rgba(255, 0, 0, 1)';
+        const fillStyle = options.fillStyle || '#f00';
+
         if (obj.isActive.type === 'point' && obj.isActive.length < 10) {
             if (obj.isActive.indexs) {
                 obj.isActive.indexs.map(index => {
                     const point = usePath[index];
                     ctx.beginPath();
-                    ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
-                    ctx.fillStyle = '#fff';
-                    ctx.rect(point[0] - 6, point[1] - 6, 12, 12, Math.PI * 2);
+                    ctx.strokeStyle = strokeStyle;
+                    ctx.fillStyle = fillStyle;
+                    ctx.rect(point[0] - (strokeRadius / 2), point[1] - (strokeRadius / 2), strokeRadius, strokeRadius, Math.PI * 2);
                     ctx.stroke();
                 });
             } else {
                 const point = usePath[obj.isActive.index];
                 ctx.beginPath();
-                ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
-                ctx.fillStyle = '#fff';
-                ctx.rect(point[0] - 6, point[1] - 6, 12, 12, Math.PI * 2);
+                ctx.strokeStyle = strokeStyle;
+                ctx.fillStyle = fillStyle;
+                ctx.rect(point[0] - (strokeRadius / 2), point[1] - (strokeRadius / 2), strokeRadius, strokeRadius, Math.PI * 2);
                 ctx.stroke();
             }
         }

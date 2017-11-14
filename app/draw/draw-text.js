@@ -1,6 +1,6 @@
 import config from '../config/config';
 
-function DrawText(Visual, obj) {
+function DrawText(Visual, obj, options) {
     // console.warn('a', obj.options);
     const ctx = Visual.ctx;
 

@@ -1,4 +1,4 @@
-function DrawLine(Visual, obj) {
+function DrawLine(Visual, obj, options) {
     const ctx = Visual.ctx;
 
     ctx.beginPath();
@@ -10,12 +10,15 @@ function DrawLine(Visual, obj) {
     }
     ctx.restore();
 
+    const strokeRadius = options.strokeRadius || 14;
+    const strokeStyle = options.strokeStyle || 'rgba(255, 0, 0, 1)';
+    // const fillStyle = options.fillStyle || '#f00';
     // active
     if (obj.isActive) {
         ctx.canvas.style.cursor = 'pointer';
         ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.strokeStyle = '#d6d6d6';
+        ctx.strokeStyle = strokeStyle;
         ctx.moveTo(obj.center[0] - 4, obj.center[1] - 4);
         ctx.rect(obj.center[0] - 4, obj.center[1] - 4, 8, 8);
         ctx.stroke();

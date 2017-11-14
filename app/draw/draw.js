@@ -24,24 +24,29 @@ function drawFns(obj) {
         ctx[key] = obj.options[key] || basicOptions[key];
     });
     //
+    const options = {
+        strokeRadius: 14,
+        strokeStyle: 'rgba(255, 0, 0, 1)',
+        fillStyle: '#f00'
+    };
     switch (obj.type) {
         case self.sys.objectTypes.line:
-            DrawLine(self, obj);
+            DrawLine(self, obj, options);
             break;
         case self.sys.objectTypes.text:
-            DrawText(self, obj);
+            DrawText(self, obj, options);
             break;
         case self.sys.objectTypes.textGroup:
-            DrawTextGroup(self, obj);
+            DrawTextGroup(self, obj, options);
             break;
         case self.sys.objectTypes.circle:
-            DrawCircle(self, obj);
+            DrawCircle(self, obj, options);
             break;
         case self.sys.objectTypes.polygon:
-            DrawPolygon(self, obj);
+            DrawPolygon(self, obj, options);
             break;
         default:
-            // console.log('unkone type', obj.type);
+        // console.log('unkone type', obj.type);
     }
     ctx.restore();
 }
