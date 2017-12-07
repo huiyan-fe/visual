@@ -2,6 +2,7 @@
 import config from '../config/config';
 
 import DrawLine from './draw-line';
+import DrawCurve from './draw-curve';
 import DrawText from './draw-text';
 import DrawTextGroup from './draw-textgroup';
 import DrawCircle from './draw-circle';
@@ -32,6 +33,9 @@ function drawFns(obj) {
     switch (obj.type) {
         case self.sys.objectTypes.line:
             DrawLine(self, obj, options);
+            break;
+        case self.sys.objectTypes.curve:
+            DrawCurve(self, obj);
             break;
         case self.sys.objectTypes.text:
             DrawText(self, obj, options);

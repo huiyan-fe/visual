@@ -5,6 +5,7 @@ import VText from './object/text';
 import VTextGroup from './object/textgroup';
 import VCircle from './object/circle';
 import VPolygon from './object/polygon';
+import VCurve from './object/curve';
 
 import Draw from './draw/draw';
 import Config from './config/config';
@@ -109,6 +110,10 @@ Visual.prototype.circle = function circlefn(radius, center = [], options = {}, u
 
 Visual.prototype.polygon = function polygonfn(path = [], options = {}, userSet) {
     return new VPolygon(this, path, options, userSet);
+};
+
+Visual.prototype.curve = function curve(path = [], options = {}) {
+    return new VCurve(this, path, options);
 };
 
 // draw

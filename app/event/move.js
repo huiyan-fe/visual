@@ -20,6 +20,7 @@ const move = (moveObject, snapShootPath, movedPos, step) => {
     switch (object.type) {
         case Config.objectTypes.polygon:
         case Config.objectTypes.line:
+        case Config.objectTypes.curve:
         case Config.objectTypes.textGroup:
             if (moveType === 'point') {
                 moveIndex = moveObject.index;
