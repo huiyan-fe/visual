@@ -1,5 +1,6 @@
-/* globals document */
+import pointsToBezierCurve from '../tools/pointToBezier';
 
+/* globals document */
 const textCanvas = document.createElement('canvas');
 textCanvas.width = 1;
 textCanvas.height = 1;
@@ -8,9 +9,10 @@ textCanvas.style.height = '1px';
 const ctx = textCanvas.getContext('2d');
 
 const matchPolygon = (P, object, eventType, res) => {
+
     const userSet = object.userSet;
     const bufferSize = userSet.bufferSize;
-
+    // console.log(userSet.bufferSize)
     ctx.beginPath();
     // object
     const outBox = object.sys.outBox;
@@ -25,15 +27,23 @@ const matchPolygon = (P, object, eventType, res) => {
         (eventType === 'mousedown' && !userSet.clickable)) {
         // res.length = 0;
     } else {
+        //
+        const bezierPoints = pointsToBezierCurve(object.path, ctx);
         ctx.lineWidth = (object.options.lineWidth || 0) + bufferSize;
-        object.path.forEach((item, index) => {
-            if (index === 0) {
-                ctx.moveTo(item[0], item[1]);
-            } else {
-                ctx.lineTo(item[0], item[1]);
+        bezierPoints.forEach((currentPoint, index) => {
+            // ctx.fillRect(currentPoint.current[0] - 3, currentPoint.current[1] - 3, 6, 6);
+            if (index > 0) {
+                const previousPoint = bezierPoints[index - 1];
+                ctx.moveTo(previousPoint.current[0], previousPoint.current[1]);
+                ctx.bezierCurveTo(
+                    previousPoint.next[0], previousPoint.next[1],
+                    currentPoint.previous[0], currentPoint.previous[1],
+                    currentPoint.current[0], currentPoint.current[1],
+                );
             }
+
             // get the length of P and O
-            const lPO = Math.sqrt(((P[0] - item[0]) ** 2) + ((P[1] - item[1]) ** 2));
+            const lPO = Math.sqrt(((P[0] - currentPoint.current[0]) ** 2) + ((P[1] - currentPoint.current[1]) ** 2));
             if (lPO < bufferSize && object.userSet.pointEditable) {
                 // pointEditable: when pointEditable is true, we push the active point to res
                 res.push({
@@ -44,8 +54,9 @@ const matchPolygon = (P, object, eventType, res) => {
                 });
             }
         });
+        //
 
-        const isFit = ctx.isPointInPath(P[0], P[1]) || ctx.isPointInStroke(P[0], P[1]);
+        const isFit = ctx.isPointInStroke(P[0], P[1]);
         const center = [((outBox.xMax + outBox.xMin) / 2), ((outBox.yMax + outBox.yMin) / 2)];
         const length = Math.sqrt(((P[0] - center[0]) ** 2) + ((P[1] - center[1]) ** 2));
         if (isFit) {

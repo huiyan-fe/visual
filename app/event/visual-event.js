@@ -12,15 +12,17 @@ const Event = self => {
     let hoveredObj = [];
     let mousedown = false;
     const step = self.options.grid.step;
-    let events = {
+    const events = {
         ctrl: false,
         shift: false,
     };
 
 
-    let uniqueArr = (arr) => {
-        let result = [], hash = {};
-        for (let i = 0, elem; (elem = arr[i]) != null; i++) {
+    const uniqueArr = arr => {
+        const result = [];
+        const hash = {};
+        for (let i = 0, elem;
+            (elem = arr[i]) != null; i++) {
             if (!hash[elem]) {
                 result.push(elem);
                 hash[elem] = true;
@@ -55,6 +57,7 @@ const Event = self => {
             switch (hoveredObj[0].object.type) {
                 case Config.objectTypes.line:
                 case Config.objectTypes.polygon:
+                case Config.objectTypes.curve:
                 case Config.objectTypes.textGroup:
                     pathSnapshoot = hoveredObj[0].object.path;
                     break;
@@ -62,7 +65,8 @@ const Event = self => {
                 case Config.objectTypes.circle:
                     pathSnapshoot = hoveredObj[0].object.center;
                     break;
-                default: break;
+                default:
+                    break;
             }
             pathSnapshoot = JSON.parse(JSON.stringify(pathSnapshoot));
 
@@ -82,9 +86,8 @@ const Event = self => {
                 });
                 indexs = uniqueArr(indexs);
                 if (oneObj) {
-                    self.sys.pickupedObjs.map(obj => {
-                        console.log('isActive indexs')
-                        obj.origin.object.isActive['indexs'] = indexs;
+                    self.sys.pickupedObjs.forEach(obj => {
+                        obj.origin.object.isActive.indexs = indexs;
                     });
                 }
             }
@@ -122,7 +125,7 @@ const Event = self => {
                 ], self.options.grid.scale)[0];
                 let movedPos = [x - mousedownPos[0], y - mousedownPos[1]];
                 movedPos = steplizePoint(movedPos, step);
-                self.sys.pickupedObjs.map((pos, index) => {
+                self.sys.pickupedObjs.forEach(pos => {
                     const snapShootPath = pos.pathSnapshoot;
                     const moveObject = pos.origin;
                     if (moveObject.object.userSet.dragable) {
@@ -168,6 +171,7 @@ const Event = self => {
                     let pathSnapshoot;
                     switch (vObj.origin.object.type) {
                         case Config.objectTypes.line:
+                        case Config.objectTypes.curve:
                         case Config.objectTypes.polygon:
                         case Config.objectTypes.textGroup:
                             pathSnapshoot = vObj.origin.object.path;
@@ -199,7 +203,8 @@ const Event = self => {
                 // ctrl
                 events.ctrl = false;
                 break;
-            default: break;
+            default:
+                break;
         }
     });
 
@@ -283,6 +288,7 @@ const Event = self => {
                         let pathSnapshoot;
                         switch (obj.origin.object.type) {
                             case Config.objectTypes.line:
+                            case Config.objectTypes.curve:
                             case Config.objectTypes.polygon:
                             case Config.objectTypes.textGroup:
                                 pathSnapshoot = obj.origin.object.path;

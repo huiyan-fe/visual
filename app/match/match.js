@@ -1,5 +1,6 @@
 import Config from '../config/config';
 import matchLine from './match-line';
+import matchCurve from './match-curve';
 import matchText from './match-text';
 import matchCircle from './match-circle';
 import matchPolygon from './match-polygon';
@@ -11,7 +12,6 @@ const MathTool = {
 
         objects.forEach(object => {
             // remove all the objects' active;
-            // console.log(multichose)
             if (!multichose) {
                 object.isActive = null;
             } else {
@@ -22,6 +22,9 @@ const MathTool = {
                 case Config.objectTypes.line:
                 case Config.objectTypes.textGroup:
                     matchLine(P, object, eventType, res);
+                    break;
+                case Config.objectTypes.curve:
+                    matchCurve(P, object, eventType, res);
                     break;
                 case Config.objectTypes.text:
                     matchText(P, object, eventType, res);
