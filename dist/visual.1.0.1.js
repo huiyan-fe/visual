@@ -94,7 +94,8 @@ var config = {
         textGroup: (0, _symbol2.default)('textGroup'),
         circle: (0, _symbol2.default)('circle'),
         polygon: (0, _symbol2.default)('polygon'),
-        curve: (0, _symbol2.default)('curve')
+        curve: (0, _symbol2.default)('curve'),
+        arc: (0, _symbol2.default)('arc')
     },
     objectUserSets: {
         dragable: true, // true: user can drag the objet by using mouse
@@ -908,19 +909,33 @@ function pointsToBezierCurve(points, ctx) {
          * Py = vNextToPrev[1] / 2 * xStartPrecent + point[1];
          */
 
-        if (index === 0) {
-            var nextNextPoint = points[index + 2];
-            var vNextNextPointToNext = [nextPoint[0] - nextNextPoint[0], nextPoint[1] - nextNextPoint[1]];
-            var vCurrentNext = [nextPoint[0] - point[0], nextPoint[1] - point[1]];
-            vPrevToNext = [vNextNextPointToNext[0] + vCurrentNext[0], vNextNextPointToNext[1] + vCurrentNext[1]];
-        }
+        // if (index === 0) {
+        //     const nextNextPoint = points[index + 2];
+        //     const vNextNextPointToNext = [
+        //         nextPoint[0] - nextNextPoint[0], nextPoint[1] - nextNextPoint[1],
+        //     ];
+        //     const vCurrentNext = [
+        //         nextPoint[0] - point[0], nextPoint[1] - point[1],
+        //     ];
+        //     vPrevToNext = [
+        //         vNextNextPointToNext[0] + vCurrentNext[0],
+        //         vNextNextPointToNext[1] + vCurrentNext[1],
+        //     ];
+        // }
 
-        if (index === points.length - 1) {
-            var prePreviousPoint = points[index - 2];
-            var vPrepreToPre = [previousPoint[0] - prePreviousPoint[0], previousPoint[1] - prePreviousPoint[1]];
-            var vCurrentToPre = [previousPoint[0] - point[0], previousPoint[1] - point[1]];
-            vNextToPrev = [vPrepreToPre[0] + vCurrentToPre[0], vPrepreToPre[1] + vCurrentToPre[1]];
-        }
+        // if (index === (points.length - 1)) {
+        //     const prePreviousPoint = points[index - 2];
+        //     const vPrepreToPre = [
+        //         previousPoint[0] - prePreviousPoint[0],
+        //         previousPoint[1] - prePreviousPoint[1],
+        //     ];
+        //     const vCurrentToPre = [
+        //         previousPoint[0] - point[0],
+        //         previousPoint[1] - point[1],
+        //     ];
+        //     vNextToPrev = [vPrepreToPre[0] + vCurrentToPre[0], vPrepreToPre[1] + vCurrentToPre[1]];
+        // }
+
 
         obj.previous = index === 0 ? obj.current : [vNextToPrev[0] / 2 * xStartPrecent + point[0], vNextToPrev[1] / 2 * xStartPrecent + point[1]];
         obj.next = index === points.length - 1 ? obj.current : [vPrevToNext[0] / 2 * xEndPrecent + point[0], vPrevToNext[1] / 2 * xEndPrecent + point[1]];
@@ -930,7 +945,7 @@ function pointsToBezierCurve(points, ctx) {
         figuredPoints.push(obj);
     });
 
-    // debug
+    // // debug
     // if (ctx) {
     //     ctx.beginPath();
     //     figuredPoints.forEach((item, index) => {
@@ -1386,6 +1401,10 @@ var _curve = __webpack_require__(108);
 
 var _curve2 = _interopRequireDefault(_curve);
 
+var _arc = __webpack_require__(134);
+
+var _arc2 = _interopRequireDefault(_arc);
+
 var _draw = __webpack_require__(109);
 
 var _draw2 = _interopRequireDefault(_draw);
@@ -1400,8 +1419,9 @@ var _visualEvent2 = _interopRequireDefault(_visualEvent);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var initCanvas = (0, _symbol2.default)('initCanvas'); /* globals window document getComputedStyle */
+/* globals window document getComputedStyle */
 
+var initCanvas = (0, _symbol2.default)('initCanvas');
 var updateCanvas = (0, _symbol2.default)('updateCanvas');
 
 var Visual = function () {
@@ -1541,6 +1561,11 @@ Visual.prototype.curve = function curve() {
     return new _curve2.default(this, path, options);
 };
 
+Visual.prototype.arc = function arc(center, radius, startArc, endArc) {
+    var config = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
+
+    return new _arc2.default(this, center, radius, startArc, endArc, config);
+};
 // draw
 
 Visual.prototype.draw = _draw2.default;
@@ -3183,10 +3208,14 @@ var _drawPolygon = __webpack_require__(114);
 
 var _drawPolygon2 = _interopRequireDefault(_drawPolygon);
 
+var _drawArc = __webpack_require__(135);
+
+var _drawArc2 = _interopRequireDefault(_drawArc);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var self = null; /* globals requestAnimationFrame  */
-
+/* globals requestAnimationFrame  */
+var self = null;
 var drawFlag = false;
 
 function Draw() {
@@ -3222,8 +3251,11 @@ function drawFns(obj) {
         case self.sys.objectTypes.polygon:
             (0, _drawPolygon2.default)(self, obj);
             break;
+        case self.sys.objectTypes.arc:
+            (0, _drawArc2.default)(self, obj);
+            break;
         default:
-        // console.log('unkone type', obj.type);
+            console.log('unkonw draw type', obj.type);
     }
     ctx.restore();
 }
@@ -3803,6 +3835,7 @@ var Event = function Event(self) {
                     break;
                 case _config2.default.objectTypes.text:
                 case _config2.default.objectTypes.circle:
+                case _config2.default.objectTypes.arc:
                     pathSnapshoot = hoveredObj[0].object.center;
                     break;
                 default:
@@ -3922,6 +3955,7 @@ var Event = function Event(self) {
                             break;
                         case _config2.default.objectTypes.text:
                         case _config2.default.objectTypes.circle:
+                        case _config2.default.objectTypes.arc:
                             pathSnapshoot = vObj.origin.object.center;
                             break;
                         default:
@@ -4039,6 +4073,7 @@ var Event = function Event(self) {
                                 break;
                             case _config2.default.objectTypes.text:
                             case _config2.default.objectTypes.circle:
+                            case _config2.default.objectTypes.arc:
                                 pathSnapshoot = obj.origin.object.center;
                                 break;
                             default:
@@ -4257,6 +4292,10 @@ var _matchPolygon = __webpack_require__(129);
 
 var _matchPolygon2 = _interopRequireDefault(_matchPolygon);
 
+var _matchArc = __webpack_require__(136);
+
+var _matchArc2 = _interopRequireDefault(_matchArc);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var MathTool = {
@@ -4290,6 +4329,9 @@ var MathTool = {
                     break;
                 case _config2.default.objectTypes.polygon:
                     (0, _matchPolygon2.default)(P, object, eventType, res);
+                    break;
+                case _config2.default.objectTypes.arc:
+                    (0, _matchArc2.default)(P, object, eventType, res);
                     break;
                 default:
                     break;
@@ -4740,7 +4782,17 @@ var _boundaryCheck = __webpack_require__(132);
 
 var _boundaryCheck2 = _interopRequireDefault(_boundaryCheck);
 
+var _moveArc = __webpack_require__(137);
+
+var _moveArc2 = _interopRequireDefault(_moveArc);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * @file this file is countrol the move the object
+ */
+
+/* global window */
 
 var move = function move(moveObject, snapShootPath, movedPos, step) {
     var moveType = moveObject.type;
@@ -4799,15 +4851,13 @@ var move = function move(moveObject, snapShootPath, movedPos, step) {
             if (needBoundaryCheck) {
                 var _pixelRatio2 = window.devicePixelRatio || 1;
                 var _maxBound2 = [moveObject.object.Visual.canvas.width / _pixelRatio2, moveObject.object.Visual.canvas.height / _pixelRatio2];
-                // console.log([
-                //     snapShootPath[0] + movedPos[0],
-                //     snapShootPath[1] + movedPos[1],
-                // ])
                 object.center = (0, _boundaryCheck2.default)([[snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]]], _maxBound2)[0];
             } else {
                 object.center = [snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]];
             }
-
+            break;
+        case _config2.default.objectTypes.arc:
+            (0, _moveArc2.default)(moveObject, snapShootPath, movedPos);
             break;
         default:
     }
@@ -4819,11 +4869,7 @@ var move = function move(moveObject, snapShootPath, movedPos, step) {
         index: moveIndex
     };
     object.emit('change', emitObj);
-}; /**
-    * @file this file is countrol the move the object
-    */
-
-/* global window */
+};
 
 exports.default = move;
 
@@ -4911,6 +4957,511 @@ var deleteObject = function deleteObject(object) {
 };
 
 exports.default = deleteObject;
+
+/***/ }),
+/* 134 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _stringify = __webpack_require__(14);
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
+var _symbol = __webpack_require__(3);
+
+var _symbol2 = _interopRequireDefault(_symbol);
+
+var _getPrototypeOf = __webpack_require__(19);
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(6);
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _possibleConstructorReturn2 = __webpack_require__(20);
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(21);
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+var _object = __webpack_require__(22);
+
+var _object2 = _interopRequireDefault(_object);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Arc = function (_VisualObject) {
+    (0, _inherits3.default)(Arc, _VisualObject);
+
+    function Arc(Visual, center, radius, startArc, endArc, options) {
+        (0, _classCallCheck3.default)(this, Arc);
+
+        var _this = (0, _possibleConstructorReturn3.default)(this, (Arc.__proto__ || (0, _getPrototypeOf2.default)(Arc)).call(this, options));
+
+        _this.Visual = Visual;
+        _this.id = (0, _symbol2.default)('arc');
+
+        _this.center = center;
+        _this.radius = radius;
+        _this.startArc = startArc;
+        _this.endArc = endArc;
+
+        var outBox = {
+            xMin: center[0] - radius - 20,
+            xMax: center[0] + radius + 20,
+            yMin: center[1] - radius - 20,
+            yMax: center[1] + radius + 20
+        };
+
+        _this.type = Visual.sys.objectTypes.arc;
+        _this.options = JSON.parse((0, _stringify2.default)(options));
+
+        var useStart = startArc;
+        if (startArc > endArc) {
+            useStart -= Math.PI * 2;
+        }
+        _this.sys = {
+            outBox: outBox,
+            startPoint: [center[0] + radius * Math.cos(startArc), center[1] + radius * Math.sin(startArc)],
+            endPoint: [center[0] + radius * Math.cos(endArc), center[1] + radius * Math.sin(endArc)],
+            centerPoint: [center[0] + radius * Math.cos((useStart + endArc) / 2), center[1] + radius * Math.sin((useStart + endArc) / 2)]
+        };
+
+        _this.Visual.sys.objects.push(_this);
+        _this.Visual.draw();
+        return _this;
+    }
+
+    return Arc;
+}(_object2.default);
+
+exports.default = Arc;
+
+/***/ }),
+/* 135 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+function DrawLine(Visual, obj) {
+    var ctx = Visual.ctx;
+
+    ctx.beginPath();
+    ctx.save();
+
+    ctx.arc(obj.center[0], obj.center[1], obj.radius, obj.startArc, obj.endArc);
+    ctx.stroke();
+    // ctx.fill();
+    // if (obj.options.border) {
+    //     ctx.stroke();
+    // }
+    // ctx.restore();
+
+    // console.log(obj.sys.startPoint, obj.sys.endPoint);
+    // console.log(obj.isActive)
+    if (obj.isActive) {
+        ctx.canvas.style.cursor = 'pointer';
+        // draw line
+        ctx.beginPath();
+        ctx.arc(obj.center[0], obj.center[1], obj.radius, obj.startArc, obj.endArc);
+        ctx.strokeStyle = '#d6d6d6';
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(obj.center[0] - 1, obj.center[1] - 1, obj.radius, obj.startArc, obj.endArc);
+        ctx.strokeStyle = '#333';
+        ctx.stroke();
+
+        // draw handle
+        ctx.beginPath();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#d6d6d6';
+        [obj.sys.startPoint, obj.sys.endPoint, obj.sys.centerPoint].forEach(function (item) {
+            ctx.rect(item[0] - 4, item[1] - 4, 8, 8);
+        });
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.strokeStyle = '#333';
+        [obj.sys.startPoint, obj.sys.endPoint, obj.sys.centerPoint].forEach(function (item) {
+            ctx.rect(item[0] - 3, item[1] - 3, 6, 6);
+        });
+        ctx.stroke();
+
+        // if active is handle point
+        if (obj.isActive.type === 'point' && obj.isActive.length < 10) {
+            // console.log(obj.isActive.subtype)
+            // console.warn(obj)
+            var point = obj.sys[obj.isActive.subtype + 'Point'];
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+            ctx.fillStyle = '#fff';
+            ctx.rect(point[0] - 6, point[1] - 6, 12, 12, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        ctx.beginPath();
+        // ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+        ctx.strokeStyle = '#eee';
+        ctx.arc(obj.center[0], obj.center[1], 3, 0, Math.PI * 2);
+        ctx.stroke();
+    }
+}
+
+exports.default = DrawLine;
+
+/***/ }),
+/* 136 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+// import pointsToBezierCurve from '../tools/pointToBezier';
+
+/* globals document */
+var textCanvas = document.createElement('canvas');
+textCanvas.width = 1;
+textCanvas.height = 1;
+textCanvas.style.width = '1px';
+textCanvas.style.height = '1px';
+var ctx = textCanvas.getContext('2d');
+
+var matchPolygon = function matchPolygon(P, object, eventType, res) {
+    var outBox = object.sys.outBox;
+    var userSet = object.userSet;
+    var bufferSize = userSet.bufferSize;
+    if (P[0] < outBox.xMin - bufferSize || P[0] > outBox.xMax + bufferSize) {
+        return false;
+    }
+    if (P[1] < outBox.yMin - bufferSize || P[1] > outBox.yMax + bufferSize) {
+        return false;
+    }
+    // console.log('xxx');
+    // return false;
+
+
+    // console.log(userSet.bufferSize)
+    ctx.beginPath();
+    // object
+
+    if (eventType === 'mousemove' && !userSet.mouseOverEventEnable || eventType === 'mousedown' && !userSet.clickable) {
+        // res.length = 0;
+    } else {
+        //
+        // const bezierPoints = pointsToBezierCurve(object.path, ctx);
+        [object.sys.startPoint, object.sys.endPoint, object.sys.centerPoint].forEach(function (point) {
+            var lPO = Math.sqrt(Math.pow(P[0] - point[0], 2) + Math.pow(P[1] - point[1], 2));
+            if (lPO < bufferSize && object.userSet.pointEditable) {
+                // pointEditable: when pointEditable is true, we push the active point to res
+                var subtype = 'center';
+                if (object.sys.startPoint === point) {
+                    subtype = 'start';
+                } else if (object.sys.endPoint === point) {
+                    subtype = 'end';
+                }
+                res.push({
+                    type: 'point',
+                    subtype: subtype,
+                    object: object,
+                    point: point,
+                    length: lPO
+                });
+            }
+        });
+
+        ctx.lineWidth = (object.options.lineWidth || 0) + bufferSize;
+        ctx.beginPath();
+        ctx.arc(object.center[0], object.center[1], object.radius, 0, Math.PI * 2);
+        ctx.stroke();
+        var isFit = ctx.isPointInPath(P[0], P[1]);
+        if (isFit) {
+            res.push({
+                type: 'object',
+                object: object,
+                length: Math.sqrt(Math.pow(P[0] - object.center[0], 2) + Math.pow(P[1] - object.center[1], 2))
+            });
+        }
+    }
+
+    return res;
+};
+
+exports.default = matchPolygon;
+
+/***/ }),
+/* 137 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = move;
+
+var _boundaryCheck = __webpack_require__(132);
+
+var _boundaryCheck2 = _interopRequireDefault(_boundaryCheck);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function move(theObject, snapShootPath, movedPos) {
+    var object = theObject.object;
+    var type = theObject.type;
+    var subtype = theObject.subtype;
+    var center = snapShootPath;
+    var radius = object.radius;
+    if (type === 'point') {
+        var mouse = [theObject.point[0] + movedPos[0], theObject.point[1] + movedPos[1]];
+        if (subtype === 'start' || subtype === 'end') {
+            var dMouseyCenterX = mouse[0] - center[0];
+            var dMouseyCenterY = mouse[1] - center[1];
+            var dMouseCentre = Math.sqrt(Math.pow(dMouseyCenterX, 2) + Math.pow(dMouseyCenterY, 2));
+            var arc = Math.acos(dMouseyCenterX / dMouseCentre);
+            if (dMouseyCenterY < 0) {
+                arc = Math.PI * 2 - arc;
+            }
+            object[subtype + 'Arc'] = arc;
+
+            object.sys[subtype + 'Point'] = [center[0] + radius * Math.cos(arc), center[1] + radius * Math.sin(arc)];
+
+            var useStart = object.startArc;
+            if (object.startArc > object.endArc) {
+                useStart -= Math.PI * 2;
+            }
+            object.sys.centerPoint = [center[0] + radius * Math.cos((useStart + object.endArc) / 2), center[1] + radius * Math.sin((useStart + object.endArc) / 2)];
+        } else if (subtype === 'center') {
+            // console.log(object.center, center);
+            // console.log(radius)
+            // console.log('center', object.center);
+            // console.log('arcCenter', object.sys.centerPoint);
+            // console.log('mouse', mouse);
+            // console.log(object.sys.startPoint)
+            // const arcCenter = object.sys.centerPoint;
+            var startPoint = object.sys.startPoint;
+            var endPoint = object.sys.endPoint;
+            // const vCenterToStartPoint = [startPoint[0] - center[0], startPoint[1] - center[1]];
+            var vEndToStartPoint = [startPoint[0] - endPoint[0], startPoint[1] - endPoint[1]];
+            var vAxleX = [Math.abs(vEndToStartPoint[0]) || 1, 0];
+
+            var arcVendToStartPointTOvAxleX = Math.acos((vEndToStartPoint[0] * vAxleX[0] + vEndToStartPoint[1] * vAxleX[1]) / (Math.sqrt(Math.pow(vEndToStartPoint[0], 2) + Math.pow(vEndToStartPoint[1], 2)) * Math.sqrt(Math.pow(vAxleX[0], 2) + Math.pow(vAxleX[1], 2))));
+            // console.warn(arcVendToStartPointTOvAxleX)
+            // console.warn(startPoint,arcVendToStartPointTOvAxleX / (Math.PI / 180));
+
+            // const vCenterToMouse = [mouse[0] - center[0], mouse[1] - center[1]];
+
+            // const vCenterToMouseRatated = [
+            //     (vCenterToMouse[0] * Math.cos(arcVendToStartPointTOvAxleX)) +
+            //     (vCenterToMouse[1] * Math.sin(arcVendToStartPointTOvAxleX)),
+            //     (vCenterToMouse[0] * -Math.sin(arcVendToStartPointTOvAxleX)) +
+            //     (vCenterToMouse[1] * Math.cos(arcVendToStartPointTOvAxleX)),
+            // ];
+            // // console.warn(vCenterToArccenter, vAxleX, arcVendToStartPointTOvAxleX / (Math.PI / 180));
+            // // console.warn(vCenterToMouse, vCenterToMouseRatated, arcVendToStartPointTOvAxleX / (Math.PI / 180));
+            // const newPoint = [0, vCenterToMouseRatated[1]];
+            // // 计算方法有问题，应该考虑到弦不过原点
+
+            // // console.log(newPoint, center)
+
+            // const newPointRotated = [
+            //     (newPoint[0] * Math.cos(-arcVendToStartPointTOvAxleX)) +
+            //     (newPoint[1] * Math.sin(-arcVendToStartPointTOvAxleX)),
+            //     (newPoint[0] * -Math.sin(-arcVendToStartPointTOvAxleX)) +
+            //     (newPoint[1] * Math.cos(-arcVendToStartPointTOvAxleX)),
+            // ];
+            // const mouseReflection = [center[0] + newPointRotated[0], center[1] + newPointRotated[1]];
+            // console.log(vCenterToMouse, arcVendToStartPointTOvAxleX, newPoint, arcVendToStartPointTOvAxleX);
+
+
+            // public static function getCirclePoint($pa, $pb, $pc) {
+            //     $pa = explode(',', $pa);
+            //     $pb = explode(',', $pb);
+            //     $pc = explode(',', $pc);
+
+            //     $m = ($pa[0]-$pc[0])*$pa[0] +  ($pa[1]-$pc[1])*$pa[1];
+            //     $n = ($pb[0]-$pc[0])*$pb[0] +  ($pb[1]-$pc[1])*$pb[1];
+            //     $k = ($pb[0]-$pc[0]) * ($pa[1]-$pc[1]);
+            //     $l = ($pa[0]-$pc[0]) * ($pb[1]-$pc[1]);
+
+            //     $x = -1 * ($m*($pb[1]-$pc[1])-$n*($pa[1]-$pc[1])) / ($k-$l);
+            //     $y = ($m*($pb[0]-$pc[0])-$n*($pa[0]-$pc[0])) / ($k-$l);
+
+            //     return array($x, $y);
+            // }
+            // const pStartMouseHalf = [(startPoint[0] + mouseReflection[0]) / 2, (startPoint[1] + mouseReflection[1]) / 2];
+            // const pEndMouseHalf = [(endPoint[0] + mouseReflection[0]) / 2, (endPoint[1] + mouseReflection[1]) / 2];
+
+            // const kl = (
+            //         (pEndMouseHalf[0] * pStartMouseHalf[1]) -
+            //         (pEndMouseHalf[0] * mouseReflection[1]) -
+            //         (mouseReflection[0] * pStartMouseHalf[1]) -
+            //         (pStartMouseHalf[0] * pEndMouseHalf[1])
+            //     ) +
+            //     (pStartMouseHalf[0] * mouseReflection[1]) +
+            //     (mouseReflection[0] * pEndMouseHalf[1]);
+
+            // const m = (pStartMouseHalf[0] - mouseReflection[0]) * pStartMouseHalf[0] +
+            //     pStartMouseHalf[1] * (pStartMouseHalf[1] - mouseReflection[1]);
+            // const n = (pEndMouseHalf[0] - mouseReflection[0]) * pEndMouseHalf[0] +
+            //     pEndMouseHalf[1] * (pEndMouseHalf[1] - mouseReflection[1]);
+
+            // const y = (m * (pEndMouseHalf[0] - mouseReflection[0]) - n * (pStartMouseHalf[0] - mouseReflection[0])) /
+            //     kl;
+            // const x = (m * (endPoint[1] - mouseReflection[1]) - n * (pStartMouseHalf[1] - mouseReflection[1])) /
+            //     -kl;
+
+
+            // console.log(startPoint, endPoint, mouseReflection);
+            // const m = (startPoint[0] - mouseReflection[0]) * startPoint[0] + (startPoint[1] - mouseReflection[1]) * startPoint[1];
+            // const n = (endPoint[0] - mouseReflection[0]) * endPoint[0] + (endPoint[1] - mouseReflection[1]) * endPoint[1];
+            // const k = (endPoint[0] - mouseReflection[0]) * (startPoint[1] - mouseReflection[1]);
+            // const l = (startPoint[0] - mouseReflection[0]) * (endPoint[1] - mouseReflection[1]);
+
+            // const x = -1 * (m * (endPoint[1] - mouseReflection[1]) - n * (startPoint[1] - mouseReflection[1])) / (k - l);
+            // const y = (m * (endPoint[0] - mouseReflection[0]) - n * (startPoint[0] - mouseReflection[0])) / (k - l);
+            // console.log([x, y]);
+
+            // return array($x, $y);
+            // object.center = [x, y]
+            // object.sys.centerPoint = mouseReflection;
+            // object.center = [x, y];
+            // const newRadius = Math.sqrt((x - mouseReflection[0]) ** 2 + (y - mouseReflection[1]) ** 2);
+            // console.log(mouseReflection,center)
+            var newRadius = Math.sqrt(Math.pow(center[0] - mouse[0], 2) + Math.pow(center[1] - mouse[1], 2));
+            object.radius = newRadius;
+
+            var _useStart = object.startArc;
+            if (object.startArc > object.endArc) {
+                _useStart -= Math.PI * 2;
+            }
+
+            // console.log(object.center[0], object.radius)
+            object.sys = {
+                outBox: {
+                    xMin: object.center[0] - object.radius - 20,
+                    xMax: object.center[0] + object.radius + 20,
+                    yMin: object.center[1] - object.radius - 20,
+                    yMax: object.center[1] + object.radius + 20
+                },
+                startPoint: [object.center[0] + object.radius * Math.cos(object.startArc), object.center[1] + object.radius * Math.sin(object.startArc)],
+                endPoint: [object.center[0] + object.radius * Math.cos(object.endArc), object.center[1] + object.radius * Math.sin(object.endArc)],
+                centerPoint: [object.center[0] + object.radius * Math.cos(_useStart + (object.endArc - _useStart) / 2), object.center[1] + object.radius * Math.sin(_useStart + (object.endArc - _useStart) / 2)]
+            };
+
+            // console.log([x, y])
+            // console.log(snapShootPath)
+
+            // const vMousereflectionToStart = [startPoint[0] - mouseReflection[0], startPoint[1] - mouseReflection[1]];
+            // const vMousereflectionToEnd = [endPoint[0] - mouseReflection[0], endPoint[1] - mouseReflection[1]];
+
+
+            // const vMouseReflectionToStartMouseHalf = [pStartMouseHalf[0] - mouseReflection[0], pStartMouseHalf[1] - mouseReflection[1]];
+            // const vMouseReflectionToEndMouseHalf = [pEndMouseHalf[0] - mouseReflection[0], pEndMouseHalf[1] - mouseReflection[1]];
+
+            // vStartMouseHalfToCenter = [x - pStartMouseHalf[0], y - pStartMouseHalf[1]];
+            // vEndMouseHalfToCenter = [x - pEndMouseHalf[0], y - pEndMouseHalf[1]];
+            //
+            // (x - pStartMouseHalf[0]) * vMouseReflectionToStartMouseHalf[0] + (y - pStartMouseHalf[1])  * vMouseReflectionToStartMouseHalf[1] = 0
+            // (x - pEndMouseHalf[0]) * vMouseReflectionToEndMouseHalf[0] +  (y - pEndMouseHalf[1]) * vMouseReflectionToEndMouseHalf[1] = 0
+            //
+            // (x - pStartMouseHalf[0]) * vMouseReflectionToStartMouseHalf[0] + (y - pStartMouseHalf[1])  * vMouseReflectionToStartMouseHalf[1] = 0
+            // (x - pEndMouseHalf[0]) * vMouseReflectionToEndMouseHalf[0] +  (y - pEndMouseHalf[1]) * vMouseReflectionToEndMouseHalf[1] = 0
+
+
+            /**
+             * (x - startToMouseReflectionHalf[0]) * vMousereflectionToStart[0] = (y - startToMouseReflectionHalf[1]) * vMousereflectionToStart[1]
+             * (x - endToMouseReflectionHalf[0]) * vMousereflectionToEnd[0] = (y - endToMouseReflectionHalf[1]) * vMousereflectionToEnd[1]
+             */
+
+            /**
+             * pNewCenter = [x, y];
+             * vMousereflectiontoStartHalfToNewpoint = [x - vMousereflectionToStartHalf[0], y - vMousereflectionToStartHalf[1]];
+             * vMousereflectiontoEndHalfToNewpoint = [x - vMousereflectionToEndHalf[0], y - vMousereflectionToEndHalf[1]];
+             * vMousereflectionToStartHalf[0] * x + vMousereflectionToStartHalf[1] * y = vMousereflectionToStartHalf[1] ** 2 + vMousereflectionToStartHalf[0] ** 2
+             * vMousereflectionToEndHalf[0] * x + vMousereflectionToEndHalf[1] * y = vMousereflectionToEndHalf[1] ** 2 + vMousereflectionToEndHalf[0] ** 2
+             * 
+             * vMousereflectionToStartHalf[0] * x + vMousereflectionToStartHalf[1] * y = vMousereflectionToStartHalf[1] ** 2 + vMousereflectionToStartHalf[0] ** 2
+             * x  = (vMousereflectionToEndHalf[1] ** 2 + vMousereflectionToEndHalf[0] ** 2 - vMousereflectionToEndHalf[1] * y) / vMousereflectionToEndHalf[0]
+             * 
+             * vMousereflectionToStartHalf[0] * (vMousereflectionToEndHalf[1] ** 2 / vMousereflectionToEndHalf[0] + vMousereflectionToEndHalf[0] ** 2 / vMousereflectionToEndHalf[0] - vMousereflectionToEndHalf[1] * y / vMousereflectionToEndHalf[0]) + vMousereflectionToStartHalf[1] * y = vMousereflectionToStartHalf[1] ** 2 + vMousereflectionToStartHalf[0] ** 2
+             * y = (vMousereflectionToStartHalf[0] * (vMousereflectionToEndHalf[1] ** 2 / vMousereflectionToEndHalf[0] + vMousereflectionToEndHalf[0] ** 2 / vMousereflectionToEndHalf[0]) - vMousereflectionToStartHalf[1] ** 2 + vMousereflectionToStartHalf[0] ** 2) / (vMousereflectionToStartHalf[0] * vMousereflectionToEndHalf[1] / vMousereflectionToEndHalf[0] + vMousereflectionToStartHalf[1])
+             */
+
+            // console.log(vMousereflectionToStartHalf[0] * vMousereflectionToEndHalf[1] / vMousereflectionToEndHalf[0], vMousereflectionToStartHalf[1])
+
+
+            /**
+             * pNewCenter = [x, y];
+             * vMousereflectionToNewCenter = [x - mouseReflection[0], y - mouseReflection[1]]
+             * vMousereflectionToStartHalfToNewCenter = [x - vMousereflectionToStartHalf[0], y - vMousereflectionToStartHalf[1]]
+             * vMousereflectionToStartHalf + vMousereflectionToStartHalfToNewCenter = vMousereflectionToNewCenter;
+             * [vMousereflectionToStartHalf[0], vMousereflectionToStartHalf[1]] + [x - vMousereflectionToStartHalf[0], y - vMousereflectionToStartHalf[1]] = [x - mouseReflection[0], y - mouseReflection[1]]
+             */
+
+            // console.warn(mouseReflection)
+            // console.log(center, newPointRotated, mouseReflection);
+            // console.log(theObject.object.Visual.ctx);
+            // let ctx = theObject.object.Visual.ctx;
+            // ctx.fillStyle = 'black';
+            // ctx.fillRect(mouseReflection[0], mouseReflection[1], 12, 12);
+
+            // object.sys.centerPoint = mouseReflection;
+            /**
+             * VCenterArcCenter ⊥ vMousePoint
+             * vCenterPoint ∥ VCenterArcCenter
+             */
+            // const vCenterArcCenter = [object.sys.centerPoint[0] - object.center[0], object.sys.centerPoint[1] - object.center[1]];
+            // vMousePoint = [x-mouse[0],y - mouse[1]];
+            //
+            // vCenterPoint = [x-object.center[0],y-object.center[1]]
+            // (x - object.center[0]) * vCenterArcCenter[1] - (y - object.center[1]) * vCenterArcCenter[0] = 0
+        }
+        // console.log(subtype);
+    } else {
+        // console.log('----')
+        var needBoundaryCheck = object.userSet.boundaryCheck;
+
+        if (needBoundaryCheck) {
+            var pixelRatio = window.devicePixelRatio || 1;
+            var maxBound = [object.Visual.canvas.width / pixelRatio, object.Visual.canvas.height / pixelRatio];
+            object.center = (0, _boundaryCheck2.default)([[snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]]], maxBound)[0];
+        } else {
+            object.center = [snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]];
+        }
+
+        var _useStart2 = object.startArc;
+        if (object.startArc > object.endArc) {
+            _useStart2 -= Math.PI * 2;
+        }
+        object.sys = {
+            outBox: {
+                xMin: object.center[0] - object.radius - 20,
+                xMax: object.center[0] + object.radius + 20,
+                yMin: object.center[1] - object.radius - 20,
+                yMax: object.center[1] + object.radius + 20
+            },
+            startPoint: [object.center[0] + object.radius * Math.cos(object.startArc), object.center[1] + object.radius * Math.sin(object.startArc)],
+            endPoint: [object.center[0] + object.radius * Math.cos(object.endArc), object.center[1] + object.radius * Math.sin(object.endArc)],
+            centerPoint: [object.center[0] + object.radius * Math.cos(_useStart2 + (object.endArc - _useStart2) / 2), object.center[1] + object.radius * Math.sin(_useStart2 + (object.endArc - _useStart2) / 2)]
+        };
+    }
+} /* globals window */
 
 /***/ })
 /******/ ]);

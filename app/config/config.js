@@ -6,6 +6,7 @@ const config = {
         circle: Symbol('circle'),
         polygon: Symbol('polygon'),
         curve: Symbol('curve'),
+        arc: Symbol('arc'),
     },
     objectUserSets: {
         dragable: true, // true: user can drag the objet by using mouse

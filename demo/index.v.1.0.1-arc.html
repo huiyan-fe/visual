@@ -1,0 +1,269 @@
+<html>
+
+<head>
+    <title>Demo of visual</title>
+    <meta charset="utf-8" />
+    <style>
+        #content {
+            margin-top: 60px;
+        }
+    </style>
+    <script src="../dist/visual.1.0.1.js"></script>
+    <script src="libs/stats.min.js"></script>
+</head>
+
+<body>
+    <div id="content" style="width:800px; height: 500px; border:1px solid #ccc;"></div>
+    <script>
+        let dom = document.getElementById('content');
+        let v = new Visual(dom, {
+            grid: {
+                step: 1,
+                scale: [1, 1]
+            }
+        });
+
+        // // v.line([
+        // //     [0, 0],
+        // //     [0, 100],
+        // // ], {
+        // //     strokeStyle: '#4df693',
+        // //     lineWidth: 8
+        // // });
+
+        // // v.line([
+        // //     [0, 100],
+        // //     [0, 200],
+        // // ], {
+        // //     strokeStyle: '#4df693',
+        // //     lineWidth: 9
+        // // });
+
+
+        // let line = v.line([
+        //     [85, 86],
+        //     [85, 89],
+        //     [85, 104],
+        //     [139, 85],
+        //     [197, 85],
+        //     [224, 85],
+        //     [10, 10],
+        //     [400, 10],
+        // ], {
+        //     strokeStyle: '#4df693',
+        //     lineWidth: 10,
+        //     boundaryCheck: true
+        // });
+
+        // line.on('finish', (data) => {
+        //     console.log(JSON.stringify(data.object.path));
+        // })
+
+        // line.on('willDeletePoint', obj => {
+        //     console.log(obj);
+        //     // return false;
+        // })
+
+
+        // v.text('Hello Mofei', [200, 300], {
+        //     rotate: Math.PI * .25,
+        //     boundaryCheck: true
+        // })
+
+        // let t1 = v.text('Hello Mofei', [200, 400], {
+        //     fontSize: 24,
+        //     rotate: Math.PI * .25,
+        //     // splitText: true,
+        //     textRotate: Math.PI * .50,
+        //     boundaryCheck: true
+        // })
+
+        // t1.on('finish', (...arg) => {
+        //     console.log('xxx', arg)
+        // })
+
+        // let cir = v.circle(10, [100, 300], {
+        //     fillStyle: 'red'
+        // })
+
+        // cir.on('change', (obj) => {
+        //     console.log(obj)
+        // })
+
+        // v.circle(10, [200, 100], {
+        //     fillStyle: 'yellow',
+        //     strokeStyle: 'skyblue',
+        //     lineWidth: 5,
+        //     border: true
+        // });
+
+        // v.polygon([
+        //     [300, 100],
+        //     [250, 150],
+        //     [350, 150]
+        // ], {
+        //     border: true,
+        //     fill: false,
+        //     lineJoin: 'round',
+        //     lineCap: 'round'
+        // })
+
+        // v.polygon([
+        //     [450, 100],
+        //     [400, 150],
+        //     [500, 150]
+        // ], {
+        //     border: true,
+        //     lineJoin: 'round',
+        //     lineCap: 'round'
+        // })
+
+        // v.polygon([
+        //     [250, 300],
+        //     [230, 350],
+        //     [250, 335],
+        //     [270, 350]
+        // ], {
+        //     border: true,
+        //     lineJoin: 'round',
+        //     lineCap: 'round'
+        // })
+
+        // for (var i = 0; i < 10; i++) {
+        //     v.polygon([
+        //         [350, 200],
+        //         [330, 250],
+        //         [350, 235],
+        //         [370, 250]
+        //     ], {
+        //         border: true,
+        //         fill: false,
+        //         lineJoin: 'round',
+        //         lineCap: 'round'
+        //     })
+        // }
+
+        // // Edit disable polygon
+        // v.polygon([
+        //     [650, 10],
+        //     [600, 60],
+        //     [700, 60]
+        // ], {
+        //     border: true,
+        //     lineJoin: 'round',
+        //     lineCap: 'round',
+        //     boundaryCheck: true
+        // });
+        // v.text('Edit disable polygon', [650, 80], {
+        //     textAlign: 'center'
+        // });
+
+        // // Edit disable line
+        // v.line([
+        //     [650, 100],
+        //     [600, 150],
+        //     [700, 150]
+        // ], {
+        //     pointEditable: false
+        // });
+        // v.text('我是', [650, 180], {
+        //     // textAlign: 'center',
+        //     // textRotate: Math.PI * (-0.5),
+        //     rotate: Math.PI * .5,
+        //     boundaryCheck: true
+        // });
+
+        // // Edit disable line
+        // window.tg = v.textGroup('我是一个中国人', [400, 260], {
+        //     // textRotate: Math.PI * .5,
+        //     // rotate: Math.PI * .5,
+        //     fontSize: 18,
+        //     boundaryCheck: true
+        // });
+
+        // // Edit disable line
+        // v.textGroup('你是一个中国人', [
+        //     [400, 220],
+        //     [412, 220],
+        //     [424, 220],
+        //     [436, 220],
+        //     [448, 220],
+        //     [460, 220],
+        //     [472, 220]
+        // ], {
+        //     textRotate: Math.PI * .5,
+        //     fontSize: 18,
+        //     boundaryCheck: true
+        // });
+
+        // v.polygon([
+        //     [660, 280],
+        //     [710, 330],
+        //     [540, 330]
+        // ], {
+        //     boundaryCheck: true
+        // })
+
+        // // Edit disable line
+        // v.text('polygn with boundaryCheck', [660, 350], {
+        //     textAlign: 'center',
+        //     boundaryCheck: true
+        // });
+
+
+        // v.line([
+        //     [310, 110],
+        //     [260, 200],
+        //     [310, 280],
+        //     [260, 330],
+        //     [310, 380],
+        //     [240, 420],
+        //     [240, 480]
+        // ], {
+        //     strokeStyle: '#4df693',
+        //     lineWidth: 5,
+        //     boundaryCheck: true
+        // });
+
+        // let curve = v.curve([
+        //     [410, 110],
+        //     [360, 200],
+        //     [410, 280],
+        //     [360, 330],
+        //     [410, 380],
+        //     [340, 420],
+        //     [340, 480]
+        // ], {
+        //     strokeStyle: '#4df693',
+        //     lineWidth: 5,
+        //     boundaryCheck: true
+        // });
+
+        // v.arc(left, right);
+        // v.arc(left, right, center);
+        let center = [300, 300];
+        let radius = 50;
+        let startArc = 0;
+        let endArc = Math.PI;
+        let config = {
+            strokeStyle: '#4df693',
+            lineWidth: 1,
+            boundaryCheck: true
+        }
+        v.arc(center, radius, startArc, endArc, config);
+
+        // console.log(curve.getBezier());
+    </script>
+
+
+    <script>
+        var stats = new Stats();
+        document.body.appendChild(stats.dom);
+        requestAnimationFrame(function loop() {
+            stats.update();
+            requestAnimationFrame(loop)
+        });
+    </script>
+</body>
+
+</html>

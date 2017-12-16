@@ -6,6 +6,7 @@ import VTextGroup from './object/textgroup';
 import VCircle from './object/circle';
 import VPolygon from './object/polygon';
 import VCurve from './object/curve';
+import VArc from './object/arc';
 
 import Draw from './draw/draw';
 import Config from './config/config';
@@ -116,6 +117,9 @@ Visual.prototype.curve = function curve(path = [], options = {}) {
     return new VCurve(this, path, options);
 };
 
+Visual.prototype.arc = function arc(center, radius, startArc, endArc, config = {}) {
+    return new VArc(this, center, radius, startArc, endArc, config);
+};
 // draw
 
 Visual.prototype.draw = Draw;

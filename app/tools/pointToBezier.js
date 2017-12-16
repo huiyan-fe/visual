@@ -66,32 +66,32 @@ function pointsToBezierCurve(points, ctx) {
          * Py = vNextToPrev[1] / 2 * xStartPrecent + point[1];
          */
 
-        if (index === 0) {
-            const nextNextPoint = points[index + 2];
-            const vNextNextPointToNext = [
-                nextPoint[0] - nextNextPoint[0], nextPoint[1] - nextNextPoint[1],
-            ];
-            const vCurrentNext = [
-                nextPoint[0] - point[0], nextPoint[1] - point[1],
-            ];
-            vPrevToNext = [
-                vNextNextPointToNext[0] + vCurrentNext[0],
-                vNextNextPointToNext[1] + vCurrentNext[1],
-            ];
-        }
+        // if (index === 0) {
+        //     const nextNextPoint = points[index + 2];
+        //     const vNextNextPointToNext = [
+        //         nextPoint[0] - nextNextPoint[0], nextPoint[1] - nextNextPoint[1],
+        //     ];
+        //     const vCurrentNext = [
+        //         nextPoint[0] - point[0], nextPoint[1] - point[1],
+        //     ];
+        //     vPrevToNext = [
+        //         vNextNextPointToNext[0] + vCurrentNext[0],
+        //         vNextNextPointToNext[1] + vCurrentNext[1],
+        //     ];
+        // }
 
-        if (index === (points.length - 1)) {
-            const prePreviousPoint = points[index - 2];
-            const vPrepreToPre = [
-                previousPoint[0] - prePreviousPoint[0],
-                previousPoint[1] - prePreviousPoint[1],
-            ];
-            const vCurrentToPre = [
-                previousPoint[0] - point[0],
-                previousPoint[1] - point[1],
-            ];
-            vNextToPrev = [vPrepreToPre[0] + vCurrentToPre[0], vPrepreToPre[1] + vCurrentToPre[1]];
-        }
+        // if (index === (points.length - 1)) {
+        //     const prePreviousPoint = points[index - 2];
+        //     const vPrepreToPre = [
+        //         previousPoint[0] - prePreviousPoint[0],
+        //         previousPoint[1] - prePreviousPoint[1],
+        //     ];
+        //     const vCurrentToPre = [
+        //         previousPoint[0] - point[0],
+        //         previousPoint[1] - point[1],
+        //     ];
+        //     vNextToPrev = [vPrepreToPre[0] + vCurrentToPre[0], vPrepreToPre[1] + vCurrentToPre[1]];
+        // }
 
 
         obj.previous = index === 0 ? obj.current : [
@@ -108,7 +108,7 @@ function pointsToBezierCurve(points, ctx) {
         figuredPoints.push(obj);
     });
 
-    // debug
+    // // debug
     // if (ctx) {
     //     ctx.beginPath();
     //     figuredPoints.forEach((item, index) => {

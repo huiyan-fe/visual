@@ -63,6 +63,7 @@ const Event = self => {
                     break;
                 case Config.objectTypes.text:
                 case Config.objectTypes.circle:
+                case Config.objectTypes.arc:
                     pathSnapshoot = hoveredObj[0].object.center;
                     break;
                 default:
@@ -178,6 +179,7 @@ const Event = self => {
                             break;
                         case Config.objectTypes.text:
                         case Config.objectTypes.circle:
+                        case Config.objectTypes.arc:
                             pathSnapshoot = vObj.origin.object.center;
                             break;
                         default:
@@ -295,6 +297,7 @@ const Event = self => {
                                 break;
                             case Config.objectTypes.text:
                             case Config.objectTypes.circle:
+                            case Config.objectTypes.arc:
                                 pathSnapshoot = obj.origin.object.center;
                                 break;
                             default:

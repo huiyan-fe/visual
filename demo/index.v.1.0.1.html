@@ -226,6 +226,20 @@
         });
 
         console.log(curve.getBezier());
+
+        let center = [300, 300];
+        let radius = 50;
+        let startArc = 0;
+        let endArc = Math.PI;
+        let config = {
+            strokeStyle: '#4df693',
+            lineWidth: 1,
+            boundaryCheck: true
+        }
+        let arc = v.arc(center, radius, startArc, endArc, config);
+        // setInterval(() => {
+        console.log(arc.center, arc.startArc, arc.endArc, arc.radius);
+            // }, 1000)
     </script>
 
 

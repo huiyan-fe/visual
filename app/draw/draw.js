@@ -7,6 +7,7 @@ import DrawText from './draw-text';
 import DrawTextGroup from './draw-textgroup';
 import DrawCircle from './draw-circle';
 import DrawPolygon from './draw-polygon';
+import DrawArc from './draw-arc';
 
 let self = null;
 let drawFlag = false;
@@ -44,8 +45,11 @@ function drawFns(obj) {
         case self.sys.objectTypes.polygon:
             DrawPolygon(self, obj);
             break;
+        case self.sys.objectTypes.arc:
+            DrawArc(self, obj);
+            break;
         default:
-            // console.log('unkone type', obj.type);
+            console.log('unkonw draw type', obj.type);
     }
     ctx.restore();
 }

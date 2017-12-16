@@ -8,6 +8,8 @@ import Config from '../config/config';
 import steplizePoint from '../tools/steplize';
 import boundaryLize from '../tools/boundary-check';
 
+import Arc from './move-arc';
+
 const move = (moveObject, snapShootPath, movedPos, step) => {
     const moveType = moveObject.type;
     const object = moveObject.object;
@@ -69,11 +71,10 @@ const move = (moveObject, snapShootPath, movedPos, step) => {
         case Config.objectTypes.circle:
             if (needBoundaryCheck) {
                 const pixelRatio = (window.devicePixelRatio || 1);
-                const maxBound = [moveObject.object.Visual.canvas.width / pixelRatio, moveObject.object.Visual.canvas.height / pixelRatio];
-                // console.log([
-                //     snapShootPath[0] + movedPos[0],
-                //     snapShootPath[1] + movedPos[1],
-                // ])
+                const maxBound = [
+                    moveObject.object.Visual.canvas.width / pixelRatio,
+                    moveObject.object.Visual.canvas.height / pixelRatio,
+                ];
                 object.center = boundaryLize([
                     [
                         snapShootPath[0] + movedPos[0],
@@ -86,7 +87,9 @@ const move = (moveObject, snapShootPath, movedPos, step) => {
                     snapShootPath[1] + movedPos[1],
                 ];
             }
-
+            break;
+        case Config.objectTypes.arc:
+            Arc(moveObject, snapShootPath, movedPos);
             break;
         default:
     }
