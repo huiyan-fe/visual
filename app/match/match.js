@@ -4,6 +4,7 @@ import matchCurve from './match-curve';
 import matchText from './match-text';
 import matchCircle from './match-circle';
 import matchPolygon from './match-polygon';
+import matchArc from './match-arc';
 
 const MathTool = {
     // eventType : mousedown/mousemove/keydown
@@ -34,6 +35,9 @@ const MathTool = {
                     break;
                 case Config.objectTypes.polygon:
                     matchPolygon(P, object, eventType, res);
+                    break;
+                case Config.objectTypes.arc:
+                    matchArc(P, object, eventType, res);
                     break;
                 default:
                     break;

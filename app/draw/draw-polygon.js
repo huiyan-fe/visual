@@ -1,4 +1,4 @@
-function DrawLine(Visual, obj,options) {
+function DrawLine(Visual, obj, options) {
     // console.log(obj);
     const ctx = Visual.ctx;
     // draw basic line
@@ -86,9 +86,18 @@ function DrawLine(Visual, obj,options) {
         });
         ctx.stroke();
 
-        const strokeRadius = options.strokeRadius || 14;
-        const strokeStyle = options.strokeStyle || 'rgba(255, 0, 0, 1)';
-        const fillStyle = options.fillStyle || '#f00';
+        let strokeRadius = 14;
+        let strokeStyle = 'rgba(255, 0, 0, 1)';
+        let fillStyle = '#f00';
+        if (options) {
+            if (options.strokeRadius) {
+                strokeRadius = options.strokeRadius;
+            } else if (options.strokeStyle) {
+                strokeStyle = options.strokeStyle;
+            } else if (options.fillStyle) {
+                fillStyle = options.fillStyle;
+            }
+        }
 
         if (obj.isActive.type === 'point' && obj.isActive.length < 10) {
             const index = obj.isActive.index;
@@ -96,7 +105,7 @@ function DrawLine(Visual, obj,options) {
             ctx.beginPath();
             ctx.strokeStyle = strokeStyle;
             ctx.fillStyle = fillStyle;
-            ctx.rect(point[0] - (strokeRadius/2), point[1] - (strokeRadius/2), strokeRadius, strokeRadius, Math.PI * 2);
+            ctx.rect(point[0] - (strokeRadius / 2), point[1] - (strokeRadius / 2), strokeRadius, strokeRadius, Math.PI * 2);
             ctx.stroke();
         }
 

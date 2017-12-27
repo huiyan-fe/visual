@@ -86,7 +86,7 @@
         })
 
         cir.on('change', (obj) => {
-            console.log(obj)
+            // console.log(obj)
         })
 
         v.circle(10, [200, 100], {
@@ -122,7 +122,9 @@
             [130, 350],
             [270, 350]
         ], {
-           renderType: "fill", fillStyle: "#00ff00",fillColor:'#ff0000'
+            renderType: "fill",
+            fillStyle: "#00ff00",
+            fillColor: '#ff0000'
         })
 
         for (var i = 0; i < 10; i++) {
@@ -222,7 +224,67 @@
             boundaryCheck: true
         });
 
+        console.log(curve);
         console.log(curve.getBezier());
+
+
+        function caculateArcLine(start, end) {
+            let centerX = (start[0] + end[0]) / 2;
+            let centerY = (start[1] + end[1]) / 2;
+            let radius = Math.sqrt((start[0] - end[0]) ** 2 + (start[1] - end[1]) ** 2)
+
+            let startYDiff = start[1] - centerY;
+            let startXDiff = start[0] - centerX;
+
+            let endYDiff = end[1] - centerY;
+            let endXDiff = end[0] - centerX;
+
+            let tan2Arc = (ydiff, xdiff) => {
+                if (ydiff == 0) {
+                    if (xdiff < 0) return Math.PI;
+                    else if (xdiff > 0) return 0;
+                    else console.log('分子分母不能同时为0');
+                } else {
+                    return Math.atan(yDiff / xDiff);
+                }
+            }
+
+            let startArc = tan2Arc(startYDiff, startXDiff);
+            let endArc = tan2Arc(endYDiff, endXDiff);
+            return [
+                [centerX, centerY], radius, startArc, endArc
+            ]
+        }
+
+        // drawArcLine();
+        drawArcLineByStartEndPoint();
+
+        function drawArcLineByStartEndPoint(start = [40, 300], end = [140, 300]) {
+            let args = caculateArcLine(start, end);
+            console.log('drawArcLineByStartEndPoint');
+            console.log(...args);
+            drawArcLine(...args);
+        }
+
+        function drawArcLine(center = [300, 300], radius = 50, startArc = 0.5 * Math.PI, endArc = 1.5 * Math.PI) {
+            let config = {
+                strokeStyle: '#4df693',
+                lineWidth: 1,
+                boundaryCheck: true
+            }
+            let arc = v.arc(center, radius, startArc, endArc, config);
+            arc.on('finish', (obj) => {
+                console.log('arc finish');
+                // console.log(arc.center, arc.startArc, arc.endArc, arc.radius);
+                let centerX = arc.center[0]
+                let centerY = arc.center[1]
+                let startX = centerX + arc.radius * Math.cos(arc.startArc)
+                let startY = centerY + arc.radius * Math.sin(arc.startArc)
+                let endX = centerX + arc.radius * Math.cos(arc.endArc)
+                let endY = centerY + arc.radius * Math.sin(arc.endArc)
+                console.log('center:', arc.center, 'start:', [startX, startY], '--- end:', [endX, endY]);
+            })
+        }
     </script>
 
 

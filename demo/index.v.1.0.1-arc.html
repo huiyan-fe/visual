@@ -1,0 +1,60 @@
+<html>
+
+<head>
+    <title>Demo of visual</title>
+    <meta charset="utf-8" />
+    <style>
+        #content {
+            margin-top: 60px;
+        }
+    </style>
+    <script src="../dist/visual.1.0.1.js"></script>
+    <script src="libs/stats.min.js"></script>
+</head>
+
+<body>
+    <div id="content" style="width:800px; height: 500px; border:1px solid #ccc;"></div>
+    <script>
+        let dom = document.getElementById('content');
+        let v = new Visual(dom, {
+            grid: {
+                step: 1,
+                scale: [1, 1]
+            }
+        });
+
+        let center = [300, 300];
+        let center1 = [200, 200];
+        let radius = 50;
+        let startArc = 0;
+        let endArc = Math.PI;
+        let config = {
+            strokeStyle: '#4df693',
+            lineWidth: 1,
+            boundaryCheck: true
+        }
+        let counterclockwise = false;
+        console.log('demo' ,counterclockwise)
+        let arc = v.arc(center, radius, startArc, endArc, config, counterclockwise);
+        let arc1 = v.arc(center, radius, startArc, endArc, config, !counterclockwise);
+        window.arc = arc;
+        console.log(arc)
+        arc.on('finish', (o) => {
+            console.log('finish')
+            console.log(o)
+        })
+        // console.log(curve.getBezier());
+    </script>
+
+
+    <script>
+        var stats = new Stats();
+        document.body.appendChild(stats.dom);
+        requestAnimationFrame(function loop() {
+            stats.update();
+            requestAnimationFrame(loop)
+        });
+    </script>
+</body>
+
+</html>

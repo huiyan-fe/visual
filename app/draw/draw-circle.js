@@ -10,8 +10,18 @@ function DrawLine(Visual, obj, options) {
     }
     ctx.restore();
 
-    const strokeRadius = options.strokeRadius || 14;
-    const strokeStyle = options.strokeStyle || 'rgba(255, 0, 0, 1)';
+    let strokeRadius = 14;
+    let strokeStyle = 'rgba(255, 0, 0, 1)';
+    let fillStyle = '#f00';
+    if (options) {
+        if (options.strokeRadius) {
+            strokeRadius = options.strokeRadius;
+        } else if (options.strokeStyle) {
+            strokeStyle = options.strokeStyle;
+        } else if (options.fillStyle) {
+            fillStyle = options.fillStyle;
+        }
+    }
     // const fillStyle = options.fillStyle || '#f00';
     // active
     if (obj.isActive) {
