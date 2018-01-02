@@ -7,6 +7,7 @@ var btnDrawRoad = $('#draw-road');
 var btnAddRoad = $('#add-road');
 var clickType = 0;
 var currentRoad = null;
+
 function initMap() {
     map = new BMap.Map(document.getElementById('map'), {
         enableWheelZoom: true
@@ -19,12 +20,14 @@ function initMap() {
             return;
         }
         var local = new BMap.LocalSearch(map, {
-            renderOptions:{map: map}
+            renderOptions: {
+                map: map
+            }
         });
         local.search($('#keyword').val());
     });
 
-    function showInfo(e){
+    function showInfo(e) {
         var value = e.point.lng + "," + e.point.lat;
         if (clickType == 1) {
             btnSelectStart.next().val(value);
@@ -33,12 +36,12 @@ function initMap() {
         } else {
             $('#map-point').text(value);
         }
-		
-	}
-	map.addEventListener("click", showInfo);
+
+    }
+    map.addEventListener("click", showInfo);
 }
 
-function drawBox () {
+function drawBox() {
     var box = config.global.boundingBox;
     if (!box) {
         return;
@@ -48,16 +51,22 @@ function drawBox () {
     if (rectangle != null) {
         map.removeOverlay(rectangle);
     }
-	rectangle = new BMap.Polygon([
-		new BMap.Point(pStart.lng,pStart.lat),
-		new BMap.Point(pEnd.lng,pStart.lat),
-		new BMap.Point(pEnd.lng,pEnd.lat),
-		new BMap.Point(pStart.lng,pEnd.lat)
-    ], {strokeColor:"blue", strokeWeight:2, strokeOpacity:0.5, fillOpacity: 0.1}); 
+    rectangle = new BMap.Polygon([
+        new BMap.Point(pStart.lng, pStart.lat),
+        new BMap.Point(pEnd.lng, pStart.lat),
+        new BMap.Point(pEnd.lng, pEnd.lat),
+        new BMap.Point(pStart.lng, pEnd.lat)
+    ], {
+        strokeColor: "blue",
+        strokeWeight: 2,
+        strokeOpacity: 0.5,
+        fillOpacity: 0.1
+    });
     map.addOverlay(rectangle);
     map.setViewport([pStart, pEnd]);
 }
-function transformPixel (pixel, w, h, rotate) {
+
+function transformPixel(pixel, w, h, rotate) {
     if (rotate == 0) {
         return pixel;
     }
@@ -81,16 +90,15 @@ function transformPixel (pixel, w, h, rotate) {
         ];
     }
 }
+
 function drawRoad(road, start, end) {
     var bps = [];
     var globalConfig = config.global;
-    
-    for(var i = 0; i < road.length; ++i) {
+
+    for (var i = 0; i < road.length; ++i) {
         var points = road[i].points;
-        console.log(points);
         var pixels = road[i].pixels;
         for (var j = 0; j < points.length; ++j) {
-            console.log(points[j])
             bps.push(new BMap.Point(points[j][0], points[j][1]));
         }
         for (var k = 0; k < pixels.length; ++k) {
@@ -100,8 +108,11 @@ function drawRoad(road, start, end) {
     if (polyline != null) {
         map.removeOverlay(polyline);
     }
-    console.log(bps);
-    polyline = new BMap.Polyline(bps, {strokeColor:"green", strokeWeight:4, strokeOpacity:0.5}); 
+    polyline = new BMap.Polyline(bps, {
+        strokeColor: "green",
+        strokeWeight: 4,
+        strokeOpacity: 0.5
+    });
     map.addOverlay(polyline);
 
     var startArr = start.split(',');
@@ -189,7 +200,8 @@ function initEvent() {
         document.getElementById('textarea2canvas').click();
     });
 }
-function init () {
+
+function init() {
     initMap();
     initEvent();
 }

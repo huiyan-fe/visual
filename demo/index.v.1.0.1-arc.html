@@ -34,14 +34,12 @@
             boundaryCheck: true
         }
         let counterclockwise = false;
-        console.log('demo' ,counterclockwise)
         let arc = v.arc(center, radius, startArc, endArc, config, counterclockwise);
         let arc1 = v.arc(center, radius, startArc, endArc, config, !counterclockwise);
         window.arc = arc;
-        console.log(arc)
         arc.on('finish', (o) => {
-            console.log('finish')
-            console.log(o)
+            // console.log('finish')
+            // console.log(o)
         })
         // console.log(curve.getBezier());
     </script>
