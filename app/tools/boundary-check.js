@@ -18,7 +18,9 @@ function boundaryLize(points, boundary) {
     const deficitX = deficitXmax < deficitXmin ? -deficitXmax : deficitXmin;
     const deficitY = deficitYmax < deficitYmin ? -deficitYmax : deficitYmin;
 
-    return points.map(point => [point[0] + deficitX, point[1] + deficitY]);
+    const bound = points.map(point => [point[0] + deficitX, point[1] + deficitY]);
+    console.log('bound', bound);
+    return bound;
 }
 
 export default boundaryLize;

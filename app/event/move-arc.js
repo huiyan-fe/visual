@@ -256,7 +256,8 @@ export default function move(theObject, snapShootPath, movedPos) {
         const needBoundaryCheck = object.userSet.boundaryCheck;
 
         if (needBoundaryCheck) {
-            const pixelRatio = (window.devicePixelRatio || 1);
+            const scale = object.Visual.options.grid.scale || [1, 1];
+            const pixelRatio = scale[0] * (window.devicePixelRatio || 1);
             const maxBound = [
                 object.Visual.canvas.width / pixelRatio,
                 object.Visual.canvas.height / pixelRatio,

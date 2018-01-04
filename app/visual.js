@@ -58,17 +58,20 @@ class Visual {
     }
 
     [updateCanvas]() {
+        const scale = this.options.grid.scale || [1, 1];
+        // const pixelRatio = scale[0] * (window.devicePixelRatio || 1);
         const pixelRatio = (window.devicePixelRatio || 1);
         const domStyle = getComputedStyle(this.dom);
         this.width = domStyle.width;
         this.height = domStyle.height;
-        this.canvas.width = parseInt(this.width, 10) * pixelRatio;
-        this.canvas.height = parseInt(this.height, 10) * pixelRatio;
-        this.canvas.style.width = this.width;
-        this.canvas.style.height = this.height;
-        const xScale = this.options.grid.scale[0];
-        const yScale = this.options.grid.scale[1];
+        this.canvas.width = parseInt(this.width, 10);
+        this.canvas.height = parseInt(this.height, 10);
+        this.canvas.style.height = parseInt(this.width, 10);
+        this.canvas.style.width = parseInt(this.height, 10);
+        const xScale = scale[0];
+        const yScale = scale[1];
         this.ctx.scale(pixelRatio * xScale, pixelRatio * yScale);
+        console.log('updateCanvas:',this.canvas);
     }
 
     clean() {

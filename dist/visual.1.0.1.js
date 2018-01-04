@@ -1472,9 +1472,11 @@ function boundaryLize(points, boundary) {
     var deficitX = deficitXmax < deficitXmin ? -deficitXmax : deficitXmin;
     var deficitY = deficitYmax < deficitYmin ? -deficitYmax : deficitYmin;
 
-    return points.map(function (point) {
+    var bound = points.map(function (point) {
         return [point[0] + deficitX, point[1] + deficitY];
     });
+    console.log('bound', bound);
+    return bound;
 }
 
 exports.default = boundaryLize;
@@ -1599,17 +1601,20 @@ var Visual = function () {
     }, {
         key: updateCanvas,
         value: function value() {
+            var scale = this.options.grid.scale || [1, 1];
+            // const pixelRatio = scale[0] * (window.devicePixelRatio || 1);
             var pixelRatio = window.devicePixelRatio || 1;
             var domStyle = getComputedStyle(this.dom);
             this.width = domStyle.width;
             this.height = domStyle.height;
-            this.canvas.width = parseInt(this.width, 10) * pixelRatio;
-            this.canvas.height = parseInt(this.height, 10) * pixelRatio;
-            this.canvas.style.width = this.width;
-            this.canvas.style.height = this.height;
-            var xScale = this.options.grid.scale[0];
-            var yScale = this.options.grid.scale[1];
+            this.canvas.width = parseInt(this.width, 10);
+            this.canvas.height = parseInt(this.height, 10);
+            this.canvas.style.height = parseInt(this.width, 10);
+            this.canvas.style.width = parseInt(this.height, 10);
+            var xScale = scale[0];
+            var yScale = scale[1];
             this.ctx.scale(pixelRatio * xScale, pixelRatio * yScale);
+            console.log('updateCanvas:', this.canvas);
         }
     }, {
         key: 'clean',
@@ -4289,13 +4294,13 @@ var _steplize = __webpack_require__(8);
 
 var _steplize2 = _interopRequireDefault(_steplize);
 
-var _scalelize = __webpack_require__(136);
+var _scalelize = __webpack_require__(137);
 
-var _move = __webpack_require__(137);
+var _move = __webpack_require__(138);
 
 var _move2 = _interopRequireDefault(_move);
 
-var _delete = __webpack_require__(139);
+var _delete = __webpack_require__(140);
 
 var _delete2 = _interopRequireDefault(_delete);
 
@@ -4828,7 +4833,7 @@ var _matchArc = __webpack_require__(135);
 
 var _matchArc2 = _interopRequireDefault(_matchArc);
 
-var _matchImage = __webpack_require__(140);
+var _matchImage = __webpack_require__(136);
 
 var _matchImage2 = _interopRequireDefault(_matchImage);
 
@@ -4906,59 +4911,79 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 var matchLine = function matchLine(P, object, eventType, res) {
-    object.path.forEach(function (data, index) {
-        if (index !== 0) {
-            var A = object.path[index - 1];
-            var B = object.path[index];
-            var vAP = [P[0] - A[0], P[1] - A[1]];
-            var lAP = Math.sqrt(Math.pow(vAP[0], 2) + Math.pow(vAP[1], 2));
-            var vAB = [B[0] - A[0], B[1] - A[1]];
-            var lAB = Math.sqrt(Math.pow(vAB[0], 2) + Math.pow(vAB[1], 2));
-            var vPB = [B[0] - P[0], B[1] - P[1]];
-            var lPB = Math.sqrt(Math.pow(vPB[0], 2) + Math.pow(vPB[1], 2));
-
-            var cAPAB = vAP[0] * vAB[0] + vAP[1] * vAB[1];
-            var lAPAB = lAP * lAB;
-            var rPAB = Math.acos(cAPAB / lAPAB);
-
-            var cABPB = vAB[0] * vPB[0] + vAB[1] * vPB[1];
-            var lABPB = lAB * Math.sqrt(Math.pow(vPB[0], 2) + Math.pow(vPB[1], 2));
-            var rPBA = Math.acos(cABPB / lABPB);
-
-            var userSet = object.userSet;
-            var bufferSize = userSet.bufferSize;
-            // mouseOverEventEnable: false,
-            // clickable: true,
-            if (eventType === 'mousemove' && !userSet.mouseOverEventEnable || eventType === 'mousedown' && !userSet.clickable) {
-                // res.length = 0;
-            } else {
-                if ((lPB < bufferSize || lAP < bufferSize) && object.userSet.pointEditable) {
-                    // pointEditable: when pointEditable is true, we push the active point to res
-                    res.push({
-                        type: 'point',
-                        object: object,
-                        projection: lPB < lAP ? B : A,
-                        length: lPB < lAP ? lPB : lAP,
-                        index: lPB < lAP ? index : index - 1
-                    });
-                } else if (rPAB < Math.PI / 2 && rPBA < Math.PI / 2) {
-                    var lAO = Math.cos(rPAB) * lAP;
-                    var pAOAB = lAO / lAB;
-                    var lPO = Math.sin(rPAB) * lAP;
-                    var O = [A[0] + vAB[0] * pAOAB, A[1] + vAB[1] * pAOAB];
-                    if (lPO < bufferSize) {
-                        res.push({
-                            type: 'object',
-                            object: object,
-                            projection: O,
-                            length: lPO
-                        });
-                    }
-                }
-                if (res.length > 0) {}
-            }
+    if (object.path.length === 1) {
+        var B = object.path[0];
+        var vPB = [B[0] - P[0], B[1] - P[1]];
+        var lPB = Math.sqrt(Math.pow(vPB[0], 2) + Math.pow(vPB[1], 2));
+        var bufferSize = object.userSet.bufferSize;
+        if (lPB < bufferSize && object.userSet.pointEditable) {
+            // pointEditable: when pointEditable is true, we push the active point to res
+            res.push({
+                type: 'point',
+                object: object,
+                projection: B,
+                length: lPB,
+                index: 0
+            });
         }
-    });
+    } else {
+        object.path.forEach(function (data, index) {
+            if (index !== 0) {
+                var A = object.path[index - 1];
+                var _B = object.path[index];
+                var vAP = [P[0] - A[0], P[1] - A[1]];
+                var lAP = Math.sqrt(Math.pow(vAP[0], 2) + Math.pow(vAP[1], 2));
+                var vAB = [_B[0] - A[0], _B[1] - A[1]];
+                var lAB = Math.sqrt(Math.pow(vAB[0], 2) + Math.pow(vAB[1], 2));
+                var _vPB = [_B[0] - P[0], _B[1] - P[1]];
+                var _lPB = Math.sqrt(Math.pow(_vPB[0], 2) + Math.pow(_vPB[1], 2));
+
+                var cAPAB = vAP[0] * vAB[0] + vAP[1] * vAB[1];
+                var lAPAB = lAP * lAB;
+                var rPAB = Math.acos(cAPAB / lAPAB);
+
+                var cABPB = vAB[0] * _vPB[0] + vAB[1] * _vPB[1];
+                var lABPB = lAB * Math.sqrt(Math.pow(_vPB[0], 2) + Math.pow(_vPB[1], 2));
+                var rPBA = Math.acos(cABPB / lABPB);
+
+                var userSet = object.userSet;
+                var _bufferSize = userSet.bufferSize;
+                // mouseOverEventEnable: false,
+                // clickable: true,
+                if (eventType === 'mousemove' && !userSet.mouseOverEventEnable || eventType === 'mousedown' && !userSet.clickable) {
+                    // res.length = 0;
+                } else {
+                    if ((_lPB < _bufferSize || lAP < _bufferSize) && object.userSet.pointEditable) {
+                        // pointEditable: when pointEditable is true, we push the active point to res
+                        res.push({
+                            type: 'point',
+                            object: object,
+                            projection: _lPB < lAP ? _B : A,
+                            length: _lPB < lAP ? _lPB : lAP,
+                            index: _lPB < lAP ? index : index - 1
+                        });
+                    } else if (rPAB < Math.PI / 2 && rPBA < Math.PI / 2) {
+                        var lAO = Math.cos(rPAB) * lAP;
+                        var pAOAB = lAO / lAB;
+                        var lPO = Math.sin(rPAB) * lAP;
+                        var O = [A[0] + vAB[0] * pAOAB, A[1] + vAB[1] * pAOAB];
+                        if (lPO < _bufferSize) {
+                            res.push({
+                                type: 'object',
+                                object: object,
+                                projection: O,
+                                length: lPO
+                            });
+                        }
+                    }
+                    if (res.length > 0) {}
+                }
+            }
+        });
+        if (res.length > 0) {
+            console.log('match-line', res);
+        }
+    }
 };
 
 exports.default = matchLine;
@@ -5353,6 +5378,35 @@ exports.default = matchPolygon;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+var matchImage = function matchImage(P, object, eventType, res) {
+    var userSet = object.userSet;
+    var bufferSize = userSet.bufferSize;
+    // console.log(object)
+    var lPC = Math.sqrt(Math.pow(P[0] - object.center[0], 2) + Math.pow(P[1] - object.center[1], 2));
+    if (lPC <= object.width / 2 && lPC <= object.height / 2) {
+        if (eventType === 'mousemove' && !userSet.mouseOverEventEnable || eventType === 'mousedown' && !userSet.clickable) {
+            // res.length = 0;
+        } else {
+            res.push({
+                object: object,
+                length: lPC
+            });
+        }
+    }
+};
+
+exports.default = matchImage;
+
+/***/ }),
+/* 137 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 var scaleOrder = function scaleOrder() {
     var pointsArr = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
     var scaleValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [1, 1];
@@ -5381,7 +5435,7 @@ exports.scaleOrder = scaleOrder;
 exports.scaleReverse = scaleReverse;
 
 /***/ }),
-/* 137 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5403,7 +5457,7 @@ var _boundaryCheck = __webpack_require__(59);
 
 var _boundaryCheck2 = _interopRequireDefault(_boundaryCheck);
 
-var _moveArc = __webpack_require__(138);
+var _moveArc = __webpack_require__(139);
 
 var _moveArc2 = _interopRequireDefault(_moveArc);
 
@@ -5416,12 +5470,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 /* global window */
 
 var move = function move(moveObject, snapShootPath, movedPos, step) {
+    console.log('====move', moveObject.object.Visual.canvas);
     var moveType = moveObject.type;
     var object = moveObject.object;
 
     var moveIndex = null;
 
     var needBoundaryCheck = object.userSet.boundaryCheck;
+    var scale = object.Visual.options.grid.scale || [1, 1];
+    var pixelRatio = scale[0] * (window.devicePixelRatio || 1);
     // boundaryCheck
     // console.log(object.userSet.boundaryCheck);
     switch (object.type) {
@@ -5432,7 +5489,6 @@ var move = function move(moveObject, snapShootPath, movedPos, step) {
             if (moveType === 'point') {
                 moveIndex = moveObject.index;
                 if (needBoundaryCheck) {
-                    var pixelRatio = window.devicePixelRatio || 1;
                     var maxBound = [moveObject.object.Visual.canvas.width / pixelRatio, moveObject.object.Visual.canvas.height / pixelRatio];
                     object.path[moveIndex] = (0, _boundaryCheck2.default)([[snapShootPath[moveIndex][0] + movedPos[0], snapShootPath[moveIndex][1] + movedPos[1]]], maxBound)[0];
                 } else {
@@ -5442,8 +5498,7 @@ var move = function move(moveObject, snapShootPath, movedPos, step) {
                 object.path[moveIndex] = (0, _steplize2.default)(object.path[moveIndex], step);
             } else {
                 if (needBoundaryCheck) {
-                    var _pixelRatio = window.devicePixelRatio || 1;
-                    var _maxBound = [moveObject.object.Visual.canvas.width / _pixelRatio, moveObject.object.Visual.canvas.height / _pixelRatio];
+                    var _maxBound = [moveObject.object.Visual.canvas.width / pixelRatio, moveObject.object.Visual.canvas.height / pixelRatio];
                     object.path = (0, _boundaryCheck2.default)(snapShootPath.map(function (item) {
                         return (0, _steplize2.default)([item[0] + movedPos[0], item[1] + movedPos[1]], step);
                     }), _maxBound);
@@ -5471,8 +5526,8 @@ var move = function move(moveObject, snapShootPath, movedPos, step) {
         case _config2.default.objectTypes.circle:
         case _config2.default.objectTypes.image:
             if (needBoundaryCheck) {
-                var _pixelRatio2 = window.devicePixelRatio || 1;
-                var _maxBound2 = [moveObject.object.Visual.canvas.width / _pixelRatio2, moveObject.object.Visual.canvas.height / _pixelRatio2];
+                var _maxBound2 = [moveObject.object.Visual.canvas.width / pixelRatio, moveObject.object.Visual.canvas.height / pixelRatio];
+
                 object.center = (0, _boundaryCheck2.default)([[snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]]], _maxBound2)[0];
             } else {
                 object.center = [snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]];
@@ -5496,7 +5551,7 @@ var move = function move(moveObject, snapShootPath, movedPos, step) {
 exports.default = move;
 
 /***/ }),
-/* 138 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5733,7 +5788,8 @@ function move(theObject, snapShootPath, movedPos) {
         var needBoundaryCheck = object.userSet.boundaryCheck;
 
         if (needBoundaryCheck) {
-            var pixelRatio = window.devicePixelRatio || 1;
+            var scale = object.Visual.options.grid.scale || [1, 1];
+            var pixelRatio = scale[0] * (window.devicePixelRatio || 1);
             var maxBound = [object.Visual.canvas.width / pixelRatio, object.Visual.canvas.height / pixelRatio];
             object.center = (0, _boundaryCheck2.default)([[snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]]], maxBound)[0];
         } else {
@@ -5759,7 +5815,7 @@ function move(theObject, snapShootPath, movedPos) {
 } /* globals window */
 
 /***/ }),
-/* 139 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5805,35 +5861,6 @@ var deleteObject = function deleteObject(object) {
 };
 
 exports.default = deleteObject;
-
-/***/ }),
-/* 140 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-var matchImage = function matchImage(P, object, eventType, res) {
-    var userSet = object.userSet;
-    var bufferSize = userSet.bufferSize;
-    // console.log(object)
-    var lPC = Math.sqrt(Math.pow(P[0] - object.center[0], 2) + Math.pow(P[1] - object.center[1], 2));
-    if (lPC <= object.width / 2 && lPC <= object.height / 2) {
-        if (eventType === 'mousemove' && !userSet.mouseOverEventEnable || eventType === 'mousedown' && !userSet.clickable) {
-            // res.length = 0;
-        } else {
-            res.push({
-                object: object,
-                length: lPC
-            });
-        }
-    }
-};
-
-exports.default = matchImage;
 
 /***/ })
 /******/ ]);

@@ -173,17 +173,16 @@
             boundaryCheck: true
         });
         
-
         // // Edit disable line
-        var text = 'abc';
-        var tg = v[text.length>1?'text':'text'](text, [400, 260], {
+        var text = '中';
+        // var tg = v[text.length>1?'text':'text'](text, [400, 260], {
+        var tg = v['textGroup'](text, [400, 260], {
             // textRotate: Math.PI * .5,
             // rotate: Math.PI * .5,
             fontSize: 18,
             boundaryCheck: true
         });
         window.tg = tg;
-
 
         // // Edit disable line
         // v.textGroup('你是一个中国人', [
