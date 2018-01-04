@@ -69,6 +69,7 @@ const move = (moveObject, snapShootPath, movedPos, step) => {
             break;
         case Config.objectTypes.text:
         case Config.objectTypes.circle:
+        case Config.objectTypes.image:
             if (needBoundaryCheck) {
                 const pixelRatio = (window.devicePixelRatio || 1);
                 const maxBound = [

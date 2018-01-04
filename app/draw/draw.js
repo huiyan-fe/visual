@@ -8,6 +8,7 @@ import DrawTextGroup from './draw-textgroup';
 import DrawCircle from './draw-circle';
 import DrawPolygon from './draw-polygon';
 import DrawArc from './draw-arc';
+import DrawImage from './draw-image';
 
 let self = null;
 let drawFlag = false;
@@ -52,6 +53,9 @@ function drawFns(obj) {
             break;
         case self.sys.objectTypes.arc:
             DrawArc(self, obj);
+            break;
+        case self.sys.objectTypes.image:
+            DrawImage(self, obj);
             break;
         default:
             console.log('unkonw draw type', obj.type);

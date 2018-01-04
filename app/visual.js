@@ -7,6 +7,7 @@ import VCircle from './object/circle';
 import VPolygon from './object/polygon';
 import VCurve from './object/curve';
 import VArc from './object/arc';
+import VImage from './object/image';
 
 import Draw from './draw/draw';
 import Config from './config/config';
@@ -120,8 +121,12 @@ Visual.prototype.curve = function curve(path = [], options = {}) {
 Visual.prototype.arc = function arc(center, radius, startArc, endArc, config = {}, counterclockwise) {
     return new VArc(this, center, radius, startArc, endArc, config, counterclockwise);
 };
-// draw
 
+Visual.prototype.image = function image(imgDom, center, width, height, options = {}, userSet) {
+    return new VImage(this, imgDom, center, width, height, options, userSet);
+};
+
+// draw
 Visual.prototype.draw = Draw;
 
 global.Visual = Visual;
