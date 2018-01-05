@@ -66,12 +66,12 @@ class Visual {
         this.height = domStyle.height;
         this.canvas.width = parseInt(this.width, 10);
         this.canvas.height = parseInt(this.height, 10);
-        this.canvas.style.height = parseInt(this.width, 10);
-        this.canvas.style.width = parseInt(this.height, 10);
+        this.canvas.style.height = this.height;
+        this.canvas.style.width = this.width;
         const xScale = scale[0];
         const yScale = scale[1];
         this.ctx.scale(pixelRatio * xScale, pixelRatio * yScale);
-        console.log('updateCanvas:',this.canvas);
+        console.log('updateCanvas:', this.canvas);
     }
 
     clean() {

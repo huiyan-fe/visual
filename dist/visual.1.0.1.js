@@ -1609,8 +1609,8 @@ var Visual = function () {
             this.height = domStyle.height;
             this.canvas.width = parseInt(this.width, 10);
             this.canvas.height = parseInt(this.height, 10);
-            this.canvas.style.height = parseInt(this.width, 10);
-            this.canvas.style.width = parseInt(this.height, 10);
+            this.canvas.style.height = this.height;
+            this.canvas.style.width = this.width;
             var xScale = scale[0];
             var yScale = scale[1];
             this.ctx.scale(pixelRatio * xScale, pixelRatio * yScale);
@@ -4246,17 +4246,19 @@ function DrawImage(Visual, obj, options) {
     // const fillStyle = options.fillStyle || '#f00';
     // active
     if (obj.isActive) {
+        var width = obj.width;
+        var height = obj.height;
         ctx.canvas.style.cursor = 'pointer';
-        ctx.lineWidth = 1;
+        ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.strokeStyle = strokeStyle;
-        ctx.moveTo(obj.center[0] - 4, obj.center[1] - 4);
-        ctx.rect(obj.center[0] - 4, obj.center[1] - 4, 8, 8);
+        ctx.moveTo(obj.center[0] - width / 2, obj.center[1] - height / 2);
+        ctx.rect(obj.center[0] - width / 2, obj.center[1] - height / 2, width, height);
         ctx.stroke();
         ctx.beginPath();
         ctx.strokeStyle = '#333';
-        ctx.moveTo(obj.center[0] - 3, obj.center[1] - 3);
-        ctx.rect(obj.center[0] - 3, obj.center[1] - 3, 6, 6);
+        ctx.moveTo(obj.center[0] - width / 2 + 2, obj.center[1] - height / 2 + 2);
+        ctx.rect(obj.center[0] - width / 2 + 2, obj.center[1] - height / 2 + 2, width - 4, height - 4);
         ctx.stroke();
     }
 }
