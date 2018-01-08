@@ -36,13 +36,13 @@ function DrawImage(Visual, obj, options) {
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.strokeStyle = strokeStyle;
-        ctx.moveTo(obj.center[0] - width / 2, obj.center[1] - height / 2);
-        ctx.rect(obj.center[0] - width / 2, obj.center[1] - height / 2, width, height);
+        ctx.moveTo(obj.center[0] - width / 2 - 2, obj.center[1] - height / 2 - 2);
+        ctx.rect(obj.center[0] - width / 2 - 2, obj.center[1] - height / 2 - 2, width + 4, height + 4);
         ctx.stroke();
         ctx.beginPath();
         ctx.strokeStyle = '#333';
-        ctx.moveTo(obj.center[0] - width / 2 + 2, obj.center[1] - height / 2 + 2);
-        ctx.rect(obj.center[0] - width / 2 + 2, obj.center[1] - height / 2 + 2, width - 4, height - 4);
+        ctx.moveTo(obj.center[0] - width / 2, obj.center[1] - height / 2);
+        ctx.rect(obj.center[0] - width / 2, obj.center[1] - height / 2, width, height);
         ctx.stroke();
     }
 }

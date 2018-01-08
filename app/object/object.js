@@ -40,7 +40,6 @@ class VisualObject {
         const currentSysObj = this.Visual.sys.objects.filter(obj => {
             return obj.id === this.id;
         });
-        console.warn(currentSysObj);
 
         // let pathSnapshoot;
         // switch (this.type) {

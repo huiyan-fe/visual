@@ -71,7 +71,7 @@ class Visual {
         const xScale = scale[0];
         const yScale = scale[1];
         this.ctx.scale(pixelRatio * xScale, pixelRatio * yScale);
-        console.log('updateCanvas:', this.canvas);
+        // console.log('updateCanvas:', this.canvas);
     }
 
     clean() {

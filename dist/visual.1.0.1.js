@@ -395,7 +395,6 @@ var VisualObject = function () {
             var currentSysObj = this.Visual.sys.objects.filter(function (obj) {
                 return obj.id === _this3.id;
             });
-            console.warn(currentSysObj);
 
             // let pathSnapshoot;
             // switch (this.type) {
@@ -1475,7 +1474,7 @@ function boundaryLize(points, boundary) {
     var bound = points.map(function (point) {
         return [point[0] + deficitX, point[1] + deficitY];
     });
-    console.log('bound', bound);
+    // console.log('bound', bound);
     return bound;
 }
 
@@ -1614,7 +1613,7 @@ var Visual = function () {
             var xScale = scale[0];
             var yScale = scale[1];
             this.ctx.scale(pixelRatio * xScale, pixelRatio * yScale);
-            console.log('updateCanvas:', this.canvas);
+            // console.log('updateCanvas:', this.canvas);
         }
     }, {
         key: 'clean',
@@ -4252,13 +4251,13 @@ function DrawImage(Visual, obj, options) {
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.strokeStyle = strokeStyle;
-        ctx.moveTo(obj.center[0] - width / 2, obj.center[1] - height / 2);
-        ctx.rect(obj.center[0] - width / 2, obj.center[1] - height / 2, width, height);
+        ctx.moveTo(obj.center[0] - width / 2 - 2, obj.center[1] - height / 2 - 2);
+        ctx.rect(obj.center[0] - width / 2 - 2, obj.center[1] - height / 2 - 2, width + 4, height + 4);
         ctx.stroke();
         ctx.beginPath();
         ctx.strokeStyle = '#333';
-        ctx.moveTo(obj.center[0] - width / 2 + 2, obj.center[1] - height / 2 + 2);
-        ctx.rect(obj.center[0] - width / 2 + 2, obj.center[1] - height / 2 + 2, width - 4, height - 4);
+        ctx.moveTo(obj.center[0] - width / 2, obj.center[1] - height / 2);
+        ctx.rect(obj.center[0] - width / 2, obj.center[1] - height / 2, width, height);
         ctx.stroke();
     }
 }
@@ -4983,7 +4982,7 @@ var matchLine = function matchLine(P, object, eventType, res) {
             }
         });
         if (res.length > 0) {
-            console.log('match-line', res);
+            // console.log('match-line', res);
         }
     }
 };
@@ -5472,7 +5471,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 /* global window */
 
 var move = function move(moveObject, snapShootPath, movedPos, step) {
-    console.log('====move', moveObject.object.Visual.canvas);
+    // console.log('====move', moveObject.object.Visual.canvas);
     var moveType = moveObject.type;
     var object = moveObject.object;
 
