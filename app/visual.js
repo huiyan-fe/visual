@@ -64,8 +64,8 @@ class Visual {
         const domStyle = getComputedStyle(this.dom);
         this.width = domStyle.width;
         this.height = domStyle.height;
-        this.canvas.width = parseInt(this.width, 10);
-        this.canvas.height = parseInt(this.height, 10);
+        this.canvas.width = parseInt(this.width, 10) * pixelRatio;
+        this.canvas.height = parseInt(this.height, 10) * pixelRatio;
         this.canvas.style.height = this.height;
         this.canvas.style.width = this.width;
         const xScale = scale[0];
