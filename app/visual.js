@@ -125,8 +125,8 @@ Visual.prototype.arc = function arc(center, radius, startArc, endArc, config = {
     return new VArc(this, center, radius, startArc, endArc, config, counterclockwise);
 };
 
-Visual.prototype.image = function image(imgDom, center, width, height, options = {}, userSet) {
-    return new VImage(this, imgDom, center, width, height, options, userSet);
+Visual.prototype.image = function image(imgDom, center, width, height, rotate = 0, options = {}, userSet) {
+    return new VImage(this, imgDom, center, width, height, rotate, options, userSet);
 };
 
 // draw

@@ -5,7 +5,7 @@ import steplizePoint from '../tools/steplize';
 
 
 class Image extends VisualObject {
-    constructor(Visual, image, centerParam, width, height, options, userSet) {
+    constructor(Visual, image, centerParam, width, height, rotate, options, userSet) {
         super(options);
         this.Visual = Visual;
         this.id = Symbol('image');
@@ -18,6 +18,7 @@ class Image extends VisualObject {
         this.center = steplizePoint(center, this.Visual.options.grid.step);
         this.width = width;
         this.height = height;
+        this.rotate = rotate;
         this.options = options;
 
         this.Visual.sys.objects.push(this);

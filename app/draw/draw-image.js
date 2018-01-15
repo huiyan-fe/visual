@@ -6,8 +6,11 @@ function DrawImage(Visual, obj, options) {
 
     const imgcenter = obj.center;
     const image = obj.image;
-    const sx = imgcenter[0] - (obj.width / 2);
-    const sy = imgcenter[1] - (obj.height / 2);
+    const sx = -(obj.width / 2);
+    const sy = -(obj.height / 2);
+    const angel = (-obj.rotate * Math.PI / 180) || 0;
+    ctx.translate(imgcenter[0], imgcenter[1]);
+    ctx.rotate(angel);
     ctx.drawImage(image, sx, sy, obj.width, obj.height);
     ctx.fill();
     if (obj.options.border) {
@@ -34,16 +37,24 @@ function DrawImage(Visual, obj, options) {
         let height = obj.height;
         ctx.canvas.style.cursor = 'pointer';
         ctx.lineWidth = 2;
+
         ctx.beginPath();
+        ctx.save();
+        ctx.translate(imgcenter[0], imgcenter[1]);
+        ctx.rotate(angel);
+
         ctx.strokeStyle = strokeStyle;
-        ctx.moveTo(obj.center[0] - width / 2 - 2, obj.center[1] - height / 2 - 2);
-        ctx.rect(obj.center[0] - width / 2 - 2, obj.center[1] - height / 2 - 2, width + 4, height + 4);
+
+        ctx.moveTo(-width / 2 - 2, -height / 2 - 2);
+        ctx.rect(-width / 2 - 2, -height / 2 - 2, width + 4, height + 4);
         ctx.stroke();
         ctx.beginPath();
         ctx.strokeStyle = '#333';
-        ctx.moveTo(obj.center[0] - width / 2, obj.center[1] - height / 2);
-        ctx.rect(obj.center[0] - width / 2, obj.center[1] - height / 2, width, height);
+        ctx.moveTo(-width / 2, -height / 2);
+        ctx.rect(-width / 2, -height / 2, width, height);
         ctx.stroke();
+
+        ctx.restore();
     }
 }
 

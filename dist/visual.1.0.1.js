@@ -1701,10 +1701,11 @@ Visual.prototype.arc = function arc(center, radius, startArc, endArc) {
 };
 
 Visual.prototype.image = function image(imgDom, center, width, height) {
-    var options = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
-    var userSet = arguments[5];
+    var rotate = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
+    var options = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : {};
+    var userSet = arguments[6];
 
-    return new _image2.default(this, imgDom, center, width, height, options, userSet);
+    return new _image2.default(this, imgDom, center, width, height, rotate, options, userSet);
 };
 
 // draw
@@ -3488,7 +3489,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var Image = function (_VisualObject) {
     (0, _inherits3.default)(Image, _VisualObject);
 
-    function Image(Visual, image, centerParam, width, height, options, userSet) {
+    function Image(Visual, image, centerParam, width, height, rotate, options, userSet) {
         (0, _classCallCheck3.default)(this, Image);
 
         var _this = (0, _possibleConstructorReturn3.default)(this, (Image.__proto__ || (0, _getPrototypeOf2.default)(Image)).call(this, options));
@@ -3504,6 +3505,7 @@ var Image = function (_VisualObject) {
         _this.center = (0, _steplize2.default)(center, _this.Visual.options.grid.step);
         _this.width = width;
         _this.height = height;
+        _this.rotate = rotate;
         _this.options = options;
 
         _this.Visual.sys.objects.push(_this);
@@ -4221,8 +4223,11 @@ function DrawImage(Visual, obj, options) {
 
     var imgcenter = obj.center;
     var image = obj.image;
-    var sx = imgcenter[0] - obj.width / 2;
-    var sy = imgcenter[1] - obj.height / 2;
+    var sx = -(obj.width / 2);
+    var sy = -(obj.height / 2);
+    var angel = -obj.rotate * Math.PI / 180 || 0;
+    ctx.translate(imgcenter[0], imgcenter[1]);
+    ctx.rotate(angel);
     ctx.drawImage(image, sx, sy, obj.width, obj.height);
     ctx.fill();
     if (obj.options.border) {
@@ -4249,16 +4254,24 @@ function DrawImage(Visual, obj, options) {
         var height = obj.height;
         ctx.canvas.style.cursor = 'pointer';
         ctx.lineWidth = 2;
+
         ctx.beginPath();
+        ctx.save();
+        ctx.translate(imgcenter[0], imgcenter[1]);
+        ctx.rotate(angel);
+
         ctx.strokeStyle = strokeStyle;
-        ctx.moveTo(obj.center[0] - width / 2 - 2, obj.center[1] - height / 2 - 2);
-        ctx.rect(obj.center[0] - width / 2 - 2, obj.center[1] - height / 2 - 2, width + 4, height + 4);
+
+        ctx.moveTo(-width / 2 - 2, -height / 2 - 2);
+        ctx.rect(-width / 2 - 2, -height / 2 - 2, width + 4, height + 4);
         ctx.stroke();
         ctx.beginPath();
         ctx.strokeStyle = '#333';
-        ctx.moveTo(obj.center[0] - width / 2, obj.center[1] - height / 2);
-        ctx.rect(obj.center[0] - width / 2, obj.center[1] - height / 2, width, height);
+        ctx.moveTo(-width / 2, -height / 2);
+        ctx.rect(-width / 2, -height / 2, width, height);
         ctx.stroke();
+
+        ctx.restore();
     }
 }
 
