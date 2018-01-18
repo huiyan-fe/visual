@@ -4449,6 +4449,9 @@ var Event = function Event(self) {
                 self.sys.pickupedObjs.forEach(function (pos) {
                     var snapShootPath = pos.pathSnapshoot;
                     var moveObject = pos.origin;
+                    if (events.ctrl) {
+                        moveObject.type = 'object';
+                    }
                     if (moveObject.object.userSet.dragable) {
                         (0, _move2.default)(moveObject, snapShootPath, movedPos, step);
                     }
@@ -4532,10 +4535,18 @@ var Event = function Event(self) {
     });
 
     window.addEventListener('keydown', function (e) {
+        // e.preventDefault();
+        e.stopPropagation();
+
         if (e.keyCode == 16) {
             // shift
             events.shift = true;
         }
+        if (e.keyCode == 17) {
+            // ctrl
+            events.ctrl = true;
+        }
+
         if (self.sys.pickupedObjs.length > 0) {
             var order = 'update';
             var x = 0;

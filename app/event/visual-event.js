@@ -2,7 +2,9 @@
 import Config from '../config/config';
 import MatchTool from '../match/match';
 import steplizePoint from '../tools/steplize';
-import { scaleReverse } from '../tools/scalelize';
+import {
+    scaleReverse
+} from '../tools/scalelize';
 import move from './move';
 import deleteObj from './delete';
 
@@ -130,6 +132,9 @@ const Event = self => {
                 self.sys.pickupedObjs.forEach(pos => {
                     const snapShootPath = pos.pathSnapshoot;
                     const moveObject = pos.origin;
+                    if (events.ctrl) {
+                        moveObject.type = 'object';
+                    }
                     if (moveObject.object.userSet.dragable) {
                         move(moveObject, snapShootPath, movedPos, step);
                     }
@@ -213,10 +218,18 @@ const Event = self => {
     });
 
     window.addEventListener('keydown', e => {
+        // e.preventDefault();
+        e.stopPropagation();
+
         if (e.keyCode == 16) {
             // shift
             events.shift = true;
         }
+        if (e.keyCode == 17) {
+            // ctrl
+            events.ctrl = true;
+        }
+
         if (self.sys.pickupedObjs.length > 0) {
             let order = 'update';
             let x = 0;
