@@ -4329,7 +4329,8 @@ var Event = function Event(self) {
     var step = self.options.grid.step;
     var events = {
         ctrl: false,
-        shift: false
+        shift: false,
+        alt: false
     };
 
     var uniqueArr = function uniqueArr(arr) {
@@ -4449,7 +4450,7 @@ var Event = function Event(self) {
                 self.sys.pickupedObjs.forEach(function (pos) {
                     var snapShootPath = pos.pathSnapshoot;
                     var moveObject = pos.origin;
-                    if (events.ctrl) {
+                    if (events.ctrl || events.alt) {
                         moveObject.type = 'object';
                     }
                     if (moveObject.object.userSet.dragable) {
@@ -4522,12 +4523,13 @@ var Event = function Event(self) {
     window.addEventListener('keyup', function (e) {
         switch (e.keyCode) {
             case 16:
-                // shift
                 events.shift = false;
                 break;
             case 17:
-                // ctrl
                 events.ctrl = false;
+                break;
+            case 18:
+                events.alt = false;
                 break;
             default:
                 break;
@@ -4539,12 +4541,13 @@ var Event = function Event(self) {
         e.stopPropagation();
 
         if (e.keyCode == 16) {
-            // shift
             events.shift = true;
         }
         if (e.keyCode == 17) {
-            // ctrl
             events.ctrl = true;
+        }
+        if (e.keyCode == 18) {
+            events.alt = true;
         }
 
         if (self.sys.pickupedObjs.length > 0) {
@@ -4582,12 +4585,13 @@ var Event = function Event(self) {
                     // update active index  & reget the active
                     break;
                 case 16:
-                    // shift
                     events.shift = true;
                     break;
                 case 17:
-                    // ctrl
                     events.ctrl = true;
+                    break;
+                case 18:
+                    events.alt = true;
                     break;
                 case 27:
                     // esc
