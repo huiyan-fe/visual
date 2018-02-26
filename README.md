@@ -143,6 +143,7 @@ visua.textGroup('TextGroup with path points', [
     lineWidth: 5,
     border: true
 })
+```
 
 #### 2.4 Image(imgDom, center, width, height, rotate);
 
