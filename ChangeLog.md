@@ -16,3 +16,7 @@
 4.  支持Shift+Tab选择上一个控制点
 5.  finish事件新增type字段（move：'移动',deletePoint:'删除点')
 
+## 2018/01/18
+
+1.  支持ctrl + 点击选中物体上一点，拖动整个visual Object。
+

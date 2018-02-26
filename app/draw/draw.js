@@ -8,6 +8,7 @@ import DrawTextGroup from './draw-textgroup';
 import DrawCircle from './draw-circle';
 import DrawPolygon from './draw-polygon';
 import DrawArc from './draw-arc';
+import DrawImage from './draw-image';
 
 let self = null;
 let drawFlag = false;
@@ -26,27 +27,35 @@ function drawFns(obj) {
         ctx[key] = obj.options[key] || basicOptions[key];
     });
     //
+    const options = {
+        strokeRadius: 14,
+        strokeStyle: 'rgba(255, 0, 0, 1)',
+        fillStyle: '#f00'
+    };
     switch (obj.type) {
         case self.sys.objectTypes.line:
-            DrawLine(self, obj);
+            DrawLine(self, obj, options);
             break;
         case self.sys.objectTypes.curve:
             DrawCurve(self, obj);
             break;
         case self.sys.objectTypes.text:
-            DrawText(self, obj);
+            DrawText(self, obj, options);
             break;
         case self.sys.objectTypes.textGroup:
-            DrawTextGroup(self, obj);
+            DrawTextGroup(self, obj, options);
             break;
         case self.sys.objectTypes.circle:
-            DrawCircle(self, obj);
+            DrawCircle(self, obj, options);
             break;
         case self.sys.objectTypes.polygon:
-            DrawPolygon(self, obj);
+            DrawPolygon(self, obj, options);
             break;
         case self.sys.objectTypes.arc:
             DrawArc(self, obj);
+            break;
+        case self.sys.objectTypes.image:
+            DrawImage(self, obj);
             break;
         default:
             console.log('unkonw draw type', obj.type);

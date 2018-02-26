@@ -7,6 +7,7 @@ import VCircle from './object/circle';
 import VPolygon from './object/polygon';
 import VCurve from './object/curve';
 import VArc from './object/arc';
+import VImage from './object/image';
 
 import Draw from './draw/draw';
 import Config from './config/config';
@@ -57,17 +58,20 @@ class Visual {
     }
 
     [updateCanvas]() {
+        const scale = this.options.grid.scale || [1, 1];
+        // const pixelRatio = scale[0] * (window.devicePixelRatio || 1);
         const pixelRatio = (window.devicePixelRatio || 1);
         const domStyle = getComputedStyle(this.dom);
         this.width = domStyle.width;
         this.height = domStyle.height;
         this.canvas.width = parseInt(this.width, 10) * pixelRatio;
         this.canvas.height = parseInt(this.height, 10) * pixelRatio;
-        this.canvas.style.width = this.width;
         this.canvas.style.height = this.height;
-        const xScale = this.options.grid.scale[0];
-        const yScale = this.options.grid.scale[1];
+        this.canvas.style.width = this.width;
+        const xScale = scale[0];
+        const yScale = scale[1];
         this.ctx.scale(pixelRatio * xScale, pixelRatio * yScale);
+        // console.log('updateCanvas:', this.canvas);
     }
 
     clean() {
@@ -117,11 +121,15 @@ Visual.prototype.curve = function curve(path = [], options = {}) {
     return new VCurve(this, path, options);
 };
 
-Visual.prototype.arc = function arc(center, radius, startArc, endArc, config = {}) {
-    return new VArc(this, center, radius, startArc, endArc, config);
+Visual.prototype.arc = function arc(center, radius, startArc, endArc, config = {}, counterclockwise) {
+    return new VArc(this, center, radius, startArc, endArc, config, counterclockwise);
 };
-// draw
 
+Visual.prototype.image = function image(imgDom, center, width, height, rotate = 0, options = {}, userSet) {
+    return new VImage(this, imgDom, center, width, height, rotate, options, userSet);
+};
+
+// draw
 Visual.prototype.draw = Draw;
 
 global.Visual = Visual;

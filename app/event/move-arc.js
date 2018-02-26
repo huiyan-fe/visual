@@ -7,6 +7,9 @@ export default function move(theObject, snapShootPath, movedPos) {
     const subtype = theObject.subtype;
     const center = snapShootPath;
     const radius = object.radius;
+    const counterclockwise = object.counterclockwise;
+    const subOrAdd = counterclockwise ? -1 : 1;
+
     if (type === 'point') {
         const mouse = [theObject.point[0] + movedPos[0], theObject.point[1] + movedPos[1]];
         if (subtype === 'start' || subtype === 'end') {
@@ -29,8 +32,8 @@ export default function move(theObject, snapShootPath, movedPos) {
                 useStart -= Math.PI * 2;
             }
             object.sys.centerPoint = [
-                center[0] + (radius * Math.cos((useStart + object.endArc) / 2)),
-                center[1] + (radius * Math.sin((useStart + object.endArc) / 2)),
+                center[0] + (subOrAdd * radius * Math.cos((useStart + object.endArc) / 2)),
+                center[1] + (subOrAdd * radius * Math.sin((useStart + object.endArc) / 2)),
             ];
         } else if (subtype === 'center') {
             // console.log(object.center, center);
@@ -57,7 +60,7 @@ export default function move(theObject, snapShootPath, movedPos) {
                 ),
             );
             // console.warn(arcVendToStartPointTOvAxleX)
-                // console.warn(startPoint,arcVendToStartPointTOvAxleX / (Math.PI / 180));
+            // console.warn(startPoint,arcVendToStartPointTOvAxleX / (Math.PI / 180));
 
             // const vCenterToMouse = [mouse[0] - center[0], mouse[1] - center[1]];
 
@@ -167,9 +170,9 @@ export default function move(theObject, snapShootPath, movedPos) {
                 ],
                 centerPoint: [
                     object.center[0] +
-                    (object.radius * Math.cos(useStart + (object.endArc - useStart) / 2)),
+                    (subOrAdd * object.radius * Math.cos(useStart + (object.endArc - useStart) / 2)),
                     object.center[1] +
-                    (object.radius * Math.sin(useStart + (object.endArc - useStart) / 2)),
+                    (subOrAdd * object.radius * Math.sin(useStart + (object.endArc - useStart) / 2)),
                 ],
             };
 
@@ -253,7 +256,8 @@ export default function move(theObject, snapShootPath, movedPos) {
         const needBoundaryCheck = object.userSet.boundaryCheck;
 
         if (needBoundaryCheck) {
-            const pixelRatio = (window.devicePixelRatio || 1);
+            const scale = object.Visual.options.grid.scale || [1, 1];
+            const pixelRatio = scale[0] * (window.devicePixelRatio || 1);
             const maxBound = [
                 object.Visual.canvas.width / pixelRatio,
                 object.Visual.canvas.height / pixelRatio,
@@ -293,9 +297,9 @@ export default function move(theObject, snapShootPath, movedPos) {
             ],
             centerPoint: [
                 object.center[0] +
-                (object.radius * Math.cos(useStart + (object.endArc - useStart) / 2)),
+                (subOrAdd * object.radius * Math.cos(useStart + (object.endArc - useStart) / 2)),
                 object.center[1] +
-                (object.radius * Math.sin(useStart + (object.endArc - useStart) / 2)),
+                (subOrAdd * object.radius * Math.sin(useStart + (object.endArc - useStart) / 2)),
             ],
         };
     }

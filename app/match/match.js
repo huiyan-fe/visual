@@ -5,6 +5,7 @@ import matchText from './match-text';
 import matchCircle from './match-circle';
 import matchPolygon from './match-polygon';
 import matchArc from './match-arc';
+import matchImage from './match-image';
 
 const MathTool = {
     // eventType : mousedown/mousemove/keydown
@@ -38,6 +39,9 @@ const MathTool = {
                     break;
                 case Config.objectTypes.arc:
                     matchArc(P, object, eventType, res);
+                    break;
+                case Config.objectTypes.image:
+                    matchImage(P, object, eventType, res);
                     break;
                 default:
                     break;

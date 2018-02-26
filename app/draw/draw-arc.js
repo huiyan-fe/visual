@@ -3,8 +3,9 @@ function DrawLine(Visual, obj) {
 
     ctx.beginPath();
     ctx.save();
+    const counterclockwise = obj.counterclockwise || false; // 默认顺时针
 
-    ctx.arc(obj.center[0], obj.center[1], obj.radius, obj.startArc, obj.endArc);
+    ctx.arc(obj.center[0], obj.center[1], obj.radius, obj.startArc, obj.endArc, counterclockwise);
     ctx.stroke();
     // ctx.fill();
     // if (obj.options.border) {
@@ -12,17 +13,15 @@ function DrawLine(Visual, obj) {
     // }
     // ctx.restore();
 
-    // console.log(obj.sys.startPoint, obj.sys.endPoint);
-    // console.log(obj.isActive)
     if (obj.isActive) {
         ctx.canvas.style.cursor = 'pointer';
         // draw line
         ctx.beginPath();
-        ctx.arc(obj.center[0], obj.center[1], obj.radius, obj.startArc, obj.endArc);
+        ctx.arc(obj.center[0], obj.center[1], obj.radius, obj.startArc, obj.endArc, counterclockwise);
         ctx.strokeStyle = '#d6d6d6';
         ctx.stroke();
         ctx.beginPath();
-        ctx.arc(obj.center[0] - 1, obj.center[1] - 1, obj.radius, obj.startArc, obj.endArc);
+        ctx.arc(obj.center[0] - 1, obj.center[1] - 1, obj.radius, obj.startArc, obj.endArc, counterclockwise);
         ctx.strokeStyle = '#333';
         ctx.stroke();
 
@@ -43,8 +42,6 @@ function DrawLine(Visual, obj) {
 
         // if active is handle point
         if (obj.isActive.type === 'point' && obj.isActive.length < 10) {
-            // console.log(obj.isActive.subtype)
-            // console.warn(obj)
             const point = obj.sys[`${obj.isActive.subtype}Point`];
             ctx.beginPath();
             ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
@@ -56,7 +53,7 @@ function DrawLine(Visual, obj) {
         ctx.beginPath();
         // ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
         ctx.strokeStyle = '#eee';
-        ctx.arc(obj.center[0], obj.center[1], 3, 0, Math.PI * 2);
+        ctx.arc(obj.center[0], obj.center[1], 3, 0, Math.PI * 2, counterclockwise);
         ctx.stroke();
     }
 }

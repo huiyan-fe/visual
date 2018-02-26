@@ -143,7 +143,18 @@ visua.textGroup('TextGroup with path points', [
     lineWidth: 5,
     border: true
 })
-```
+
+#### 2.4 Image(imgDom, center, width, height, rotate);
+
+|参数|类型|说明|
+|:---|:---|:---|
+| **imgDom** | `Dom` | img的dom对象
+| **center** | `Array` | 图片中心点
+| **width** | `Number` | 图片宽度
+| **height** | `Number` | 图片高度
+| **rotate** | `Number` | 顺时针旋转角度
+
+简单示例:见demo
 
 #### 2.5 config
 

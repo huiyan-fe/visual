@@ -33,14 +33,35 @@ class VisualObject {
         // line.set('disableDrag',true)
         this.userSet = this.userSet || {};
         this.userSet[type] = value;
+        this.Visual.draw();
     }
 
     active() {
-        const currentSysObj = this.object.Visual.sys.objects.filter(obj => {
+        const currentSysObj = this.Visual.sys.objects.filter(obj => {
             return obj.id === this.id;
         });
-        console.warn(currentSysObj)
+
+        // let pathSnapshoot;
+        // switch (this.type) {
+        //     case Config.objectTypes.line:
+        //     case Config.objectTypes.polygon:
+        //     case Config.objectTypes.textGroup:
+        //         pathSnapshoot = this.path;
+        //         break;
+        //     case Config.objectTypes.text:
+        //     case Config.objectTypes.circle:
+        //         pathSnapshoot = this.center;
+        //         break;
+        //     default: break;
+        // }
+        // pathSnapshoot = JSON.parse(JSON.stringify(pathSnapshoot));
+
+        // this.Visual.sys.pickupedObjs.push({
+        //     pathSnapshoot,
+        //     origin: this,
+        // });
         currentSysObj[0]['isActive'] = { data: currentSysObj[0] };
+        this.Visual.draw();
     }
 
     unbind(type, fn) {

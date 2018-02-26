@@ -1,0 +1,85 @@
+<html>
+
+<head>
+    <title>Demo of visual</title>
+    <meta charset="utf-8" />
+    <style>
+        #content {
+            margin-top: 60px;
+        }
+    </style>
+    <script src="../dist/visual.1.0.1.js"></script>
+    <script src="libs/stats.min.js"></script>
+</head>
+
+<body>
+    <p>要使用的图像：</p>
+    <img id="tulip" src="./img/flower.jpg" alt="The Tulip" />
+    <div id="content" style="width:800px; height: 500px; border:1px solid #ccc;"></div>
+    <script>
+        let dom = document.getElementById('content');
+        let v = new Visual(dom, {
+            grid: {
+                step: 1,
+                scale: [1, 1]
+            }
+        });
+
+
+
+        // const imgDom = document.getElementById("tulip");
+        // const imgDom = document.createElement("image");
+        const src = 'http://sandbox.runjs.cn/uploads/rs/54/bvxwdunk/4.jpg';
+        let center = [100, 100];
+        let width = 80;
+        let height = 60;
+        let rotate = 10;
+        preImage(src, (img) => {
+            console.log('image onload', img);
+            // let image1 = v.image(img, center, width, height, 0);
+            let image = v.image(img, center, width, height, rotate);
+            // window.image = image;
+            // image.on('finish', (o) => {
+            //     console.log('finish image');
+            //     console.log(o);
+            // })
+        })
+
+
+        function preImage(url, callback) {
+            var img = new Image(); //创建一个Image对象，实现图片的预下载  
+            img.src = url;
+
+            if (img.complete) { // 如果图片已经存在于浏览器缓存，直接调用回调函数  
+                console.log('complete')
+                callback(img);
+                return; // 直接返回，不用再处理onload事件  
+            }
+
+            img.onload = () => { //图片下载完毕时异步调用callback函数。 
+                console.log('onload')
+                callback(img); //将回调函数的this替换为Image对象  
+            };
+        }
+
+
+
+        v.circle(10, [200, 200], {
+            fillStyle: 'yellow',
+            strokeStyle: 'skyblue',
+            lineWidth: 5,
+            border: true
+        });
+    </script>
+
+    <script>
+        // var stats = new Stats();
+        // document.body.appendChild(stats.dom);
+        // requestAnimationFrame(function loop() {
+        //     stats.update();
+        //     requestAnimationFrame(loop)
+        // });
+    </script>
+</body>
+
+</html>

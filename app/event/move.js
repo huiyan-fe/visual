@@ -11,12 +11,15 @@ import boundaryLize from '../tools/boundary-check';
 import Arc from './move-arc';
 
 const move = (moveObject, snapShootPath, movedPos, step) => {
+    // console.log('====move', moveObject.object.Visual.canvas);
     const moveType = moveObject.type;
     const object = moveObject.object;
 
     let moveIndex = null;
 
     const needBoundaryCheck = object.userSet.boundaryCheck;
+    const scale = object.Visual.options.grid.scale || [1, 1];
+    const pixelRatio = scale[0] * (window.devicePixelRatio || 1);
     // boundaryCheck
     // console.log(object.userSet.boundaryCheck);
     switch (object.type) {
@@ -27,7 +30,6 @@ const move = (moveObject, snapShootPath, movedPos, step) => {
             if (moveType === 'point') {
                 moveIndex = moveObject.index;
                 if (needBoundaryCheck) {
-                    const pixelRatio = (window.devicePixelRatio || 1);
                     const maxBound = [moveObject.object.Visual.canvas.width / pixelRatio, moveObject.object.Visual.canvas.height / pixelRatio];
                     object.path[moveIndex] = boundaryLize([
                         [
@@ -42,7 +44,6 @@ const move = (moveObject, snapShootPath, movedPos, step) => {
                 object.path[moveIndex] = steplizePoint(object.path[moveIndex], step);
             } else {
                 if (needBoundaryCheck) {
-                    const pixelRatio = (window.devicePixelRatio || 1);
                     const maxBound = [moveObject.object.Visual.canvas.width / pixelRatio, moveObject.object.Visual.canvas.height / pixelRatio];
                     object.path = boundaryLize(snapShootPath.map(
                         item => steplizePoint([item[0] + movedPos[0], item[1] + movedPos[1]], step),
@@ -69,12 +70,13 @@ const move = (moveObject, snapShootPath, movedPos, step) => {
             break;
         case Config.objectTypes.text:
         case Config.objectTypes.circle:
+        case Config.objectTypes.image:
             if (needBoundaryCheck) {
-                const pixelRatio = (window.devicePixelRatio || 1);
                 const maxBound = [
                     moveObject.object.Visual.canvas.width / pixelRatio,
                     moveObject.object.Visual.canvas.height / pixelRatio,
                 ];
+
                 object.center = boundaryLize([
                     [
                         snapShootPath[0] + movedPos[0],

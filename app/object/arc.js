@@ -1,7 +1,7 @@
 import VisualObject from './object';
 
 class Arc extends VisualObject {
-    constructor(Visual, center, radius, startArc, endArc, options) {
+    constructor(Visual, center, radius, startArc, endArc, options, counterclockwise) {
         super(options);
         this.Visual = Visual;
         this.id = Symbol('arc');
@@ -10,6 +10,7 @@ class Arc extends VisualObject {
         this.radius = radius;
         this.startArc = startArc;
         this.endArc = endArc;
+        this.counterclockwise = counterclockwise;
 
         const outBox = {
             xMin: center[0] - radius - 20,
@@ -26,6 +27,7 @@ class Arc extends VisualObject {
         if (startArc > endArc) {
             useStart -= Math.PI * 2;
         }
+        const subOrAdd = counterclockwise ? -1 : 1;
         this.sys = {
             outBox,
             startPoint: [
@@ -37,8 +39,8 @@ class Arc extends VisualObject {
                 center[1] + (radius * Math.sin(endArc)),
             ],
             centerPoint: [
-                center[0] + (radius * Math.cos((useStart + endArc) / 2)),
-                center[1] + (radius * Math.sin((useStart + endArc) / 2)),
+                center[0] + (subOrAdd * radius * Math.cos((useStart + endArc) / 2)),
+                center[1] + (subOrAdd * radius * Math.sin((useStart + endArc) / 2)),
             ],
         };
 
