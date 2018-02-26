@@ -4,7 +4,7 @@
 
 欢迎来到Visual的世界，Visual是一款基于canvas的可视化**底层工具**，支持点、线、面、文字多边形的拖拽，选取等操作。
 
-可以通过简单的Demo了解什么是Visual [Visual Demo](https://huiyan-fe.github.io/visual/demo/index.v.1.0.1.html)
+可以通过简单的Demo了解什么是Visual [Visual Demo](https://zmofei.github.io/visual/demo/index.v.1.0.1.html)
 
 
 ## API
@@ -143,6 +143,7 @@ visua.textGroup('TextGroup with path points', [
     lineWidth: 5,
     border: true
 })
+```
 
 #### 2.4 Image(imgDom, center, width, height, rotate);
 
