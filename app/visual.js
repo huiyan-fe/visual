@@ -82,6 +82,8 @@ class Visual {
             this.box.style.overflow = 'scroll';
         } else {
             this.box.style.overflow = 'hidden';
+            this.box.scrollTop = 0;
+            this.box.scrollLeft = 0;
         }
 
         const xScale = scale[0];
