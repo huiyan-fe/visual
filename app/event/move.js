@@ -30,7 +30,10 @@ const move = (moveObject, snapShootPath, movedPos, step) => {
             if (moveType === 'point') {
                 moveIndex = moveObject.index;
                 if (needBoundaryCheck) {
-                    const maxBound = [moveObject.object.Visual.canvas.width / pixelRatio, moveObject.object.Visual.canvas.height / pixelRatio];
+                    const maxBound = [
+                        moveObject.object.Visual.canvas.width / pixelRatio,
+                        moveObject.object.Visual.canvas.height / pixelRatio,
+                    ];
                     object.path[moveIndex] = boundaryLize([
                         [
                             snapShootPath[moveIndex][0] + movedPos[0],
@@ -44,7 +47,10 @@ const move = (moveObject, snapShootPath, movedPos, step) => {
                 object.path[moveIndex] = steplizePoint(object.path[moveIndex], step);
             } else {
                 if (needBoundaryCheck) {
-                    const maxBound = [moveObject.object.Visual.canvas.width / pixelRatio, moveObject.object.Visual.canvas.height / pixelRatio];
+                    const maxBound = [
+                        moveObject.object.Visual.canvas.width / pixelRatio,
+                        moveObject.object.Visual.canvas.height / pixelRatio,
+                    ];
                     object.path = boundaryLize(snapShootPath.map(
                         item => steplizePoint([item[0] + movedPos[0], item[1] + movedPos[1]], step),
                     ), maxBound);

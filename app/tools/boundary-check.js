@@ -1,5 +1,4 @@
 function boundaryLize(points, boundary) {
-    // console.log(boundary)
     let deficitXmin = 0;
     let deficitYmin = 0;
 

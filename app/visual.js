@@ -46,6 +46,10 @@ class Visual {
 
         //
         this.dom = dom;
+        this.box = document.createElement('div');
+        this.box.style.overflow = 'hidden';
+        this.dom.appendChild(this.box);
+
         this[initCanvas]();
         Event(this);
     }
@@ -53,25 +57,44 @@ class Visual {
     [initCanvas]() {
         this.canvas = document.createElement('canvas');
         this.ctx = this.canvas.getContext('2d');
+        this.ratio = (window.devicePixelRatio || 1);
+        this.initScale = this.options.grid.scale || [1, 1];
+        this.box.appendChild(this.canvas);
         this[updateCanvas]();
-        this.dom.appendChild(this.canvas);
     }
 
     [updateCanvas]() {
         const scale = this.options.grid.scale || [1, 1];
-        // const pixelRatio = scale[0] * (window.devicePixelRatio || 1);
-        const pixelRatio = (window.devicePixelRatio || 1);
+        const pixelRatio = this.ratio;
         const domStyle = getComputedStyle(this.dom);
         this.width = domStyle.width;
         this.height = domStyle.height;
-        this.canvas.width = parseInt(this.width, 10) * pixelRatio;
-        this.canvas.height = parseInt(this.height, 10) * pixelRatio;
-        this.canvas.style.height = this.height;
-        this.canvas.style.width = this.width;
+        this.canvas.width = parseInt(this.width, 10) * pixelRatio * Math.max(1, scale[0]);
+        this.canvas.height = parseInt(this.height, 10) * pixelRatio * Math.max(1, scale[1]);
+        this.canvas.style.height = `${parseInt(this.height, 10) * Math.max(1, scale[1])}px`;
+        this.canvas.style.width = `${parseInt(this.width, 10) * Math.max(1, scale[0])}px`;
+
+        this.box.style.height = `${parseInt(this.height, 10) * Math.min(1, scale[1])}px`;
+        this.box.style.width = `${parseInt(this.width, 10) * Math.min(1, scale[0])}px`;
+
+
+        if (scale[1] > 1 || scale[0] > 1) {
+            this.box.style.overflow = 'scroll';
+        } else {
+            this.box.style.overflow = 'hidden';
+        }
+
         const xScale = scale[0];
         const yScale = scale[1];
         this.ctx.scale(pixelRatio * xScale, pixelRatio * yScale);
-        // console.log('updateCanvas:', this.canvas);
+    }
+
+    zoom(zoom) {
+        this.options.grid.scale = this.initScale.map(item => zoom * item);
+        this.update(this.dom, {
+            scale: this.options.grid.scale,
+        });
+        this.draw();
     }
 
     clean() {
@@ -121,11 +144,24 @@ Visual.prototype.curve = function curve(path = [], options = {}) {
     return new VCurve(this, path, options);
 };
 
-Visual.prototype.arc = function arc(center, radius, startArc, endArc, config = {}, counterclockwise) {
+Visual.prototype.arc = function arc(
+    center,
+    radius,
+    startArc,
+    endArc,
+    config = {},
+    counterclockwise) {
     return new VArc(this, center, radius, startArc, endArc, config, counterclockwise);
 };
 
-Visual.prototype.image = function image(imgDom, center, width, height, rotate = 0, options = {}, userSet) {
+Visual.prototype.image = function image(
+    imgDom,
+    center,
+    width,
+    height,
+    rotate = 0,
+    options = {},
+    userSet) {
     return new VImage(this, imgDom, center, width, height, rotate, options, userSet);
 };
 
