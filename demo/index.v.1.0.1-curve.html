@@ -229,17 +229,20 @@
             [410, 110],
             [360, 200],
             [410, 280],
-            [360, 330],
-            [410, 380],
-            [340, 420],
-            [340, 480]
+            // [360, 330],
+            // [410, 380],
+            // [340, 420],
+            // [340, 480]
         ], {
             strokeStyle: '#4df693',
             lineWidth: 5,
             boundaryCheck: true
         });
 
-        console.log(curve.getBezier());
+        curve.on('finish', () => {
+            console.log('path', curve.path);
+            console.log('getBezier:', curve.getBezier());
+        });
     </script>
 
 

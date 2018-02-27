@@ -17,6 +17,7 @@ const Event = self => {
     const events = {
         ctrl: false,
         shift: false,
+        alt: false,
     };
 
 
@@ -132,7 +133,7 @@ const Event = self => {
                 self.sys.pickupedObjs.forEach(pos => {
                     const snapShootPath = pos.pathSnapshoot;
                     const moveObject = pos.origin;
-                    if (events.ctrl) {
+                    if (events.ctrl || events.alt) {
                         moveObject.type = 'object';
                     }
                     if (moveObject.object.userSet.dragable) {
@@ -205,12 +206,13 @@ const Event = self => {
     window.addEventListener('keyup', e => {
         switch (e.keyCode) {
             case 16:
-                // shift
                 events.shift = false;
                 break;
             case 17:
-                // ctrl
                 events.ctrl = false;
+                break;
+            case 18:
+                events.alt = false;
                 break;
             default:
                 break;
@@ -222,12 +224,13 @@ const Event = self => {
         e.stopPropagation();
 
         if (e.keyCode == 16) {
-            // shift
             events.shift = true;
         }
         if (e.keyCode == 17) {
-            // ctrl
             events.ctrl = true;
+        }
+        if (e.keyCode == 18) {
+            events.alt = true;
         }
 
         if (self.sys.pickupedObjs.length > 0) {
@@ -265,12 +268,13 @@ const Event = self => {
                     // update active index  & reget the active
                     break;
                 case 16:
-                    // shift
                     events.shift = true;
                     break;
                 case 17:
-                    // ctrl
                     events.ctrl = true;
+                    break;
+                case 18:
+                    events.alt = true;
                     break;
                 case 27:
                     // esc
