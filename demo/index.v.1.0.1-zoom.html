@@ -13,7 +13,9 @@
 </head>
 
 <body>
-    <div id="content" style="width:800px; height: 500px; border:1px solid #ccc;"></div>
+    <div id='outer'>
+        <div id="content" style="width:800px; height: 500px; border:1px solid #ccc;"></div>
+    </div>
     <script>
         let dom = document.getElementById('content');
         let v = new Visual(dom, {
@@ -241,22 +243,35 @@
                 console.log('center:', arc.center, 'start:', [startX, startY], '--- end:', [endX, endY]);
             })
         }
-    </script>
 
+        var zoom = 1;
+        let h = 600;
+        let w = 800;
 
-    <script>
+        function zoomChange(amp) {
+            let outer = dom;
+            //  document.getElementById('outer');
+            let height = h * amp;
+            let width = w * amp;
+            let style = "width:800px; height: 500px; border:1px solid #ccc;";
+            v.zoom(amp)
+            console.log(amp, height, width)
+            outer.style.height = height + 'px';
+            outer.style.width = width + 'px';
+            // dom.setAttribute('height', h);
+            // dom.setAttribute('width', w);
+        }
+
         var stats = new Stats();
         document.body.appendChild(stats.dom);
         requestAnimationFrame(function loop() {
             stats.update();
             requestAnimationFrame(loop)
         });
-
-        var zoom = 1;
     </script>
     <div>
-        <button onclick="zoom*=0.5; v.zoom(zoom)">zoom in</button>
-        <button onclick="zoom*=1.5; v.zoom(zoom)">zoom out</button>
+        <button onclick='zoomChange(0.5)'>zoom in</button>
+        <button onclick='zoomChange(1.5)'>zoom out</button>
     </div>
 </body>
 

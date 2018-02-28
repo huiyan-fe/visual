@@ -46,8 +46,10 @@ class Visual {
 
         //
         this.dom = dom;
+        this.zoomScale = 1;
         this.box = document.createElement('div');
         this.box.style.overflow = 'hidden';
+        // this.box.style['pointer-events'] = 'none';
         this.dom.appendChild(this.box);
 
         this[initCanvas]();
@@ -59,6 +61,12 @@ class Visual {
         this.ctx = this.canvas.getContext('2d');
         this.ratio = (window.devicePixelRatio || 1);
         this.initScale = this.options.grid.scale || [1, 1];
+        // be careful to use getComputedStyle,it change output while dom change
+        const domStyle = getComputedStyle(this.dom);
+        this.initDomStyle = {
+            width: domStyle.width,
+            height: domStyle.height,
+        };
         this.box.appendChild(this.canvas);
         this[updateCanvas]();
     }
@@ -66,17 +74,17 @@ class Visual {
     [updateCanvas]() {
         const scale = this.options.grid.scale || [1, 1];
         const pixelRatio = this.ratio;
-        const domStyle = getComputedStyle(this.dom);
-        this.width = domStyle.width;
-        this.height = domStyle.height;
-        this.canvas.width = parseInt(this.width, 10) * pixelRatio * Math.max(1, scale[0]);
+        this.width = this.initDomStyle.width;
+        this.height = this.initDomStyle.height;
         this.canvas.height = parseInt(this.height, 10) * pixelRatio * Math.max(1, scale[1]);
+        this.canvas.width = parseInt(this.width, 10) * pixelRatio * Math.max(1, scale[0]);
         this.canvas.style.height = `${parseInt(this.height, 10) * Math.max(1, scale[1])}px`;
         this.canvas.style.width = `${parseInt(this.width, 10) * Math.max(1, scale[0])}px`;
 
-        this.box.style.height = `${parseInt(this.height, 10) * Math.min(1, scale[1])}px`;
-        this.box.style.width = `${parseInt(this.width, 10) * Math.min(1, scale[0])}px`;
-
+        // this.box.style.height = `${1500}px`;
+        // this.box.style.width = `${2000}px`;
+        this.box.style.height = `${parseInt(this.height, 10) * scale[1]}px`;
+        this.box.style.width = `${parseInt(this.width, 10) * scale[0]}px`;
 
         if (scale[1] > 1 || scale[0] > 1) {
             this.box.style.overflow = 'scroll';
@@ -92,7 +100,9 @@ class Visual {
     }
 
     zoom(zoom) {
+        this.zoomScale = zoom;
         this.options.grid.scale = this.initScale.map(item => zoom * item);
+        console.log('scale', this.options.grid.scale);
         this.update(this.dom, {
             scale: this.options.grid.scale,
         });

@@ -1584,8 +1584,10 @@ var Visual = function () {
 
         //
         this.dom = dom;
+        this.zoomScale = 1;
         this.box = document.createElement('div');
         this.box.style.overflow = 'hidden';
+        // this.box.style['pointer-events'] = 'none';
         this.dom.appendChild(this.box);
 
         this[initCanvas]();
@@ -1599,6 +1601,12 @@ var Visual = function () {
             this.ctx = this.canvas.getContext('2d');
             this.ratio = window.devicePixelRatio || 1;
             this.initScale = this.options.grid.scale || [1, 1];
+            // be careful to use getComputedStyle,it change output while dom change
+            var domStyle = getComputedStyle(this.dom);
+            this.initDomStyle = {
+                width: domStyle.width,
+                height: domStyle.height
+            };
             this.box.appendChild(this.canvas);
             this[updateCanvas]();
         }
@@ -1607,16 +1615,17 @@ var Visual = function () {
         value: function value() {
             var scale = this.options.grid.scale || [1, 1];
             var pixelRatio = this.ratio;
-            var domStyle = getComputedStyle(this.dom);
-            this.width = domStyle.width;
-            this.height = domStyle.height;
-            this.canvas.width = parseInt(this.width, 10) * pixelRatio * Math.max(1, scale[0]);
+            this.width = this.initDomStyle.width;
+            this.height = this.initDomStyle.height;
             this.canvas.height = parseInt(this.height, 10) * pixelRatio * Math.max(1, scale[1]);
+            this.canvas.width = parseInt(this.width, 10) * pixelRatio * Math.max(1, scale[0]);
             this.canvas.style.height = parseInt(this.height, 10) * Math.max(1, scale[1]) + 'px';
             this.canvas.style.width = parseInt(this.width, 10) * Math.max(1, scale[0]) + 'px';
 
-            this.box.style.height = parseInt(this.height, 10) * Math.min(1, scale[1]) + 'px';
-            this.box.style.width = parseInt(this.width, 10) * Math.min(1, scale[0]) + 'px';
+            // this.box.style.height = `${1500}px`;
+            // this.box.style.width = `${2000}px`;
+            this.box.style.height = parseInt(this.height, 10) * scale[1] + 'px';
+            this.box.style.width = parseInt(this.width, 10) * scale[0] + 'px';
 
             if (scale[1] > 1 || scale[0] > 1) {
                 this.box.style.overflow = 'scroll';
@@ -1633,9 +1642,11 @@ var Visual = function () {
     }, {
         key: 'zoom',
         value: function zoom(_zoom) {
+            this.zoomScale = _zoom;
             this.options.grid.scale = this.initScale.map(function (item) {
                 return _zoom * item;
             });
+            console.log('scale', this.options.grid.scale);
             this.update(this.dom, {
                 scale: this.options.grid.scale
             });
@@ -4355,7 +4366,8 @@ var Event = function Event(self) {
     var step = self.options.grid.step;
     var events = {
         ctrl: false,
-        shift: false
+        shift: false,
+        alt: false
     };
 
     var uniqueArr = function uniqueArr(arr) {
@@ -4475,7 +4487,7 @@ var Event = function Event(self) {
                 self.sys.pickupedObjs.forEach(function (pos) {
                     var snapShootPath = pos.pathSnapshoot;
                     var moveObject = pos.origin;
-                    if (events.ctrl) {
+                    if (events.ctrl || events.alt) {
                         moveObject.type = 'object';
                     }
                     if (moveObject.object.userSet.dragable) {
@@ -4548,12 +4560,13 @@ var Event = function Event(self) {
     window.addEventListener('keyup', function (e) {
         switch (e.keyCode) {
             case 16:
-                // shift
                 events.shift = false;
                 break;
             case 17:
-                // ctrl
                 events.ctrl = false;
+                break;
+            case 18:
+                events.alt = false;
                 break;
             default:
                 break;
@@ -4565,12 +4578,13 @@ var Event = function Event(self) {
         e.stopPropagation();
 
         if (e.keyCode == 16) {
-            // shift
             events.shift = true;
         }
         if (e.keyCode == 17) {
-            // ctrl
             events.ctrl = true;
+        }
+        if (e.keyCode == 18) {
+            events.alt = true;
         }
 
         if (self.sys.pickupedObjs.length > 0) {
@@ -4608,12 +4622,13 @@ var Event = function Event(self) {
                     // update active index  & reget the active
                     break;
                 case 16:
-                    // shift
                     events.shift = true;
                     break;
                 case 17:
-                    // ctrl
                     events.ctrl = true;
+                    break;
+                case 18:
+                    events.alt = true;
                     break;
                 case 27:
                     // esc
