@@ -18,19 +18,11 @@ const matchPolygon = (P, object, eventType, res) => {
     if (P[1] < (outBox.yMin - bufferSize) || P[1] > (outBox.yMax + bufferSize)) {
         return false;
     }
-    // console.log('xxx');
-    // return false;
-
-
-    // console.log(userSet.bufferSize)
     ctx.beginPath();
-    // object
-
     if ((eventType === 'mousemove' && !userSet.mouseOverEventEnable) ||
         (eventType === 'mousedown' && !userSet.clickable)) {
         // res.length = 0;
     } else {
-        //
         // const bezierPoints = pointsToBezierCurve(object.path, ctx);
         [object.sys.startPoint, object.sys.endPoint, object.sys.centerPoint].forEach(point => {
             const lPO = Math.sqrt(((P[0] - point[0]) ** 2) + ((P[1] - point[1]) ** 2));
@@ -56,7 +48,9 @@ const matchPolygon = (P, object, eventType, res) => {
         ctx.beginPath();
         ctx.arc(object.center[0], object.center[1], object.radius, 0, Math.PI * 2);
         ctx.stroke();
+
         const isFit = ctx.isPointInPath(P[0], P[1]);
+        // console.log('match arc isFit:', isFit, P, object);
         if (isFit) {
             res.push({
                 type: 'object',

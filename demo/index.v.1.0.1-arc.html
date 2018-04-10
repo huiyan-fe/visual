@@ -28,14 +28,18 @@
         let radius = 50;
         let startArc = 0;
         let endArc = Math.PI;
-        let config = {
-            strokeStyle: '#4df693',
-            lineWidth: 1,
-            boundaryCheck: true
+        let options = {
+            strokeStyle: '#0f0',
+            lineWidth: 5,
+            boundaryCheck: true,
+            activeOptions:{
+                // lineWidth: 1,
+                // strokeStyle: '#f00',
+            }
         }
         let counterclockwise = false;
-        let arc = v.arc(center, radius, startArc, endArc, config, counterclockwise);
-        let arc1 = v.arc(center, radius, startArc, endArc, config, !counterclockwise);
+        let arc = v.arc(center, radius, startArc, endArc, options, counterclockwise);
+        let arc1 = v.arc(center, radius, startArc, endArc, options, !counterclockwise);
         window.arc = arc;
         arc.on('finish', (o) => {
             // console.log('finish')

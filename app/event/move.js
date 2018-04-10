@@ -11,7 +11,6 @@ import boundaryLize from '../tools/boundary-check';
 import Arc from './move-arc';
 
 const move = (moveObject, snapShootPath, movedPos, step) => {
-    // console.log('====move', moveObject.object.Visual.canvas);
     const moveType = moveObject.type;
     const object = moveObject.object;
 

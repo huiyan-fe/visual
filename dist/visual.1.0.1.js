@@ -116,7 +116,12 @@ var config = {
         strokeStyle: 'black',
         lineWidth: 1,
         lineJoin: 'miter',
-        lineCap: 'butt'
+        lineCap: 'butt',
+        activeOptions: {
+            fillStyle: 'red',
+            strokeStyle: 'red',
+            lineWidth: 1
+        }
     },
     ctxOperationConfig: {
         rotate: 0,
@@ -4180,6 +4185,17 @@ exports.default = DrawLine;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _keys = __webpack_require__(4);
+
+var _keys2 = _interopRequireDefault(_keys);
+
+var _config = __webpack_require__(1);
+
+var _config2 = _interopRequireDefault(_config);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function DrawLine(Visual, obj) {
     var ctx = Visual.ctx;
 
@@ -4197,26 +4213,38 @@ function DrawLine(Visual, obj) {
 
     if (obj.isActive) {
         ctx.canvas.style.cursor = 'pointer';
+        var activeOptions = _config2.default.ctxStyleConfig.activeOptions;
+        var userActiveOptions = ctx['activeOptions'];
+        (0, _keys2.default)(activeOptions).forEach(function (configKey) {
+            if (!!userActiveOptions[configKey]) {
+                ctx[configKey] = userActiveOptions[configKey];
+            } else {
+                if (!!activeOptions[configKey]) {
+                    ctx[configKey] = activeOptions[configKey];
+                }
+            }
+        });
         // draw line
         ctx.beginPath();
         ctx.arc(obj.center[0], obj.center[1], obj.radius, obj.startArc, obj.endArc, counterclockwise);
-        ctx.strokeStyle = '#d6d6d6';
+        // ctx.strokeStyle = '#0f0';
         ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(obj.center[0] - 1, obj.center[1] - 1, obj.radius, obj.startArc, obj.endArc, counterclockwise);
-        ctx.strokeStyle = '#333';
-        ctx.stroke();
+
+        // ctx.beginPath();
+        // ctx.arc(obj.center[0] - 1, obj.center[1] - 1, obj.radius, obj.startArc, obj.endArc, counterclockwise);
+        // ctx.strokeStyle = '#f00';
+        // ctx.stroke();
 
         // draw handle
         ctx.beginPath();
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = '#d6d6d6';
+        // ctx.lineWidth = 1;
+        // ctx.strokeStyle = '#000';
         [obj.sys.startPoint, obj.sys.endPoint, obj.sys.centerPoint].forEach(function (item) {
             ctx.rect(item[0] - 4, item[1] - 4, 8, 8);
         });
         ctx.stroke();
         ctx.beginPath();
-        ctx.strokeStyle = '#333';
+        // ctx.strokeStyle = '#333';
         [obj.sys.startPoint, obj.sys.endPoint, obj.sys.centerPoint].forEach(function (item) {
             ctx.rect(item[0] - 3, item[1] - 3, 6, 6);
         });
@@ -4226,15 +4254,13 @@ function DrawLine(Visual, obj) {
         if (obj.isActive.type === 'point' && obj.isActive.length < 10) {
             var point = obj.sys[obj.isActive.subtype + 'Point'];
             ctx.beginPath();
-            ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
-            ctx.fillStyle = '#fff';
+            // ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)';
             ctx.rect(point[0] - 6, point[1] - 6, 12, 12, Math.PI * 2);
             ctx.stroke();
         }
 
         ctx.beginPath();
         // ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
-        ctx.strokeStyle = '#eee';
         ctx.arc(obj.center[0], obj.center[1], 3, 0, Math.PI * 2, counterclockwise);
         ctx.stroke();
     }
@@ -4262,7 +4288,7 @@ function DrawImage(Visual, obj, options) {
     var image = obj.image;
     var sx = -(obj.width / 2);
     var sy = -(obj.height / 2);
-    var angel = -obj.rotate * Math.PI / 180 || 0;
+    var angel = obj.rotate * Math.PI / 180 || 0;
     ctx.translate(imgcenter[0], imgcenter[1]);
     ctx.rotate(angel);
     ctx.drawImage(image, sx, sy, obj.width, obj.height);
@@ -5083,7 +5109,6 @@ var matchPolygon = function matchPolygon(P, object, eventType, res) {
 
     var userSet = object.userSet;
     var bufferSize = userSet.bufferSize;
-    // console.log(userSet.bufferSize)
     ctx.beginPath();
     // object
     var outBox = object.sys.outBox;
@@ -5382,18 +5407,10 @@ var matchPolygon = function matchPolygon(P, object, eventType, res) {
     if (P[1] < outBox.yMin - bufferSize || P[1] > outBox.yMax + bufferSize) {
         return false;
     }
-    // console.log('xxx');
-    // return false;
-
-
-    // console.log(userSet.bufferSize)
     ctx.beginPath();
-    // object
-
     if (eventType === 'mousemove' && !userSet.mouseOverEventEnable || eventType === 'mousedown' && !userSet.clickable) {
         // res.length = 0;
     } else {
-        //
         // const bezierPoints = pointsToBezierCurve(object.path, ctx);
         [object.sys.startPoint, object.sys.endPoint, object.sys.centerPoint].forEach(function (point) {
             var lPO = Math.sqrt(Math.pow(P[0] - point[0], 2) + Math.pow(P[1] - point[1], 2));
@@ -5419,7 +5436,9 @@ var matchPolygon = function matchPolygon(P, object, eventType, res) {
         ctx.beginPath();
         ctx.arc(object.center[0], object.center[1], object.radius, 0, Math.PI * 2);
         ctx.stroke();
+
         var isFit = ctx.isPointInPath(P[0], P[1]);
+        // console.log('match arc isFit:', isFit, P, object);
         if (isFit) {
             res.push({
                 type: 'object',
@@ -5536,7 +5555,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 /* global window */
 
 var move = function move(moveObject, snapShootPath, movedPos, step) {
-    // console.log('====move', moveObject.object.Visual.canvas);
     var moveType = moveObject.type;
     var object = moveObject.object;
 
@@ -5642,7 +5660,6 @@ function move(theObject, snapShootPath, movedPos) {
     var radius = object.radius;
     var counterclockwise = object.counterclockwise;
     var subOrAdd = counterclockwise ? -1 : 1;
-
     if (type === 'point') {
         var mouse = [theObject.point[0] + movedPos[0], theObject.point[1] + movedPos[1]];
         if (subtype === 'start' || subtype === 'end') {
@@ -5770,10 +5787,10 @@ function move(theObject, snapShootPath, movedPos) {
             // console.log(object.center[0], object.radius)
             object.sys = {
                 outBox: {
-                    xMin: object.center[0] - object.radius - 20,
-                    xMax: object.center[0] + object.radius + 20,
-                    yMin: object.center[1] - object.radius - 20,
-                    yMax: object.center[1] + object.radius + 20
+                    xMin: object.center[0] - object.radius - 5,
+                    xMax: object.center[0] + object.radius + 5,
+                    yMin: object.center[1] - object.radius - 5,
+                    yMax: object.center[1] + object.radius + 5
                 },
                 startPoint: [object.center[0] + object.radius * Math.cos(object.startArc), object.center[1] + object.radius * Math.sin(object.startArc)],
                 endPoint: [object.center[0] + object.radius * Math.cos(object.endArc), object.center[1] + object.radius * Math.sin(object.endArc)],
@@ -5850,14 +5867,42 @@ function move(theObject, snapShootPath, movedPos) {
         }
         // console.log(subtype);
     } else {
-        // console.log('----')
         var needBoundaryCheck = object.userSet.boundaryCheck;
-
+        console.log('====move', object.center, snapShootPath, movedPos);
         if (needBoundaryCheck) {
             var scale = object.Visual.options.grid.scale || [1, 1];
             var pixelRatio = scale[0] * (window.devicePixelRatio || 1);
             var maxBound = [object.Visual.canvas.width / pixelRatio, object.Visual.canvas.height / pixelRatio];
             object.center = (0, _boundaryCheck2.default)([[snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]]], maxBound)[0];
+
+            var snapBox = {
+                xMin: snapShootPath[0] - object.radius - 5,
+                xMax: snapShootPath[0] + object.radius + 5,
+                yMin: snapShootPath[1] - object.radius - 5,
+                yMax: snapShootPath[1] + object.radius + 5
+            };
+            var boxBounds = [[snapBox.xMin, snapBox.yMin], [snapBox.xMin, snapBox.yMax], [snapBox.xMax, snapBox.yMin], [snapBox.xMax, snapBox.yMax]];
+            boxBounds = (0, _boundaryCheck2.default)(boxBounds.map(function (pt) {
+                return [pt[0] + movedPos[0], pt[1] + movedPos[1]];
+            }), maxBound);
+            var xs = [];
+            var ys = [];
+            boxBounds.map(function (p) {
+                xs.push(p[0]);
+                ys.push(p[1]);
+            });
+            xs = xs.sort();
+            ys = ys.sort();
+            var _outBox = {
+                xMin: xs[3],
+                xMax: xs[0],
+                yMin: ys[3],
+                yMax: ys[0]
+            };
+            var _boxCenter = [(_outBox.xMax + _outBox.xMin) / 2, (_outBox.yMax + _outBox.yMin) / 2];
+            if (object.center[0] !== _boxCenter[0] || object.center[1] !== _boxCenter[1]) {
+                object.center = _boxCenter;
+            }
         } else {
             object.center = [snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]];
         }
@@ -5868,10 +5913,10 @@ function move(theObject, snapShootPath, movedPos) {
         }
         object.sys = {
             outBox: {
-                xMin: object.center[0] - object.radius - 20,
-                xMax: object.center[0] + object.radius + 20,
-                yMin: object.center[1] - object.radius - 20,
-                yMax: object.center[1] + object.radius + 20
+                xMin: object.center[0] - object.radius - 5,
+                xMax: object.center[0] + object.radius + 5,
+                yMin: object.center[1] - object.radius - 5,
+                yMax: object.center[1] + object.radius + 5
             },
             startPoint: [object.center[0] + object.radius * Math.cos(object.startArc), object.center[1] + object.radius * Math.sin(object.startArc)],
             endPoint: [object.center[0] + object.radius * Math.cos(object.endArc), object.center[1] + object.radius * Math.sin(object.endArc)],

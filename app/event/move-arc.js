@@ -9,7 +9,6 @@ export default function move(theObject, snapShootPath, movedPos) {
     const radius = object.radius;
     const counterclockwise = object.counterclockwise;
     const subOrAdd = counterclockwise ? -1 : 1;
-
     if (type === 'point') {
         const mouse = [theObject.point[0] + movedPos[0], theObject.point[1] + movedPos[1]];
         if (subtype === 'start' || subtype === 'end') {
@@ -155,10 +154,10 @@ export default function move(theObject, snapShootPath, movedPos) {
             // console.log(object.center[0], object.radius)
             object.sys = {
                 outBox: {
-                    xMin: object.center[0] - object.radius - 20,
-                    xMax: object.center[0] + object.radius + 20,
-                    yMin: object.center[1] - object.radius - 20,
-                    yMax: object.center[1] + object.radius + 20,
+                    xMin: object.center[0] - object.radius - 5,
+                    xMax: object.center[0] + object.radius + 5,
+                    yMin: object.center[1] - object.radius - 5,
+                    yMax: object.center[1] + object.radius + 5,
                 },
                 startPoint: [
                     object.center[0] + (object.radius * Math.cos(object.startArc)),
@@ -252,9 +251,8 @@ export default function move(theObject, snapShootPath, movedPos) {
         }
         // console.log(subtype);
     } else {
-        // console.log('----')
         const needBoundaryCheck = object.userSet.boundaryCheck;
-
+        console.log('====move', object.center, snapShootPath, movedPos);
         if (needBoundaryCheck) {
             const scale = object.Visual.options.grid.scale || [1, 1];
             const pixelRatio = scale[0] * (window.devicePixelRatio || 1);
@@ -268,6 +266,42 @@ export default function move(theObject, snapShootPath, movedPos) {
                     snapShootPath[1] + movedPos[1],
                 ],
             ], maxBound)[0];
+
+            const snapBox = {
+                xMin: snapShootPath[0] - object.radius - 5,
+                xMax: snapShootPath[0] + object.radius + 5,
+                yMin: snapShootPath[1] - object.radius - 5,
+                yMax: snapShootPath[1] + object.radius + 5,
+            };
+            let boxBounds = [
+                [snapBox.xMin, snapBox.yMin],
+                [snapBox.xMin, snapBox.yMax],
+                [snapBox.xMax, snapBox.yMin],
+                [snapBox.xMax, snapBox.yMax]
+            ];
+            boxBounds = boundaryLize(boxBounds.map(
+                pt => {
+                    return [pt[0] + movedPos[0], pt[1] + movedPos[1]];
+                }), maxBound);
+            let xs = [];
+            let ys = [];
+            boxBounds.map(p => {
+                xs.push(p[0]);
+                ys.push(p[1]);
+            });
+            xs = xs.sort();
+            ys = ys.sort();
+            const _outBox = {
+                xMin: xs[3],
+                xMax: xs[0],
+                yMin: ys[3],
+                yMax: ys[0],
+            };
+            const _boxCenter = [(_outBox.xMax + _outBox.xMin) / 2, (_outBox.yMax + _outBox.yMin) / 2]
+            if (object.center[0] !== _boxCenter[0] ||
+                object.center[1] !== _boxCenter[1]) {
+                object.center = _boxCenter;
+            }
         } else {
             object.center = [
                 snapShootPath[0] + movedPos[0],
@@ -275,17 +309,16 @@ export default function move(theObject, snapShootPath, movedPos) {
             ];
         }
 
-
         let useStart = object.startArc;
         if (object.startArc > object.endArc) {
             useStart -= Math.PI * 2;
         }
         object.sys = {
             outBox: {
-                xMin: object.center[0] - object.radius - 20,
-                xMax: object.center[0] + object.radius + 20,
-                yMin: object.center[1] - object.radius - 20,
-                yMax: object.center[1] + object.radius + 20,
+                xMin: object.center[0] - object.radius - 5,
+                xMax: object.center[0] + object.radius + 5,
+                yMin: object.center[1] - object.radius - 5,
+                yMax: object.center[1] + object.radius + 5,
             },
             startPoint: [
                 object.center[0] + (object.radius * Math.cos(object.startArc)),

@@ -27,6 +27,11 @@ const config = {
         lineWidth: 1,
         lineJoin: 'miter',
         lineCap: 'butt',
+        activeOptions: {
+            fillStyle: 'red',
+            strokeStyle: 'red',
+            lineWidth: 1,
+        },
     },
     ctxOperationConfig: {
         rotate: 0,

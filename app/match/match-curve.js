@@ -12,7 +12,6 @@ const matchPolygon = (P, object, eventType, res) => {
 
     const userSet = object.userSet;
     const bufferSize = userSet.bufferSize;
-    // console.log(userSet.bufferSize)
     ctx.beginPath();
     // object
     const outBox = object.sys.outBox;

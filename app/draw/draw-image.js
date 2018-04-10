@@ -8,7 +8,7 @@ function DrawImage(Visual, obj, options) {
     const image = obj.image;
     const sx = -(obj.width / 2);
     const sy = -(obj.height / 2);
-    const angel = (-obj.rotate * Math.PI / 180) || 0;
+    const angel = (obj.rotate * Math.PI / 180) || 0;
     ctx.translate(imgcenter[0], imgcenter[1]);
     ctx.rotate(angel);
     ctx.drawImage(image, sx, sy, obj.width, obj.height);
