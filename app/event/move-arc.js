@@ -170,7 +170,7 @@ export default function move(theObject, snapShootPath, outBoxSnapshootPath, move
                 newCenter[0] >= maxBound[0] - object.radius ? newCenter[0] = maxBound[0] - object.radius : '';
                 newCenter[1] <= object.radius ? newCenter[1] = object.radius : '';
                 newCenter[1] >= maxBound[1] - object.radius ? newCenter[1] = maxBound[1] - object.radius : '';
-                console.log('overBound', newCenter);
+                // console.log('overBound', newCenter);
             }
             object.center = newCenter;
             // let boxBounds = [
