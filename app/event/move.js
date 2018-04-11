@@ -10,7 +10,10 @@ import boundaryLize from '../tools/boundary-check';
 
 import Arc from './move-arc';
 
-const move = (moveObject, snapShootPath, movedPos, step) => {
+const move = (obj, movedPos, step) => {
+    const snapShootPath = obj.pathSnapshoot;
+    const moveObject = obj.origin;
+    const outBoxSnapshootPath = obj.outBoxSnapshoot;
     const moveType = moveObject.type;
     const object = moveObject.object;
 
@@ -96,7 +99,7 @@ const move = (moveObject, snapShootPath, movedPos, step) => {
             }
             break;
         case Config.objectTypes.arc:
-            Arc(moveObject, snapShootPath, movedPos);
+            Arc(moveObject, snapShootPath, outBoxSnapshootPath, movedPos);
             break;
         default:
     }

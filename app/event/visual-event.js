@@ -56,19 +56,24 @@ const Event = self => {
         }
 
         if (hoveredObj.length >= 1) {
+            let hObj = hoveredObj[0].object;
             let pathSnapshoot;
+            let outBoxSnapshoot;
             switch (hoveredObj[0].object.type) {
                 case Config.objectTypes.line:
                 case Config.objectTypes.polygon:
                 case Config.objectTypes.curve:
                 case Config.objectTypes.textGroup:
-                    pathSnapshoot = hoveredObj[0].object.path;
+                    pathSnapshoot = hObj.path;
                     break;
                 case Config.objectTypes.text:
                 case Config.objectTypes.circle:
-                case Config.objectTypes.arc:
                 case Config.objectTypes.image:
-                    pathSnapshoot = hoveredObj[0].object.center;
+                    pathSnapshoot = hObj.center;
+                    break;
+                case Config.objectTypes.arc:
+                    pathSnapshoot = hObj.center;
+                    outBoxSnapshoot = JSON.parse(JSON.stringify(hObj.sys.outBox));
                     break;
                 default:
                     break;
@@ -77,6 +82,7 @@ const Event = self => {
 
             self.sys.pickupedObjs.push({
                 pathSnapshoot,
+                outBoxSnapshoot,
                 origin: hoveredObj[0],
             });
 
@@ -130,14 +136,15 @@ const Event = self => {
                 ], self.options.grid.scale)[0];
                 let movedPos = [x - mousedownPos[0], y - mousedownPos[1]];
                 movedPos = steplizePoint(movedPos, step);
-                self.sys.pickupedObjs.forEach(pos => {
-                    const snapShootPath = pos.pathSnapshoot;
-                    const moveObject = pos.origin;
+                self.sys.pickupedObjs.forEach(obj => {
+                    const snapShootPath = obj.pathSnapshoot;
+                    // console.log('obj', obj);
+                    const moveObject = obj.origin;
                     if (events.ctrl || events.alt) {
                         moveObject.type = 'object';
                     }
                     if (moveObject.object.userSet.dragable) {
-                        move(moveObject, snapShootPath, movedPos, step);
+                        move(obj, movedPos, step);
                     }
                 });
             }
@@ -337,8 +344,8 @@ const Event = self => {
                         const indexs = self.sys.pickupedObjs.map(obj => {
                             updateSnapshoot();
                             const snapShootPath = obj.pathSnapshoot;
-                            const moveObject = obj.origin;
-                            move(moveObject, snapShootPath, [x * step, y * step], step);
+                            const moveObject = obj;
+                            move(moveObject, [x * step, y * step], step);
                             if (a.origin.object.id !== obj.origin.object.id) {
                                 oneObj = false;
                             }
@@ -356,8 +363,8 @@ const Event = self => {
                     }
                 } else {
                     const snapShootPath = self.sys.pickupedObjs[0].pathSnapshoot;
-                    const moveObject = self.sys.pickupedObjs[0].origin;
-                    move(moveObject, snapShootPath, [x * step, y * step], step);
+                    const moveObject = self.sys.pickupedObjs[0];
+                    move(moveObject, [x * step, y * step], step);
                     self.sys.pickupedObjs[0].origin.object.emit('finish', {
                         object: self.sys.pickupedObjs[0].origin.object,
                         type: 'move',
