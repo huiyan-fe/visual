@@ -5777,8 +5777,6 @@ function move(theObject, snapShootPath, outBoxSnapshootPath, movedPos) {
             if (object.startArc > object.endArc) {
                 _useStart -= Math.PI * 2;
             }
-
-            // console.log(object.center[0], object.radius)
             object.sys = {
                 outBox: {
                     xMin: object.center[0] - object.radius - 5,
@@ -5811,39 +5809,9 @@ function move(theObject, snapShootPath, outBoxSnapshootPath, movedPos) {
                 } else if (overBoundAxis === 'y') {
                     object.center[0] = newCenter[0];
                 }
-                console.log('overBound', newCenter, object.center);
             } else {
                 object.center = newCenter;
             }
-            // let boxBounds = [
-            //     [outBoxSnapshootPath.xMin, outBoxSnapshootPath.yMin],
-            //     [outBoxSnapshootPath.xMin, outBoxSnapshootPath.yMax],
-            //     [outBoxSnapshootPath.xMax, outBoxSnapshootPath.yMin],
-            //     [outBoxSnapshootPath.xMax, outBoxSnapshootPath.yMax]
-            // ];
-            // boxBounds = boundaryLize(boxBounds.map(
-            //     pt => {
-            //         return [pt[0] + movedPos[0], pt[1] + movedPos[1]];
-            //     }), maxBound);
-            // let xs = [];
-            // let ys = [];
-            // boxBounds.map(p => {
-            //     xs.push(p[0]);
-            //     ys.push(p[1]);
-            // });
-            // xs = xs.sort();
-            // ys = ys.sort();
-            // const _outBox = {
-            //     xMin: xs[3],
-            //     xMax: xs[0],
-            //     yMin: ys[3],
-            //     yMax: ys[0],
-            // };
-            // const _boxCenter = [(_outBox.xMax + _outBox.xMin) / 2, (_outBox.yMax + _outBox.yMin) / 2]
-            // if (object.center[0] !== _boxCenter[0] ||
-            //     object.center[1] !== _boxCenter[1]) {
-            //     object.center = _boxCenter;
-            // }
         } else {
             object.center = [snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]];
         }
