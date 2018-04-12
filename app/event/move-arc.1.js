@@ -71,11 +71,10 @@ const isOverBound = (newCenter, item, bound) => {
         overBoundAxis = '';
     }
     return {
-        flag: overBoundFlag,
-        axis: overBoundAxis
+        overBoundFlag,
+        overBoundAxis
     };
 }
-
 
 export default function move(theObject, snapShootPath, outBoxSnapshootPath, movedPos) {
     const object = theObject.object;
@@ -173,23 +172,28 @@ export default function move(theObject, snapShootPath, outBoxSnapshootPath, move
                     snapShootPath[1] + movedPos[1],
                 ],
             ], maxBound)[0];
-            const over = isOverBound(newCenter, object, maxBound);
-            const overBound = over.flag;
-            const overBoundAxis = over.axis;
+            // 需要拿新的重新计算的中心点去判断是否超出边界
+            const {
+                overBound,
+                overBoundAxis
+            } = isOverBound(newCenter, object, maxBound);
             if (overBound) {
                 newCenter[0] <= object.radius ? newCenter[0] = object.radius : '';
                 newCenter[0] >= maxBound[0] - object.radius ? newCenter[0] = maxBound[0] - object.radius : '';
                 newCenter[1] <= object.radius ? newCenter[1] = object.radius : '';
                 newCenter[1] >= maxBound[1] - object.radius ? newCenter[1] = maxBound[1] - object.radius : '';
-                if (overBoundAxis === 'x') {
-                    object.center[1] = newCenter[1];
-                } else if (overBoundAxis === 'y') {
-                    object.center[0] = newCenter[0];
-                }
-                console.log('overBound', newCenter, object.center);
+                // object.center = JSON.parse(JSON.stringify(object.lastCenter));
+                // object.center = JSON.parse(JSON.stringify(object.lastCenter));
+                // if (overBoundAxis === 'x') {
+                //     object.center[1] = newCenter[1];
+                // } else if (overBoundAxis === 'y') {
+                //     object.center[0] = newCenter[0];
+                // }
             } else {
+                // console.log('--', overBound, [newCenter[0] - object.center[0], newCenter[1] - object.center[1]], movedPos);
                 object.center = newCenter;
             }
+
             // let boxBounds = [
             //     [outBoxSnapshootPath.xMin, outBoxSnapshootPath.yMin],
             //     [outBoxSnapshootPath.xMin, outBoxSnapshootPath.yMax],

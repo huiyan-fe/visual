@@ -142,6 +142,12 @@ module.exports = { "default": __webpack_require__(73), __esModule: true };
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
+module.exports = { "default": __webpack_require__(103), __esModule: true };
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
 "use strict";
 
 
@@ -152,12 +158,6 @@ exports.default = function (instance, Constructor) {
     throw new TypeError("Cannot call a class as a function");
   }
 };
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = { "default": __webpack_require__(103), __esModule: true };
 
 /***/ }),
 /* 5 */
@@ -326,11 +326,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _keys = __webpack_require__(4);
+var _keys = __webpack_require__(3);
 
 var _keys2 = _interopRequireDefault(_keys);
 
-var _classCallCheck2 = __webpack_require__(3);
+var _classCallCheck2 = __webpack_require__(4);
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
@@ -1312,7 +1312,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _keys = __webpack_require__(4);
+var _keys = __webpack_require__(3);
 
 var _keys2 = _interopRequireDefault(_keys);
 
@@ -1495,7 +1495,7 @@ var _assign = __webpack_require__(62);
 
 var _assign2 = _interopRequireDefault(_assign);
 
-var _classCallCheck2 = __webpack_require__(3);
+var _classCallCheck2 = __webpack_require__(4);
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
@@ -2393,7 +2393,7 @@ var _getPrototypeOf = __webpack_require__(10);
 
 var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
 
-var _classCallCheck2 = __webpack_require__(3);
+var _classCallCheck2 = __webpack_require__(4);
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
@@ -2754,7 +2754,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _keys = __webpack_require__(4);
+var _keys = __webpack_require__(3);
 
 var _keys2 = _interopRequireDefault(_keys);
 
@@ -2770,7 +2770,7 @@ var _getPrototypeOf = __webpack_require__(10);
 
 var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
 
-var _classCallCheck2 = __webpack_require__(3);
+var _classCallCheck2 = __webpack_require__(4);
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
@@ -2901,7 +2901,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _keys = __webpack_require__(4);
+var _keys = __webpack_require__(3);
 
 var _keys2 = _interopRequireDefault(_keys);
 
@@ -2917,7 +2917,7 @@ var _getPrototypeOf = __webpack_require__(10);
 
 var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
 
-var _classCallCheck2 = __webpack_require__(3);
+var _classCallCheck2 = __webpack_require__(4);
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
@@ -3074,7 +3074,7 @@ var _getPrototypeOf = __webpack_require__(10);
 
 var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
 
-var _classCallCheck2 = __webpack_require__(3);
+var _classCallCheck2 = __webpack_require__(4);
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
@@ -3171,7 +3171,7 @@ var _getPrototypeOf = __webpack_require__(10);
 
 var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
 
-var _classCallCheck2 = __webpack_require__(3);
+var _classCallCheck2 = __webpack_require__(4);
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
@@ -3291,7 +3291,7 @@ var _getPrototypeOf = __webpack_require__(10);
 
 var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
 
-var _classCallCheck2 = __webpack_require__(3);
+var _classCallCheck2 = __webpack_require__(4);
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
@@ -3410,7 +3410,7 @@ var _getPrototypeOf = __webpack_require__(10);
 
 var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
 
-var _classCallCheck2 = __webpack_require__(3);
+var _classCallCheck2 = __webpack_require__(4);
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
@@ -3500,7 +3500,7 @@ var _getPrototypeOf = __webpack_require__(10);
 
 var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
 
-var _classCallCheck2 = __webpack_require__(3);
+var _classCallCheck2 = __webpack_require__(4);
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
@@ -3580,7 +3580,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _keys = __webpack_require__(4);
+var _keys = __webpack_require__(3);
 
 var _keys2 = _interopRequireDefault(_keys);
 
@@ -3712,7 +3712,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _keys = __webpack_require__(4);
+var _keys = __webpack_require__(3);
 
 var _keys2 = _interopRequireDefault(_keys);
 
@@ -3820,7 +3820,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _keys = __webpack_require__(4);
+var _keys = __webpack_require__(3);
 
 var _keys2 = _interopRequireDefault(_keys);
 
@@ -3947,7 +3947,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _keys = __webpack_require__(4);
+var _keys = __webpack_require__(3);
 
 var _keys2 = _interopRequireDefault(_keys);
 
@@ -4186,7 +4186,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _keys = __webpack_require__(4);
+var _keys = __webpack_require__(3);
 
 var _keys2 = _interopRequireDefault(_keys);
 
@@ -4900,7 +4900,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _keys = __webpack_require__(4);
+var _keys = __webpack_require__(3);
 
 var _keys2 = _interopRequireDefault(_keys);
 
@@ -5182,7 +5182,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _keys = __webpack_require__(4);
+var _keys = __webpack_require__(3);
 
 var _keys2 = _interopRequireDefault(_keys);
 
@@ -5685,8 +5685,8 @@ var isArcInRange = function isArcInRange(initArc, startArc, endArc, counterclock
 }; /* globals window */
 
 
-var isOverBound = function isOverBound(item, bound) {
-    var center = item.center;
+var isOverBound = function isOverBound(newCenter, item, bound) {
+    var center = newCenter; // item.center;
     var radius = item.radius;
     var startArc = item.startArc;
     var endArc = item.endArc;
@@ -5699,6 +5699,7 @@ var isOverBound = function isOverBound(item, bound) {
     var d2x = center[0] + Math.cos(endArc);
     var d2y = center[1] + Math.sin(endArc);
     // 判断是否超出canvas边界
+    var overBoundAxis = '';
     if (d1y <= 0 - buffer || d1x <= 0 - buffer || d2x <= 0 - buffer || d2y <= 0 - buffer || d1y >= buffer + bound[1] || d1x >= buffer + bound[0] || d2x >= buffer + bound[0] || d2y >= buffer + bound[1]) {
         overBoundFlag = true;
     } else {
@@ -5708,24 +5709,31 @@ var isOverBound = function isOverBound(item, bound) {
         if (center[0] - radius <= 0) {
             arc1 = Math.acos(-center[0] / radius);
             arc2 = -arc1;
+            overBoundAxis = 'x';
         } else if (center[1] - radius < 0) {
             arc1 = Math.asin(-center[1] / radius);
             arc2 = -(Math.PI + arc1);
+            overBoundAxis = 'y';
         } else if (center[0] + radius > bound[0]) {
             arc1 = Math.acos((bound[0] - center[0]) / radius);
             arc2 = -arc1;
+            overBoundAxis = 'x';
         } else if (center[1] + radius > bound[1]) {
             arc1 = Math.asin((bound[1] - center[1]) / radius);
             arc2 = -(Math.PI + arc1);
+            overBoundAxis = 'y';
         }
         var flag1 = isArcInRange(arc1, startArc, endArc, counterclockwise);
         var flag2 = isArcInRange(arc2, startArc, endArc, counterclockwise);
         overBoundFlag = flag1 || flag2;
     }
-    if (overBoundFlag) {
-        console.log('overBoundFlag ===', overBoundFlag);
+    if (!overBoundFlag) {
+        overBoundAxis = '';
     }
-    return overBoundFlag;
+    return {
+        flag: overBoundFlag,
+        axis: overBoundAxis
+    };
 };
 
 function move(theObject, snapShootPath, outBoxSnapshootPath, movedPos) {
@@ -5789,16 +5797,24 @@ function move(theObject, snapShootPath, outBoxSnapshootPath, movedPos) {
             var scale = object.Visual.options.grid.scale || [1, 1];
             var pixelRatio = scale[0] * (window.devicePixelRatio || 1);
             var maxBound = [object.Visual.canvas.width / pixelRatio, object.Visual.canvas.height / pixelRatio];
-            var overBound = isOverBound(object, maxBound);
             var newCenter = (0, _boundaryCheck2.default)([[snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]]], maxBound)[0];
+            var over = isOverBound(newCenter, object, maxBound);
+            var overBound = over.flag;
+            var overBoundAxis = over.axis;
             if (overBound) {
                 newCenter[0] <= object.radius ? newCenter[0] = object.radius : '';
                 newCenter[0] >= maxBound[0] - object.radius ? newCenter[0] = maxBound[0] - object.radius : '';
                 newCenter[1] <= object.radius ? newCenter[1] = object.radius : '';
                 newCenter[1] >= maxBound[1] - object.radius ? newCenter[1] = maxBound[1] - object.radius : '';
-                // console.log('overBound', newCenter);
+                if (overBoundAxis === 'x') {
+                    object.center[1] = newCenter[1];
+                } else if (overBoundAxis === 'y') {
+                    object.center[0] = newCenter[0];
+                }
+                console.log('overBound', newCenter, object.center);
+            } else {
+                object.center = newCenter;
             }
-            object.center = newCenter;
             // let boxBounds = [
             //     [outBoxSnapshootPath.xMin, outBoxSnapshootPath.yMin],
             //     [outBoxSnapshootPath.xMin, outBoxSnapshootPath.yMax],
