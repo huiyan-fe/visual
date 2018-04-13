@@ -28,43 +28,48 @@ function DrawLine(Visual, obj) {
                 }
             }
         });
+        const tempStrokeStyle = ctx.strokeStyle;
         // draw line
         ctx.beginPath();
         ctx.arc(obj.center[0], obj.center[1], obj.radius, obj.startArc, obj.endArc, counterclockwise);
-        // ctx.strokeStyle = '#0f0';
+        ctx.strokeStyle = '#000';
         ctx.stroke();
-
+        ctx.strokeStyle = tempStrokeStyle;
         // ctx.beginPath();
         // ctx.arc(obj.center[0] - 1, obj.center[1] - 1, obj.radius, obj.startArc, obj.endArc, counterclockwise);
         // ctx.strokeStyle = '#f00';
         // ctx.stroke();
 
-        // draw handle
+        // draw handle outer
         ctx.beginPath();
         // ctx.lineWidth = 1;
-        // ctx.strokeStyle = '#000';
+        ctx.strokeStyle = '#d6d6d6';
+        ctx.stroke();
         [obj.sys.startPoint, obj.sys.endPoint, obj.sys.centerPoint].forEach(item => {
             ctx.rect(item[0] - 4, item[1] - 4, 8, 8);
         });
         ctx.stroke();
+        // draw handle inner
         ctx.beginPath();
-        // ctx.strokeStyle = '#333';
+        ctx.strokeStyle = '#333';
         [obj.sys.startPoint, obj.sys.endPoint, obj.sys.centerPoint].forEach(item => {
             ctx.rect(item[0] - 3, item[1] - 3, 6, 6);
         });
         ctx.stroke();
+        ctx.strokeStyle = tempStrokeStyle;
 
         // if active is handle point
         if (obj.isActive.type === 'point' && obj.isActive.length < 10) {
             const point = obj.sys[`${obj.isActive.subtype}Point`];
             ctx.beginPath();
-            // ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)';
             ctx.rect(point[0] - 6, point[1] - 6, 12, 12, Math.PI * 2);
             ctx.stroke();
         }
 
+        // draw the arc center point
+        ctx.stroke();
         ctx.beginPath();
-        // ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+        // ctx.strokeStyle = '#333';
         ctx.arc(obj.center[0], obj.center[1], 3, 0, Math.PI * 2, counterclockwise);
         ctx.stroke();
     }

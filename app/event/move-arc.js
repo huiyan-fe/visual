@@ -1,81 +1,6 @@
 /* globals window */
 import boundaryLize from '../tools/boundary-check';
-
-const isArcInRange = (initArc, startArc, endArc, counterclockwise) => {
-    let flag = false;
-    let arc = initArc;
-    if (arc > 2 * Math.PI) {
-        arc = arc % (Math.PI * 2);
-    }
-    if (arc < 0) {
-        arc = arc % (Math.PI * 2) + (2 * Math.PI);
-    }
-    let start = startArc;
-    let end = endArc;
-    if (counterclockwise) {
-        start = endArc;
-        end = startArc + 2 * Math.PI;
-        arc = arc + 2 * Math.PI;
-    }
-    if (arc < end && arc > start) {
-        flag = true;
-    }
-    return flag;
-}
-
-const isOverBound = (newCenter, item, bound) => {
-    const center = newCenter; // item.center;
-    const radius = item.radius;
-    const startArc = item.startArc;
-    const endArc = item.endArc;
-    const counterclockwise = item.counterclockwise;
-    let overBoundFlag = false;
-    // 起点终点目标位置
-    const buffer = 0;
-    const d1x = center[0] + Math.cos(startArc);
-    const d1y = center[1] + Math.sin(startArc);
-    const d2x = center[0] + Math.cos(endArc);
-    const d2y = center[1] + Math.sin(endArc);
-    // 判断是否超出canvas边界
-    let overBoundAxis = '';
-    if (d1y <= (0 - buffer) || d1x <= (0 - buffer) || d2x <= (0 - buffer) || d2y <= (0 - buffer) ||
-        d1y >= (buffer + bound[1]) || d1x >= (buffer + bound[0]) || d2x >= (buffer + bound[0]) || d2y >= (buffer + bound[1])
-    ) {
-        overBoundFlag = true;
-    } else {
-        // 计算x轴只用cos，y轴用sin
-        let arc1 = null;
-        let arc2 = null;
-        if (center[0] - radius <= 0) {
-            arc1 = Math.acos(-center[0] / radius);
-            arc2 = -arc1;
-            overBoundAxis = 'x';
-        } else if (center[1] - radius < 0) {
-            arc1 = Math.asin(-center[1] / radius);
-            arc2 = -(Math.PI + arc1);
-            overBoundAxis = 'y';
-        } else if (center[0] + radius > bound[0]) {
-            arc1 = Math.acos((bound[0] - center[0]) / radius);
-            arc2 = -arc1;
-            overBoundAxis = 'x';
-        } else if (center[1] + radius > bound[1]) {
-            arc1 = Math.asin((bound[1] - center[1]) / radius);
-            arc2 = -(Math.PI + arc1);
-            overBoundAxis = 'y';
-        }
-        const flag1 = isArcInRange(arc1, startArc, endArc, counterclockwise);
-        const flag2 = isArcInRange(arc2, startArc, endArc, counterclockwise);
-        overBoundFlag = flag1 || flag2;
-    }
-    if (!overBoundFlag) {
-        overBoundAxis = '';
-    }
-    return {
-        flag: overBoundFlag,
-        axis: overBoundAxis
-    };
-}
-
+import checkBound from '../tools/checkBound';
 
 export default function move(theObject, snapShootPath, outBoxSnapshootPath, movedPos) {
     const object = theObject.object;
@@ -85,6 +10,14 @@ export default function move(theObject, snapShootPath, outBoxSnapshootPath, move
     const radius = object.radius;
     const counterclockwise = object.counterclockwise;
     const subOrAdd = counterclockwise ? -1 : 1;
+    const scale = object.Visual.options.grid.scale || [1, 1];
+    const pixelRatio = scale[0] * (window.devicePixelRatio || 1);
+    const maxBound = [
+        object.Visual.canvas.width / pixelRatio,
+        object.Visual.canvas.height / pixelRatio,
+    ];
+    // console.log('arc move:', type, subtype, theObject, movedPos);
+
     if (type === 'point') {
         const mouse = [theObject.point[0] + movedPos[0], theObject.point[1] + movedPos[1]];
         if (subtype === 'start' || subtype === 'end') {
@@ -127,7 +60,15 @@ export default function move(theObject, snapShootPath, outBoxSnapshootPath, move
                 ),
             );
             const newRadius = Math.sqrt((center[0] - mouse[0]) ** 2 + (center[1] - mouse[1]) ** 2);
-            object.radius = newRadius;
+            const over = checkBound.isOverBound(object.center, newRadius, object.startArc, object.endArc, object.counterclockwise, maxBound);
+            const overBound = over.flag;
+            const overBoundAxis = over.axis;
+            console.log('--overBound--:', overBound);
+            if (!overBound) {
+                object.radius = newRadius;
+            } else {
+                console.log('over boundary:', overBound);
+            }
 
             let useStart = object.startArc;
             if (object.startArc > object.endArc) {
@@ -159,19 +100,14 @@ export default function move(theObject, snapShootPath, outBoxSnapshootPath, move
     } else {
         const needBoundaryCheck = object.userSet.boundaryCheck;
         if (needBoundaryCheck) {
-            const scale = object.Visual.options.grid.scale || [1, 1];
-            const pixelRatio = scale[0] * (window.devicePixelRatio || 1);
-            const maxBound = [
-                object.Visual.canvas.width / pixelRatio,
-                object.Visual.canvas.height / pixelRatio,
-            ];
             const newCenter = boundaryLize([
                 [
                     snapShootPath[0] + movedPos[0],
                     snapShootPath[1] + movedPos[1],
                 ],
             ], maxBound)[0];
-            const over = isOverBound(newCenter, object, maxBound);
+            // console.log('isOverBound', object);
+            const over = checkBound.isOverBound(newCenter, object.radius, object.startArc, object.endArc, object.counterclockwise, maxBound);
             const overBound = over.flag;
             const overBoundAxis = over.axis;
             if (overBound) {

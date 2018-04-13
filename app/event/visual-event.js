@@ -136,9 +136,9 @@ const Event = self => {
                 ], self.options.grid.scale)[0];
                 let movedPos = [x - mousedownPos[0], y - mousedownPos[1]];
                 movedPos = steplizePoint(movedPos, step);
+                console.log('mousemove', self.sys.pickupedObjs);
                 self.sys.pickupedObjs.forEach(obj => {
                     const snapShootPath = obj.pathSnapshoot;
-                    // console.log('obj', obj);
                     const moveObject = obj.origin;
                     if (events.ctrl || events.alt) {
                         moveObject.type = 'object';

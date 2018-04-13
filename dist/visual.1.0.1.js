@@ -4224,43 +4224,48 @@ function DrawLine(Visual, obj) {
                 }
             }
         });
+        var tempStrokeStyle = ctx.strokeStyle;
         // draw line
         ctx.beginPath();
         ctx.arc(obj.center[0], obj.center[1], obj.radius, obj.startArc, obj.endArc, counterclockwise);
-        // ctx.strokeStyle = '#0f0';
+        ctx.strokeStyle = '#000';
         ctx.stroke();
-
+        ctx.strokeStyle = tempStrokeStyle;
         // ctx.beginPath();
         // ctx.arc(obj.center[0] - 1, obj.center[1] - 1, obj.radius, obj.startArc, obj.endArc, counterclockwise);
         // ctx.strokeStyle = '#f00';
         // ctx.stroke();
 
-        // draw handle
+        // draw handle outer
         ctx.beginPath();
         // ctx.lineWidth = 1;
-        // ctx.strokeStyle = '#000';
+        ctx.strokeStyle = '#d6d6d6';
+        ctx.stroke();
         [obj.sys.startPoint, obj.sys.endPoint, obj.sys.centerPoint].forEach(function (item) {
             ctx.rect(item[0] - 4, item[1] - 4, 8, 8);
         });
         ctx.stroke();
+        // draw handle inner
         ctx.beginPath();
-        // ctx.strokeStyle = '#333';
+        ctx.strokeStyle = '#333';
         [obj.sys.startPoint, obj.sys.endPoint, obj.sys.centerPoint].forEach(function (item) {
             ctx.rect(item[0] - 3, item[1] - 3, 6, 6);
         });
         ctx.stroke();
+        ctx.strokeStyle = tempStrokeStyle;
 
         // if active is handle point
         if (obj.isActive.type === 'point' && obj.isActive.length < 10) {
             var point = obj.sys[obj.isActive.subtype + 'Point'];
             ctx.beginPath();
-            // ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)';
             ctx.rect(point[0] - 6, point[1] - 6, 12, 12, Math.PI * 2);
             ctx.stroke();
         }
 
+        // draw the arc center point
+        ctx.stroke();
         ctx.beginPath();
-        // ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+        // ctx.strokeStyle = '#333';
         ctx.arc(obj.center[0], obj.center[1], 3, 0, Math.PI * 2, counterclockwise);
         ctx.stroke();
     }
@@ -4377,7 +4382,7 @@ var _move = __webpack_require__(138);
 
 var _move2 = _interopRequireDefault(_move);
 
-var _delete = __webpack_require__(140);
+var _delete = __webpack_require__(141);
 
 var _delete2 = _interopRequireDefault(_delete);
 
@@ -4516,9 +4521,9 @@ var Event = function Event(self) {
 
                 var movedPos = [x - mousedownPos[0], y - mousedownPos[1]];
                 movedPos = (0, _steplize2.default)(movedPos, step);
+                console.log('mousemove', self.sys.pickupedObjs);
                 self.sys.pickupedObjs.forEach(function (obj) {
                     var snapShootPath = obj.pathSnapshoot;
-                    // console.log('obj', obj);
                     var moveObject = obj.origin;
                     if (events.ctrl || events.alt) {
                         moveObject.type = 'object';
@@ -5660,8 +5665,132 @@ var _boundaryCheck = __webpack_require__(59);
 
 var _boundaryCheck2 = _interopRequireDefault(_boundaryCheck);
 
+var _checkBound = __webpack_require__(140);
+
+var _checkBound2 = _interopRequireDefault(_checkBound);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+/* globals window */
+function move(theObject, snapShootPath, outBoxSnapshootPath, movedPos) {
+    var object = theObject.object;
+    var type = theObject.type;
+    var subtype = theObject.subtype;
+    var center = snapShootPath;
+    var radius = object.radius;
+    var counterclockwise = object.counterclockwise;
+    var subOrAdd = counterclockwise ? -1 : 1;
+    var scale = object.Visual.options.grid.scale || [1, 1];
+    var pixelRatio = scale[0] * (window.devicePixelRatio || 1);
+    var maxBound = [object.Visual.canvas.width / pixelRatio, object.Visual.canvas.height / pixelRatio];
+    // console.log('arc move:', type, subtype, theObject, movedPos);
+
+    if (type === 'point') {
+        var mouse = [theObject.point[0] + movedPos[0], theObject.point[1] + movedPos[1]];
+        if (subtype === 'start' || subtype === 'end') {
+            var dMouseyCenterX = mouse[0] - center[0];
+            var dMouseyCenterY = mouse[1] - center[1];
+            var dMouseCentre = Math.sqrt(Math.pow(dMouseyCenterX, 2) + Math.pow(dMouseyCenterY, 2));
+            var arc = Math.acos(dMouseyCenterX / dMouseCentre);
+            if (dMouseyCenterY < 0) {
+                arc = Math.PI * 2 - arc;
+            }
+            object[subtype + 'Arc'] = arc;
+
+            object.sys[subtype + 'Point'] = [center[0] + radius * Math.cos(arc), center[1] + radius * Math.sin(arc)];
+
+            var useStart = object.startArc;
+            if (object.startArc > object.endArc) {
+                useStart -= Math.PI * 2;
+            }
+            object.sys.centerPoint = [center[0] + subOrAdd * radius * Math.cos((useStart + object.endArc) / 2), center[1] + subOrAdd * radius * Math.sin((useStart + object.endArc) / 2)];
+        } else if (subtype === 'center') {
+            var startPoint = object.sys.startPoint;
+            var endPoint = object.sys.endPoint;
+            var vEndToStartPoint = [startPoint[0] - endPoint[0], startPoint[1] - endPoint[1]];
+            var vAxleX = [Math.abs(vEndToStartPoint[0]) || 1, 0];
+
+            var arcVendToStartPointTOvAxleX = Math.acos((vEndToStartPoint[0] * vAxleX[0] + vEndToStartPoint[1] * vAxleX[1]) / (Math.sqrt(Math.pow(vEndToStartPoint[0], 2) + Math.pow(vEndToStartPoint[1], 2)) * Math.sqrt(Math.pow(vAxleX[0], 2) + Math.pow(vAxleX[1], 2))));
+            var newRadius = Math.sqrt(Math.pow(center[0] - mouse[0], 2) + Math.pow(center[1] - mouse[1], 2));
+            var over = _checkBound2.default.isOverBound(object.center, newRadius, object.startArc, object.endArc, object.counterclockwise, maxBound);
+            var overBound = over.flag;
+            var overBoundAxis = over.axis;
+            console.log('--overBound--:', overBound);
+            if (!overBound) {
+                object.radius = newRadius;
+            } else {
+                console.log('over boundary:', overBound);
+            }
+
+            var _useStart = object.startArc;
+            if (object.startArc > object.endArc) {
+                _useStart -= Math.PI * 2;
+            }
+            object.sys = {
+                outBox: {
+                    xMin: object.center[0] - object.radius - 5,
+                    xMax: object.center[0] + object.radius + 5,
+                    yMin: object.center[1] - object.radius - 5,
+                    yMax: object.center[1] + object.radius + 5
+                },
+                startPoint: [object.center[0] + object.radius * Math.cos(object.startArc), object.center[1] + object.radius * Math.sin(object.startArc)],
+                endPoint: [object.center[0] + object.radius * Math.cos(object.endArc), object.center[1] + object.radius * Math.sin(object.endArc)],
+                centerPoint: [object.center[0] + subOrAdd * object.radius * Math.cos(_useStart + (object.endArc - _useStart) / 2), object.center[1] + subOrAdd * object.radius * Math.sin(_useStart + (object.endArc - _useStart) / 2)]
+            };
+        }
+    } else {
+        var needBoundaryCheck = object.userSet.boundaryCheck;
+        if (needBoundaryCheck) {
+            var newCenter = (0, _boundaryCheck2.default)([[snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]]], maxBound)[0];
+            // console.log('isOverBound', object);
+            var _over = _checkBound2.default.isOverBound(newCenter, object.radius, object.startArc, object.endArc, object.counterclockwise, maxBound);
+            var _overBound = _over.flag;
+            var _overBoundAxis = _over.axis;
+            if (_overBound) {
+                newCenter[0] <= object.radius ? newCenter[0] = object.radius : '';
+                newCenter[0] >= maxBound[0] - object.radius ? newCenter[0] = maxBound[0] - object.radius : '';
+                newCenter[1] <= object.radius ? newCenter[1] = object.radius : '';
+                newCenter[1] >= maxBound[1] - object.radius ? newCenter[1] = maxBound[1] - object.radius : '';
+                if (_overBoundAxis === 'x') {
+                    object.center[1] = newCenter[1];
+                } else if (_overBoundAxis === 'y') {
+                    object.center[0] = newCenter[0];
+                }
+            } else {
+                object.center = newCenter;
+            }
+        } else {
+            object.center = [snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]];
+        }
+
+        var _useStart2 = object.startArc;
+        if (object.startArc > object.endArc) {
+            _useStart2 -= Math.PI * 2;
+        }
+        object.sys = {
+            outBox: {
+                xMin: object.center[0] - object.radius - 5,
+                xMax: object.center[0] + object.radius + 5,
+                yMin: object.center[1] - object.radius - 5,
+                yMax: object.center[1] + object.radius + 5
+            },
+            startPoint: [object.center[0] + object.radius * Math.cos(object.startArc), object.center[1] + object.radius * Math.sin(object.startArc)],
+            endPoint: [object.center[0] + object.radius * Math.cos(object.endArc), object.center[1] + object.radius * Math.sin(object.endArc)],
+            centerPoint: [object.center[0] + subOrAdd * object.radius * Math.cos(_useStart2 + (object.endArc - _useStart2) / 2), object.center[1] + subOrAdd * object.radius * Math.sin(_useStart2 + (object.endArc - _useStart2) / 2)]
+        };
+    }
+}
+
+/***/ }),
+/* 140 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 var isArcInRange = function isArcInRange(initArc, startArc, endArc, counterclockwise) {
     var flag = false;
     var arc = initArc;
@@ -5673,24 +5802,20 @@ var isArcInRange = function isArcInRange(initArc, startArc, endArc, counterclock
     }
     var start = startArc;
     var end = endArc;
+    var overArc = null;
     if (counterclockwise) {
         start = endArc;
         end = startArc + 2 * Math.PI;
-        arc = arc + 2 * Math.PI;
+        overArc = arc + 2 * Math.PI;
     }
-    if (arc < end && arc > start) {
+    if (arc < end && arc > start || overArc < end && overArc > start) {
         flag = true;
     }
     return flag;
-}; /* globals window */
+};
 
-
-var isOverBound = function isOverBound(newCenter, item, bound) {
+var isOverBound = function isOverBound(newCenter, radius, startArc, endArc, counterclockwise, bound) {
     var center = newCenter; // item.center;
-    var radius = item.radius;
-    var startArc = item.startArc;
-    var endArc = item.endArc;
-    var counterclockwise = item.counterclockwise;
     var overBoundFlag = false;
     // 起点终点目标位置
     var buffer = 0;
@@ -5723,9 +5848,13 @@ var isOverBound = function isOverBound(newCenter, item, bound) {
             arc2 = -(Math.PI + arc1);
             overBoundAxis = 'y';
         }
-        var flag1 = isArcInRange(arc1, startArc, endArc, counterclockwise);
-        var flag2 = isArcInRange(arc2, startArc, endArc, counterclockwise);
-        overBoundFlag = flag1 || flag2;
+        if (arc1 && arc2) {
+            console.log('isArcInRange', arc1, arc2, '||', startArc, endArc, counterclockwise);
+            var flag1 = isArcInRange(arc1, startArc, endArc, counterclockwise);
+            var flag2 = isArcInRange(arc2, startArc, endArc, counterclockwise);
+            console.log('==', flag1, flag2);
+            overBoundFlag = flag1 || flag2;
+        }
     }
     if (!overBoundFlag) {
         overBoundAxis = '';
@@ -5736,106 +5865,13 @@ var isOverBound = function isOverBound(newCenter, item, bound) {
     };
 };
 
-function move(theObject, snapShootPath, outBoxSnapshootPath, movedPos) {
-    var object = theObject.object;
-    var type = theObject.type;
-    var subtype = theObject.subtype;
-    var center = snapShootPath;
-    var radius = object.radius;
-    var counterclockwise = object.counterclockwise;
-    var subOrAdd = counterclockwise ? -1 : 1;
-    if (type === 'point') {
-        var mouse = [theObject.point[0] + movedPos[0], theObject.point[1] + movedPos[1]];
-        if (subtype === 'start' || subtype === 'end') {
-            var dMouseyCenterX = mouse[0] - center[0];
-            var dMouseyCenterY = mouse[1] - center[1];
-            var dMouseCentre = Math.sqrt(Math.pow(dMouseyCenterX, 2) + Math.pow(dMouseyCenterY, 2));
-            var arc = Math.acos(dMouseyCenterX / dMouseCentre);
-            if (dMouseyCenterY < 0) {
-                arc = Math.PI * 2 - arc;
-            }
-            object[subtype + 'Arc'] = arc;
-
-            object.sys[subtype + 'Point'] = [center[0] + radius * Math.cos(arc), center[1] + radius * Math.sin(arc)];
-
-            var useStart = object.startArc;
-            if (object.startArc > object.endArc) {
-                useStart -= Math.PI * 2;
-            }
-            object.sys.centerPoint = [center[0] + subOrAdd * radius * Math.cos((useStart + object.endArc) / 2), center[1] + subOrAdd * radius * Math.sin((useStart + object.endArc) / 2)];
-        } else if (subtype === 'center') {
-            var startPoint = object.sys.startPoint;
-            var endPoint = object.sys.endPoint;
-            var vEndToStartPoint = [startPoint[0] - endPoint[0], startPoint[1] - endPoint[1]];
-            var vAxleX = [Math.abs(vEndToStartPoint[0]) || 1, 0];
-
-            var arcVendToStartPointTOvAxleX = Math.acos((vEndToStartPoint[0] * vAxleX[0] + vEndToStartPoint[1] * vAxleX[1]) / (Math.sqrt(Math.pow(vEndToStartPoint[0], 2) + Math.pow(vEndToStartPoint[1], 2)) * Math.sqrt(Math.pow(vAxleX[0], 2) + Math.pow(vAxleX[1], 2))));
-            var newRadius = Math.sqrt(Math.pow(center[0] - mouse[0], 2) + Math.pow(center[1] - mouse[1], 2));
-            object.radius = newRadius;
-
-            var _useStart = object.startArc;
-            if (object.startArc > object.endArc) {
-                _useStart -= Math.PI * 2;
-            }
-            object.sys = {
-                outBox: {
-                    xMin: object.center[0] - object.radius - 5,
-                    xMax: object.center[0] + object.radius + 5,
-                    yMin: object.center[1] - object.radius - 5,
-                    yMax: object.center[1] + object.radius + 5
-                },
-                startPoint: [object.center[0] + object.radius * Math.cos(object.startArc), object.center[1] + object.radius * Math.sin(object.startArc)],
-                endPoint: [object.center[0] + object.radius * Math.cos(object.endArc), object.center[1] + object.radius * Math.sin(object.endArc)],
-                centerPoint: [object.center[0] + subOrAdd * object.radius * Math.cos(_useStart + (object.endArc - _useStart) / 2), object.center[1] + subOrAdd * object.radius * Math.sin(_useStart + (object.endArc - _useStart) / 2)]
-            };
-        }
-    } else {
-        var needBoundaryCheck = object.userSet.boundaryCheck;
-        if (needBoundaryCheck) {
-            var scale = object.Visual.options.grid.scale || [1, 1];
-            var pixelRatio = scale[0] * (window.devicePixelRatio || 1);
-            var maxBound = [object.Visual.canvas.width / pixelRatio, object.Visual.canvas.height / pixelRatio];
-            var newCenter = (0, _boundaryCheck2.default)([[snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]]], maxBound)[0];
-            var over = isOverBound(newCenter, object, maxBound);
-            var overBound = over.flag;
-            var overBoundAxis = over.axis;
-            if (overBound) {
-                newCenter[0] <= object.radius ? newCenter[0] = object.radius : '';
-                newCenter[0] >= maxBound[0] - object.radius ? newCenter[0] = maxBound[0] - object.radius : '';
-                newCenter[1] <= object.radius ? newCenter[1] = object.radius : '';
-                newCenter[1] >= maxBound[1] - object.radius ? newCenter[1] = maxBound[1] - object.radius : '';
-                if (overBoundAxis === 'x') {
-                    object.center[1] = newCenter[1];
-                } else if (overBoundAxis === 'y') {
-                    object.center[0] = newCenter[0];
-                }
-            } else {
-                object.center = newCenter;
-            }
-        } else {
-            object.center = [snapShootPath[0] + movedPos[0], snapShootPath[1] + movedPos[1]];
-        }
-
-        var _useStart2 = object.startArc;
-        if (object.startArc > object.endArc) {
-            _useStart2 -= Math.PI * 2;
-        }
-        object.sys = {
-            outBox: {
-                xMin: object.center[0] - object.radius - 5,
-                xMax: object.center[0] + object.radius + 5,
-                yMin: object.center[1] - object.radius - 5,
-                yMax: object.center[1] + object.radius + 5
-            },
-            startPoint: [object.center[0] + object.radius * Math.cos(object.startArc), object.center[1] + object.radius * Math.sin(object.startArc)],
-            endPoint: [object.center[0] + object.radius * Math.cos(object.endArc), object.center[1] + object.radius * Math.sin(object.endArc)],
-            centerPoint: [object.center[0] + subOrAdd * object.radius * Math.cos(_useStart2 + (object.endArc - _useStart2) / 2), object.center[1] + subOrAdd * object.radius * Math.sin(_useStart2 + (object.endArc - _useStart2) / 2)]
-        };
-    }
-}
+exports.default = {
+    isArcInRange: isArcInRange,
+    isOverBound: isOverBound
+};
 
 /***/ }),
-/* 140 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
