@@ -4568,8 +4568,6 @@ var Event = function Event(self) {
                         var snapShootPath = obj.pathSnapshoot;
                         var moveObject = obj.origin;
                         if (events.ctrl || events.alt) {
-                            console.log('scale', self.options.grid.scale, '[x,y]', [e.pageX, e.pageY], [x, y]);
-                            console.log('movedPos', movedPos, step);
                             moveObject.type = 'object';
                         }
                         if (moveObject.object.userSet.dragable) {
@@ -4591,7 +4589,6 @@ var Event = function Event(self) {
             var tempObjs = [];
             self.sys.pickupedObjs.map(function (item) {
                 if (item == needDeleteObj) {
-                    console.log('delete obj');
                     var indexs = item.origin.object.isActive.indexs;
                     indexs = indexs.filter(function (n) {
                         return n !== needDeleteObj.origin.index;
@@ -4662,6 +4659,8 @@ var Event = function Event(self) {
     });
 
     window.addEventListener('keyup', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
         switch (e.keyCode) {
             case 16:
                 events.shift = false;
@@ -4678,26 +4677,35 @@ var Event = function Event(self) {
     });
 
     window.addEventListener('keydown', function (e) {
-        // e.preventDefault();
+        e.preventDefault();
         e.stopPropagation();
-
-        if (e.keyCode == 16) {
-            events.shift = true;
-        }
-        if (e.keyCode == 17) {
-            events.ctrl = true;
-        }
-        if (e.keyCode == 18) {
-            events.alt = true;
+        switch (e.keyCode) {
+            case 16:
+                events.shift = true;
+                break;
+            case 17:
+                events.ctrl = true;
+                break;
+            case 18:
+                events.alt = true;
+                break;
+            default:
+                break;
         }
 
         if (self.sys.pickupedObjs.length > 0) {
-            var order = 'update';
+            var order = 'false';
             var x = 0;
             var y = 0;
             var eventType = 'keydown';
 
             switch (e.keyCode) {
+                case 8:
+                    // BackSpace
+                    (0, _delete2.default)(self.sys.pickupedObjs[0]);
+                    order = 'cancel';
+                    // update active index  & reget the active
+                    break;
                 case 9:
                     order = 'cancel';
                     var index = self.sys.pickupedObjs[0].origin.index;
@@ -4719,21 +4727,6 @@ var Event = function Event(self) {
                     self.sys.pickupedObjs[0].origin.type = 'point';
                     e.preventDefault();
                     break;
-                case 8:
-                    // BackSpace
-                    (0, _delete2.default)(self.sys.pickupedObjs[0]);
-                    order = 'cancel';
-                    // update active index  & reget the active
-                    break;
-                case 16:
-                    events.shift = true;
-                    break;
-                case 17:
-                    events.ctrl = true;
-                    break;
-                case 18:
-                    events.alt = true;
-                    break;
                 case 27:
                     // esc
                     self.sys.pickupedObjs = [];
@@ -4752,12 +4745,21 @@ var Event = function Event(self) {
                     // right
                     x = 1;
                     break;
+                case 16:
+                    events.shift = true;
+                    break;
+                case 17:
+                    events.ctrl = true;
+                    break;
+                case 18:
+                    events.alt = true;
+                    break;
                 case 40:
                     // bottom
                     y = 1;
                     break;
                 default:
-                    order = false;
+                    break;
             }
 
             // update snapshoot
@@ -4785,7 +4787,7 @@ var Event = function Event(self) {
                     // pathSnapshoot = [{},{},{}]
                 }
             };
-            updateSnapshoot();
+            // updateSnapshoot();
             if (order === 'update') {
                 if (events.shift) {
                     if (self.sys.pickupedObjs.length > 1) {
@@ -4793,7 +4795,6 @@ var Event = function Event(self) {
                         var oneObj = true;
                         var indexs = self.sys.pickupedObjs.map(function (obj) {
                             updateSnapshoot();
-                            var snapShootPath = obj.pathSnapshoot;
                             var moveObject = obj;
                             (0, _move2.default)(moveObject, [x * step, y * step], step);
                             if (a.origin.object.id !== obj.origin.object.id) {
@@ -4801,7 +4802,6 @@ var Event = function Event(self) {
                             }
                             return obj.origin.index;
                         });
-
                         var uniIndexs = uniqueArr(indexs);
                         if (oneObj) {
                             a.origin.object.emit('finish', {
@@ -5644,7 +5644,6 @@ var move = function move(obj, movedPos, step) {
     var scale = object.Visual.options.grid.scale || [1, 1];
     var pixelRatio = scale[0] * (window.devicePixelRatio || 1);
     // boundaryCheck
-    // console.log(object.userSet.boundaryCheck);
     switch (object.type) {
         case _config2.default.objectTypes.polygon:
         case _config2.default.objectTypes.line:

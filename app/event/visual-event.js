@@ -185,8 +185,6 @@ const Event = self => {
                         const snapShootPath = obj.pathSnapshoot;
                         const moveObject = obj.origin;
                         if (events.ctrl || events.alt) {
-                            console.log('scale', self.options.grid.scale, '[x,y]', [e.pageX, e.pageY], [x, y]);
-                            console.log('movedPos', movedPos, step);
                             moveObject.type = 'object';
                         }
                         if (moveObject.object.userSet.dragable) {
@@ -208,7 +206,6 @@ const Event = self => {
             let tempObjs = [];
             self.sys.pickupedObjs.map(item => {
                 if (item == needDeleteObj) {
-                    console.log('delete obj');
                     let indexs = item.origin.object.isActive.indexs;
                     indexs = indexs.filter(n => {
                         return n !== needDeleteObj.origin.index;
@@ -279,6 +276,8 @@ const Event = self => {
     });
 
     window.addEventListener('keyup', e => {
+        e.preventDefault();
+        e.stopPropagation();
         switch (e.keyCode) {
             case 16:
                 events.shift = false;
@@ -295,26 +294,35 @@ const Event = self => {
     });
 
     window.addEventListener('keydown', e => {
-        // e.preventDefault();
+        e.preventDefault();
         e.stopPropagation();
-
-        if (e.keyCode == 16) {
-            events.shift = true;
-        }
-        if (e.keyCode == 17) {
-            events.ctrl = true;
-        }
-        if (e.keyCode == 18) {
-            events.alt = true;
+        switch (e.keyCode) {
+            case 16:
+                events.shift = true;
+                break;
+            case 17:
+                events.ctrl = true;
+                break;
+            case 18:
+                events.alt = true;
+                break;
+            default:
+                break;
         }
 
         if (self.sys.pickupedObjs.length > 0) {
-            let order = 'update';
+            let order = 'false';
             let x = 0;
             let y = 0;
             const eventType = 'keydown';
 
             switch (e.keyCode) {
+                case 8:
+                    // BackSpace
+                    deleteObj(self.sys.pickupedObjs[0]);
+                    order = 'cancel';
+                    // update active index  & reget the active
+                    break;
                 case 9:
                     order = 'cancel';
                     let index = self.sys.pickupedObjs[0].origin.index;
@@ -336,21 +344,6 @@ const Event = self => {
                     self.sys.pickupedObjs[0].origin.type = 'point';
                     e.preventDefault();
                     break;
-                case 8:
-                    // BackSpace
-                    deleteObj(self.sys.pickupedObjs[0]);
-                    order = 'cancel';
-                    // update active index  & reget the active
-                    break;
-                case 16:
-                    events.shift = true;
-                    break;
-                case 17:
-                    events.ctrl = true;
-                    break;
-                case 18:
-                    events.alt = true;
-                    break;
                 case 27:
                     // esc
                     self.sys.pickupedObjs = [];
@@ -369,12 +362,21 @@ const Event = self => {
                     // right
                     x = 1;
                     break;
+                case 16:
+                    events.shift = true;
+                    break;
+                case 17:
+                    events.ctrl = true;
+                    break;
+                case 18:
+                    events.alt = true;
+                    break;
                 case 40:
                     // bottom
                     y = 1;
                     break;
                 default:
-                    order = false;
+                    break;
             }
 
             // update snapshoot
@@ -402,7 +404,7 @@ const Event = self => {
                     // pathSnapshoot = [{},{},{}]
                 }
             };
-            updateSnapshoot();
+            // updateSnapshoot();
             if (order === 'update') {
                 if (events.shift) {
                     if (self.sys.pickupedObjs.length > 1) {
@@ -410,7 +412,6 @@ const Event = self => {
                         let oneObj = true;
                         const indexs = self.sys.pickupedObjs.map(obj => {
                             updateSnapshoot();
-                            const snapShootPath = obj.pathSnapshoot;
                             const moveObject = obj;
                             move(moveObject, [x * step, y * step], step);
                             if (a.origin.object.id !== obj.origin.object.id) {
@@ -418,7 +419,6 @@ const Event = self => {
                             }
                             return obj.origin.index;
                         });
-
                         const uniIndexs = uniqueArr(indexs);
                         if (oneObj) {
                             a.origin.object.emit('finish', {

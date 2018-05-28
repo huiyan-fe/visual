@@ -23,7 +23,6 @@ const move = (obj, movedPos, step) => {
     const scale = object.Visual.options.grid.scale || [1, 1];
     const pixelRatio = scale[0] * (window.devicePixelRatio || 1);
     // boundaryCheck
-    // console.log(object.userSet.boundaryCheck);
     switch (object.type) {
         case Config.objectTypes.polygon:
         case Config.objectTypes.line:
