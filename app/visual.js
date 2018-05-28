@@ -74,8 +74,9 @@ class Visual {
     [updateCanvas]() {
         const scale = this.options.grid.scale || [1, 1];
         const pixelRatio = this.ratio;
-        this.width = this.initDomStyle.width;
-        this.height = this.initDomStyle.height;
+        const domStyle = this.initDomStyle;
+        this.width = domStyle.width;
+        this.height = domStyle.height;
         this.canvas.height = parseInt(this.height, 10) * pixelRatio * Math.max(1, scale[1]);
         this.canvas.width = parseInt(this.width, 10) * pixelRatio * Math.max(1, scale[0]);
         this.canvas.style.height = `${parseInt(this.height, 10) * Math.max(1, scale[1])}px`;
@@ -102,7 +103,7 @@ class Visual {
     zoom(zoom) {
         this.zoomScale = zoom;
         this.options.grid.scale = this.initScale.map(item => zoom * item);
-        console.log('scale', this.options.grid.scale);
+        // console.log('scale', this.options.grid.scale);
         this.update(this.dom, {
             scale: this.options.grid.scale,
         });

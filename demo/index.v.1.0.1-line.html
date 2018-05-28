@@ -44,8 +44,6 @@
         }, userSet1);
 
         line.on('finish', (data) => {
-            console.log('click');
-            console.log(JSON.stringify(data.object.path));
             line.set('dragable', false)
         })
 
@@ -75,8 +73,6 @@
         }, userSet2);
 
         line2.on('finish', (data) => {
-            console.log('click');
-            console.log(JSON.stringify(data.object.path));
             // line.set('dragable',false)
         })
 

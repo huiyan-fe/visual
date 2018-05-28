@@ -12,7 +12,10 @@ const Event = self => {
     const canvas = self.canvas;
     let mousedownPos = [];
     let hoveredObj = [];
+    let mousedownObj = null;
+    let needDeleteObj = null;
     let mousedown = false;
+
     const step = self.options.grid.step;
     const events = {
         ctrl: false,
@@ -37,6 +40,8 @@ const Event = self => {
 
     window.addEventListener('mousedown', e => {
         mousedown = true;
+        mousedownObj = null;
+        needDeleteObj = null;
         let x = e.offsetX;
         let y = e.offsetY;
         [x, y] = scaleReverse([
@@ -80,11 +85,27 @@ const Event = self => {
             }
             pathSnapshoot = JSON.parse(JSON.stringify(pathSnapshoot));
 
-            self.sys.pickupedObjs.push({
+            const uniquePickedObjs = [];
+            let alreadyHave = false;
+            self.sys.pickupedObjs.map(item => {
+                let obj = item.origin;
+                if (obj.index == hoveredObj[0].index && obj.object == hoveredObj[0].object) {
+                    alreadyHave = true;
+                } else {
+                    uniquePickedObjs.push(item);
+                }
+            });
+            let temp = {
                 pathSnapshoot,
                 outBoxSnapshoot,
                 origin: hoveredObj[0],
-            });
+            }
+            uniquePickedObjs.push(temp);
+            if (alreadyHave) {
+                needDeleteObj = temp;
+            }
+            mousedownObj = hoveredObj[0];
+            self.sys.pickupedObjs = uniquePickedObjs;
 
             let oneObj = true;
             if (self.sys.pickupedObjs.length > 1) {
@@ -102,7 +123,6 @@ const Event = self => {
                     });
                 }
             }
-
             mousedownPos = scaleReverse([
                 [e.pageX, e.pageY],
             ], self.options.grid.scale)[0];
@@ -113,6 +133,7 @@ const Event = self => {
     window.addEventListener('mousemove', e => {
         let x = 0;
         let y = 0;
+        needDeleteObj = null;
 
         if (self.sys.pickupedObjs.length === 0) {
             x = e.offsetX;
@@ -134,19 +155,45 @@ const Event = self => {
                 [x, y] = scaleReverse([
                     [x, y],
                 ], self.options.grid.scale)[0];
+
                 let movedPos = [x - mousedownPos[0], y - mousedownPos[1]];
                 movedPos = steplizePoint(movedPos, step);
-                console.log('mousemove', self.sys.pickupedObjs);
-                self.sys.pickupedObjs.forEach(obj => {
-                    const snapShootPath = obj.pathSnapshoot;
-                    const moveObject = obj.origin;
-                    if (events.ctrl || events.alt) {
-                        moveObject.type = 'object';
-                    }
-                    if (moveObject.object.userSet.dragable) {
-                        move(obj, movedPos, step);
+                // judge if is multi point chose state
+                let mouseDownOnPoint = false;
+                self.sys.pickupedObjs.forEach(item => {
+                    const obj = item.origin;
+                    if (obj.type == 'point' && mousedownObj == obj) {
+                        mouseDownOnPoint = true;
                     }
                 });
+
+                // judge if the visual instance is chosed
+                let mousedownOnVObj = false;
+                if (!mouseDownOnPoint) {
+                    if (self.sys.pickupedObjs.length == 1) {
+                        const moveObject = self.sys.pickupedObjs[0].origin;
+                        if (moveObject &&
+                            (moveObject.type == 'object' || moveObject.type == undefined)
+                        ) {
+                            mousedownOnVObj = true;
+                        }
+                    }
+                }
+                // only when down on points or down on visual object can move
+                if (mouseDownOnPoint || mousedownOnVObj || otherCons) {
+                    self.sys.pickupedObjs.forEach(obj => {
+                        const snapShootPath = obj.pathSnapshoot;
+                        const moveObject = obj.origin;
+                        if (events.ctrl || events.alt) {
+                            console.log('scale', self.options.grid.scale, '[x,y]', [e.pageX, e.pageY], [x, y]);
+                            console.log('movedPos', movedPos, step);
+                            moveObject.type = 'object';
+                        }
+                        if (moveObject.object.userSet.dragable) {
+                            move(obj, movedPos, step);
+                        }
+                    });
+                }
             }
             e.preventDefault();
         }
@@ -155,6 +202,26 @@ const Event = self => {
 
     window.addEventListener('mouseup', () => {
         mousedown = false;
+        mousedownObj = null;
+
+        if (needDeleteObj) {
+            let tempObjs = [];
+            self.sys.pickupedObjs.map(item => {
+                if (item == needDeleteObj) {
+                    console.log('delete obj');
+                    let indexs = item.origin.object.isActive.indexs;
+                    indexs = indexs.filter(n => {
+                        return n !== needDeleteObj.origin.index;
+                    });
+                    item.origin.object.isActive.indexs = indexs;
+                    needDeleteObj = null;
+                } else {
+                    tempObjs.push(item);
+                }
+            });
+            self.sys.pickupedObjs = tempObjs;
+        }
+
         if (events.shift) {
             if (self.sys.pickupedObjs.length > 1) {
                 const a = self.sys.pickupedObjs[0];
@@ -208,6 +275,7 @@ const Event = self => {
             hoveredObj.length = 0;
             mousedownPos.length = 0;
         }
+        self.draw();
     });
 
     window.addEventListener('keyup', e => {
@@ -337,7 +405,6 @@ const Event = self => {
             updateSnapshoot();
             if (order === 'update') {
                 if (events.shift) {
-                    // console.warn(self.sys.pickupedObjs.length);
                     if (self.sys.pickupedObjs.length > 1) {
                         const a = self.sys.pickupedObjs[0];
                         let oneObj = true;

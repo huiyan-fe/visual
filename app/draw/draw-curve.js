@@ -74,21 +74,20 @@ function DrawLine(Visual, obj) {
                 obj.isActive.indexs.forEach(index => {
                     const point = usePath[index];
                     ctx.beginPath();
-                    ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+                    ctx.strokeStyle = 'rgba(255, 0, 0, 1)';
                     ctx.fillStyle = '#fff';
-                    ctx.rect(point[0] - 6, point[1] - 6, 12, 12, Math.PI * 2);
+                    ctx.rect(point[0] - 7, point[1] - 7, 14, 14, Math.PI * 2);
                     ctx.stroke();
                 });
             } else {
                 const point = usePath[obj.isActive.index];
                 ctx.beginPath();
-                ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+                ctx.strokeStyle = 'rgba(255, 0, 0, 1)';
                 ctx.fillStyle = '#fff';
-                ctx.rect(point[0] - 6, point[1] - 6, 12, 12, Math.PI * 2);
+                ctx.rect(point[0] - 7, point[1] - 7, 14, 14, Math.PI * 2);
                 ctx.stroke();
             }
         }
-
         ctx.restore();
     }
 }

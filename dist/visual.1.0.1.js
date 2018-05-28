@@ -1620,8 +1620,9 @@ var Visual = function () {
         value: function value() {
             var scale = this.options.grid.scale || [1, 1];
             var pixelRatio = this.ratio;
-            this.width = this.initDomStyle.width;
-            this.height = this.initDomStyle.height;
+            var domStyle = this.initDomStyle;
+            this.width = domStyle.width;
+            this.height = domStyle.height;
             this.canvas.height = parseInt(this.height, 10) * pixelRatio * Math.max(1, scale[1]);
             this.canvas.width = parseInt(this.width, 10) * pixelRatio * Math.max(1, scale[0]);
             this.canvas.style.height = parseInt(this.height, 10) * Math.max(1, scale[1]) + 'px';
@@ -1651,7 +1652,7 @@ var Visual = function () {
             this.options.grid.scale = this.initScale.map(function (item) {
                 return _zoom * item;
             });
-            console.log('scale', this.options.grid.scale);
+            // console.log('scale', this.options.grid.scale);
             this.update(this.dom, {
                 scale: this.options.grid.scale
             });
@@ -3788,21 +3789,20 @@ function DrawLine(Visual, obj) {
                 obj.isActive.indexs.forEach(function (index) {
                     var point = usePath[index];
                     ctx.beginPath();
-                    ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+                    ctx.strokeStyle = 'rgba(255, 0, 0, 1)';
                     ctx.fillStyle = '#fff';
-                    ctx.rect(point[0] - 6, point[1] - 6, 12, 12, Math.PI * 2);
+                    ctx.rect(point[0] - 7, point[1] - 7, 14, 14, Math.PI * 2);
                     ctx.stroke();
                 });
             } else {
                 var point = usePath[obj.isActive.index];
                 ctx.beginPath();
-                ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+                ctx.strokeStyle = 'rgba(255, 0, 0, 1)';
                 ctx.fillStyle = '#fff';
-                ctx.rect(point[0] - 6, point[1] - 6, 12, 12, Math.PI * 2);
+                ctx.rect(point[0] - 7, point[1] - 7, 14, 14, Math.PI * 2);
                 ctx.stroke();
             }
         }
-
         ctx.restore();
     }
 }
@@ -4393,7 +4393,10 @@ var Event = function Event(self) {
     var canvas = self.canvas;
     var mousedownPos = [];
     var hoveredObj = [];
+    var mousedownObj = null;
+    var needDeleteObj = null;
     var mousedown = false;
+
     var step = self.options.grid.step;
     var events = {
         ctrl: false,
@@ -4415,6 +4418,8 @@ var Event = function Event(self) {
 
     window.addEventListener('mousedown', function (e) {
         mousedown = true;
+        mousedownObj = null;
+        needDeleteObj = null;
         var x = e.offsetX;
         var y = e.offsetY;
 
@@ -4461,11 +4466,27 @@ var Event = function Event(self) {
             }
             pathSnapshoot = JSON.parse((0, _stringify2.default)(pathSnapshoot));
 
-            self.sys.pickupedObjs.push({
+            var uniquePickedObjs = [];
+            var alreadyHave = false;
+            self.sys.pickupedObjs.map(function (item) {
+                var obj = item.origin;
+                if (obj.index == hoveredObj[0].index && obj.object == hoveredObj[0].object) {
+                    alreadyHave = true;
+                } else {
+                    uniquePickedObjs.push(item);
+                }
+            });
+            var temp = {
                 pathSnapshoot: pathSnapshoot,
                 outBoxSnapshoot: outBoxSnapshoot,
                 origin: hoveredObj[0]
-            });
+            };
+            uniquePickedObjs.push(temp);
+            if (alreadyHave) {
+                needDeleteObj = temp;
+            }
+            mousedownObj = hoveredObj[0];
+            self.sys.pickupedObjs = uniquePickedObjs;
 
             var oneObj = true;
             if (self.sys.pickupedObjs.length > 1) {
@@ -4483,7 +4504,6 @@ var Event = function Event(self) {
                     });
                 }
             }
-
             mousedownPos = (0, _scalelize.scaleReverse)([[e.pageX, e.pageY]], self.options.grid.scale)[0];
         }
         self.draw();
@@ -4492,6 +4512,7 @@ var Event = function Event(self) {
     window.addEventListener('mousemove', function (e) {
         var x = 0;
         var y = 0;
+        needDeleteObj = null;
 
         if (self.sys.pickupedObjs.length === 0) {
             x = e.offsetX;
@@ -4519,19 +4540,43 @@ var Event = function Event(self) {
                 x = _scaleReverse$3[0];
                 y = _scaleReverse$3[1];
 
+
                 var movedPos = [x - mousedownPos[0], y - mousedownPos[1]];
                 movedPos = (0, _steplize2.default)(movedPos, step);
-                console.log('mousemove', self.sys.pickupedObjs);
-                self.sys.pickupedObjs.forEach(function (obj) {
-                    var snapShootPath = obj.pathSnapshoot;
-                    var moveObject = obj.origin;
-                    if (events.ctrl || events.alt) {
-                        moveObject.type = 'object';
-                    }
-                    if (moveObject.object.userSet.dragable) {
-                        (0, _move2.default)(obj, movedPos, step);
+                // judge if is multi point chose state
+                var mouseDownOnPoint = false;
+                self.sys.pickupedObjs.forEach(function (item) {
+                    var obj = item.origin;
+                    if (obj.type == 'point' && mousedownObj == obj) {
+                        mouseDownOnPoint = true;
                     }
                 });
+
+                // judge if the visual instance is chosed
+                var mousedownOnVObj = false;
+                if (!mouseDownOnPoint) {
+                    if (self.sys.pickupedObjs.length == 1) {
+                        var moveObject = self.sys.pickupedObjs[0].origin;
+                        if (moveObject && (moveObject.type == 'object' || moveObject.type == undefined)) {
+                            mousedownOnVObj = true;
+                        }
+                    }
+                }
+                // only when down on points or down on visual object can move
+                if (mouseDownOnPoint || mousedownOnVObj || otherCons) {
+                    self.sys.pickupedObjs.forEach(function (obj) {
+                        var snapShootPath = obj.pathSnapshoot;
+                        var moveObject = obj.origin;
+                        if (events.ctrl || events.alt) {
+                            console.log('scale', self.options.grid.scale, '[x,y]', [e.pageX, e.pageY], [x, y]);
+                            console.log('movedPos', movedPos, step);
+                            moveObject.type = 'object';
+                        }
+                        if (moveObject.object.userSet.dragable) {
+                            (0, _move2.default)(obj, movedPos, step);
+                        }
+                    });
+                }
             }
             e.preventDefault();
         }
@@ -4540,6 +4585,26 @@ var Event = function Event(self) {
 
     window.addEventListener('mouseup', function () {
         mousedown = false;
+        mousedownObj = null;
+
+        if (needDeleteObj) {
+            var tempObjs = [];
+            self.sys.pickupedObjs.map(function (item) {
+                if (item == needDeleteObj) {
+                    console.log('delete obj');
+                    var indexs = item.origin.object.isActive.indexs;
+                    indexs = indexs.filter(function (n) {
+                        return n !== needDeleteObj.origin.index;
+                    });
+                    item.origin.object.isActive.indexs = indexs;
+                    needDeleteObj = null;
+                } else {
+                    tempObjs.push(item);
+                }
+            });
+            self.sys.pickupedObjs = tempObjs;
+        }
+
         if (events.shift) {
             if (self.sys.pickupedObjs.length > 1) {
                 var a = self.sys.pickupedObjs[0];
@@ -4593,6 +4658,7 @@ var Event = function Event(self) {
             hoveredObj.length = 0;
             mousedownPos.length = 0;
         }
+        self.draw();
     });
 
     window.addEventListener('keyup', function (e) {
@@ -4722,7 +4788,6 @@ var Event = function Event(self) {
             updateSnapshoot();
             if (order === 'update') {
                 if (events.shift) {
-                    // console.warn(self.sys.pickupedObjs.length);
                     if (self.sys.pickupedObjs.length > 1) {
                         var a = self.sys.pickupedObjs[0];
                         var oneObj = true;
