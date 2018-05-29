@@ -276,7 +276,7 @@ const Event = self => {
     });
 
     window.addEventListener('keyup', e => {
-        e.preventDefault();
+        // e.preventDefault();
         e.stopPropagation();
         switch (e.keyCode) {
             case 16:
@@ -294,7 +294,7 @@ const Event = self => {
     });
 
     window.addEventListener('keydown', e => {
-        e.preventDefault();
+        // e.preventDefault();
         e.stopPropagation();
         switch (e.keyCode) {
             case 16:

@@ -4659,7 +4659,7 @@ var Event = function Event(self) {
     });
 
     window.addEventListener('keyup', function (e) {
-        e.preventDefault();
+        // e.preventDefault();
         e.stopPropagation();
         switch (e.keyCode) {
             case 16:
@@ -4677,7 +4677,7 @@ var Event = function Event(self) {
     });
 
     window.addEventListener('keydown', function (e) {
-        e.preventDefault();
+        // e.preventDefault();
         e.stopPropagation();
         switch (e.keyCode) {
             case 16:
