@@ -15,7 +15,7 @@ const Event = self => {
     let mousedownObj = null;
     let needDeleteObj = null;
     let mousedown = false;
-
+    let keydown = false;
     const step = self.options.grid.step;
     const events = {
         ctrl: false,
@@ -134,7 +134,6 @@ const Event = self => {
         let x = 0;
         let y = 0;
         needDeleteObj = null;
-
         if (self.sys.pickupedObjs.length === 0) {
             x = e.offsetX;
             y = e.offsetY;
@@ -278,6 +277,7 @@ const Event = self => {
     window.addEventListener('keyup', e => {
         // e.preventDefault();
         e.stopPropagation();
+        keydown = false;
         switch (e.keyCode) {
             case 16:
                 events.shift = false;
@@ -294,6 +294,8 @@ const Event = self => {
     });
 
     window.addEventListener('keydown', e => {
+        if (keydown) return;
+        keydown = true;
         // e.preventDefault();
         e.stopPropagation();
         switch (e.keyCode) {
@@ -309,9 +311,8 @@ const Event = self => {
             default:
                 break;
         }
-
         if (self.sys.pickupedObjs.length > 0) {
-            let order = 'false';
+            let order = 'update';
             let x = 0;
             let y = 0;
             const eventType = 'keydown';
@@ -404,7 +405,7 @@ const Event = self => {
                     // pathSnapshoot = [{},{},{}]
                 }
             };
-            // updateSnapshoot();
+            updateSnapshoot();
             if (order === 'update') {
                 if (events.shift) {
                     if (self.sys.pickupedObjs.length > 1) {
@@ -431,6 +432,7 @@ const Event = self => {
                 } else {
                     const snapShootPath = self.sys.pickupedObjs[0].pathSnapshoot;
                     const moveObject = self.sys.pickupedObjs[0];
+
                     move(moveObject, [x * step, y * step], step);
                     self.sys.pickupedObjs[0].origin.object.emit('finish', {
                         object: self.sys.pickupedObjs[0].origin.object,
