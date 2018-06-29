@@ -4396,7 +4396,7 @@ var Event = function Event(self) {
     var mousedownObj = null;
     var needDeleteObj = null;
     var mousedown = false;
-
+    var keydown = false;
     var step = self.options.grid.step;
     var events = {
         ctrl: false,
@@ -4513,7 +4513,6 @@ var Event = function Event(self) {
         var x = 0;
         var y = 0;
         needDeleteObj = null;
-
         if (self.sys.pickupedObjs.length === 0) {
             x = e.offsetX;
             y = e.offsetY;
@@ -4661,6 +4660,7 @@ var Event = function Event(self) {
     window.addEventListener('keyup', function (e) {
         // e.preventDefault();
         e.stopPropagation();
+        keydown = false;
         switch (e.keyCode) {
             case 16:
                 events.shift = false;
@@ -4677,6 +4677,8 @@ var Event = function Event(self) {
     });
 
     window.addEventListener('keydown', function (e) {
+        if (keydown) return;
+        keydown = true;
         // e.preventDefault();
         e.stopPropagation();
         switch (e.keyCode) {
@@ -4692,9 +4694,8 @@ var Event = function Event(self) {
             default:
                 break;
         }
-
         if (self.sys.pickupedObjs.length > 0) {
-            var order = 'false';
+            var order = 'update';
             var x = 0;
             var y = 0;
             var eventType = 'keydown';
@@ -4787,7 +4788,7 @@ var Event = function Event(self) {
                     // pathSnapshoot = [{},{},{}]
                 }
             };
-            // updateSnapshoot();
+            updateSnapshoot();
             if (order === 'update') {
                 if (events.shift) {
                     if (self.sys.pickupedObjs.length > 1) {
@@ -4814,6 +4815,7 @@ var Event = function Event(self) {
                 } else {
                     var snapShootPath = self.sys.pickupedObjs[0].pathSnapshoot;
                     var moveObject = self.sys.pickupedObjs[0];
+
                     (0, _move2.default)(moveObject, [x * step, y * step], step);
                     self.sys.pickupedObjs[0].origin.object.emit('finish', {
                         object: self.sys.pickupedObjs[0].origin.object,
